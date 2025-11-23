@@ -1,3 +1,24 @@
+
+
+<environment_details>
+# Visual Studio Code Visible Files
+README.md
+
+# Visual Software Code Open Tabs
+README.md
+
+# Actively Running Terminals
+## Original command: `cd backend; npm start`
+
+# Current Time
+11/21/2025, 5:05:37 PM (Africa/Nairobi, UTC+3:00)
+
+# Context Window Usage
+42,534 / 256K tokens used (17%)
+
+# Current Mode
+ACT MODE
+=======
 # AgriFlock360 – Unified Livestock Management & IoT Brooder System
 
 AgriFlock360 is a multi-platform agricultural technology ecosystem combining:
@@ -94,7 +115,7 @@ More details in `BRANCHING_STRATEGY.md`.
 
 ---
 
-## 📄 Licensing
+## � Licensing
 Internal proprietary software — not open-source.
 
 ---
@@ -103,3 +124,4 @@ Internal proprietary software — not open-source.
 **M’Global Business Consultancy**  
 📧 mglobalbizconsult@gmail.com  
 📞 +254 799 863 070  
+>>>>>>> backend
