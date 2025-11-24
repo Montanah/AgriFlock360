@@ -1,4 +1,3 @@
-=======
 # AgriFlock360 – Unified Livestock Management & IoT Brooder System
 
 AgriFlock360 is a multi-platform agricultural technology ecosystem combining:
@@ -104,4 +103,4 @@ Internal proprietary software — not open-source.
 **M’Global Business Consultancy**  
 📧 mglobalbizconsult@gmail.com  
 📞 +254 799 863 070  
->>>>>>> backend
+
