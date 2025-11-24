@@ -1,23 +1,3 @@
-
-
-<environment_details>
-# Visual Studio Code Visible Files
-README.md
-
-# Visual Software Code Open Tabs
-README.md
-
-# Actively Running Terminals
-## Original command: `cd backend; npm start`
-
-# Current Time
-11/21/2025, 5:05:37 PM (Africa/Nairobi, UTC+3:00)
-
-# Context Window Usage
-42,534 / 256K tokens used (17%)
-
-# Current Mode
-ACT MODE
 =======
 # AgriFlock360 – Unified Livestock Management & IoT Brooder System
 
