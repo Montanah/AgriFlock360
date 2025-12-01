@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Batch, BatchStatus } from '../database/entities/Batch.entity';
+import { BirdType } from 'src/database/entities/BirdType.entity';
 import { BatchHistory } from '../database/entities/BatchHistory.entity';
 import { Vaccination } from '../database/entities/Vaccination.entity';
 import { FeedingSchedule } from '../database/entities/FeedingSchedule.entity';
@@ -35,6 +36,8 @@ export class BatchService {
     private feedingRecordRepository: Repository<FeedingRecord>,
     @InjectRepository(WeightSample)
     private weightSampleRepository: Repository<WeightSample>,
+    @InjectRepository(BirdType)
+    private birdTypeRepository: Repository<BirdType>,
     private logger: CustomLogger,
     private auditService: AuditService,
   ) {}
@@ -81,6 +84,7 @@ export class BatchService {
   }
 
   async findAll(userId: string, query: QueryBatchDto) {
+    
     const { status, farm_id, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
 
@@ -377,6 +381,14 @@ export class BatchService {
     }
 
     return this.calculateBatchStats(batchId);
+  }
+
+  async getAllBirdTypes() {
+    return this.birdTypeRepository
+      .createQueryBuilder('bird_type')
+      .select('bird_type.id', 'id')
+      .addSelect('bird_type.name', 'name')
+      .getRawMany();
   }
 
   private async calculateBatchStats(batchId: string) {

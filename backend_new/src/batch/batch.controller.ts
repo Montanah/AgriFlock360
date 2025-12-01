@@ -61,6 +61,13 @@ export class BatchController {
     return this.batchService.findAll(user.userId, query);
   }
 
+  @Get('bird-types')
+  @ApiOperation({ summary: 'Get all bird types' })
+  @ApiResponse({ status: 200, description: 'Bird types retrieved' })
+  async getBirdTypes() {
+    return this.batchService.getAllBirdTypes();
+  }
+
   @Get(':batchId')
   @ApiOperation({ summary: 'Get batch details with related data' })
   @ApiResponse({ status: 200, description: 'Batch details retrieved' })
@@ -147,4 +154,5 @@ export class BatchController {
     const result = await this.batchService.findOne(batchId, user.userId);
     return { history: result.history };
   }
+
 }

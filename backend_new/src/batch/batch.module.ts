@@ -12,6 +12,7 @@ import { FeedingSchedule } from '../database/entities/FeedingSchedule.entity';
 import { FeedingRecord } from '../database/entities/FeedingRecord.entity';
 import { WeightSample } from '../database/entities/WeightSample.entity';
 import { AuditLog } from '../database/entities/AuditLog.entity';
+import { BirdType } from 'src/database/entities/BirdType.entity';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AuditLog } from '../database/entities/AuditLog.entity';
       FeedingRecord,
       WeightSample,
       AuditLog,
+      BirdType,
     ]),
   ],
   controllers: [
