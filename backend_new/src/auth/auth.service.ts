@@ -33,6 +33,7 @@ import { CustomLogger } from '../common/custom-logger.service';
 import { TokenRotationService } from '../services/token-rotation.service';
 import { AppleAuthService } from '../services/apple-auth.service';
 import { MetricsService } from '../common/metrics.service';
+import { Profile } from 'src/database/entities/Profile.entity';
 
 @Injectable()
 export class AuthService {
@@ -43,6 +44,8 @@ export class AuthService {
     private userRepository: Repository<User>,
     @InjectRepository(Role)
     private roleRepository: Repository<Role>,
+    @InjectRepository(Profile)
+    private profileRepository: Repository<Profile>,
     @InjectRepository(Farm)
     private farmRepository: Repository<Farm>,
     private jwtService: JwtService,
@@ -71,6 +74,15 @@ export class AuthService {
       if (existingUser) {
         this.logger.warn(`Registration attempt with existing email: ${registerDto.email}`);
         throw new ConflictException('User already exists');
+      }
+
+      // Check if phone number is already in use
+      const existingProfile = await this.userRepository.findOne({
+        where: { phone_number: registerDto.phone_number },
+      });
+
+      if (existingProfile) {
+        throw new ConflictException('Phone number already in use');
       }
 
       // Get default user role
@@ -112,12 +124,37 @@ export class AuthService {
         await this.farmRepository.save(farm);
 
         //Set farm_id on user
-        user.farm_id = farm.id;
-        user.farm = farm;
-        await this.userRepository.save(user); 
+        // user.farm_id = farm.id;
+        // user.farm = farm;
+        // await this.userRepository.save(user); 
       }
 
       console.log('user created and farm ', user, farm);
+
+      // Create profile
+      const profile = this.profileRepository.create({
+        user_id: user.id,
+        full_name: registerDto.full_name,
+        national_id: registerDto.national_id,
+        phone_number: registerDto.phone_number,
+        calling_code: '+254', // Default calling code
+        date_of_birth: registerDto.date_of_birth ? new Date(registerDto.date_of_birth) : undefined,
+        gender: registerDto.gender as any,
+        location: registerDto.location,
+        farm_id: farm?.id,
+        years_of_experience: registerDto.years_of_experience,
+        poultry_type: registerDto.poultry_type as any,
+        chicken_house_capacity: registerDto.chicken_house_capacity,
+        current_number_of_chickens: registerDto.current_number_of_chickens,
+        preferred_agrovet_name: registerDto.preferred_agrovet_name,
+        preferred_feed_company: registerDto.preferred_feed_company,
+        preferred_chicks_company: registerDto.preferred_chicks_company,
+        preferred_offtaker_agent: registerDto.preferred_offtaker_agent,
+      });
+
+      await this.profileRepository.save(profile);
+
+      console.log('User, profile, and farm created:', { user, profile, farm });
 
       // Send verification email
       await this.emailService.sendVerificationEmail(user.email, verificationCode);
@@ -361,8 +398,7 @@ export class AuthService {
           user = this.userRepository.create({
             email,
             google_id: sub,
-            first_name: given_name,
-            last_name: family_name,
+            name: `${given_name} ${family_name}`,
             oauth_provider: 'google',
             role_id: defaultRole.id,
             status: 'active',

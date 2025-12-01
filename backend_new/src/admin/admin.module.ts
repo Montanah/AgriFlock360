@@ -17,6 +17,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from '../auth/auth.service';
 import { Role } from '../database/entities/Role.entity';
 import { Farm } from '../database/entities/Farm.entity';
+import { Batch } from '../database/entities/Batch.entity';
 import { JwtStrategy } from '../auth/strategies/jwt.strategy';
 import { GoogleStrategy } from '../auth/strategies/google.strategy';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -37,6 +38,8 @@ import { RateLimitGuard } from '../auth/guards/rate-limit.guard';
 import { LoggingInterceptor } from '../common/logging.interceptor';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { UsersModule } from '../users/users.module';
+import { Payment } from '../database/entities/Payment.entity';
+import { Profile } from '../database/entities/Profile.entity';
 
 @Module({
   imports: [
@@ -51,6 +54,9 @@ import { UsersModule } from '../users/users.module';
       LoginAttempt,
       UserSession,
       RateLimitLog,
+      Batch,
+      Payment,
+      Profile,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({

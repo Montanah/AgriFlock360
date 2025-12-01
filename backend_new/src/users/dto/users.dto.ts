@@ -1,33 +1,23 @@
 // users/dto/update-profile.dto.ts
-import { IsOptional, IsString, IsEmail, IsDateString, IsBoolean, MinLength, MaxLength, Matches, IsEnum, IsNotEmpty, IsObject } from 'class-validator';
+import { IsOptional, IsString, IsEmail, IsDateString, IsBoolean, MinLength, MaxLength, Matches, IsEnum, IsNotEmpty, IsObject, IsIn, IsInt, Min, IsPhoneNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 export class UpdateProfileDto {
-  @ApiProperty({ description: 'User first name', example: 'John', required: false })
-  @IsOptional()
-  @IsString()
-  @MinLength(2)
-  @MaxLength(255)
-  first_name?: string;
-
-  @ApiProperty({ description: 'User last name', example: 'Doe', required: false })
-  @IsOptional()
-  @IsString()
-  @MinLength(2)
-  @MaxLength(255)
-  last_name?: string;
-
   @ApiProperty({ description: 'Display name', example: 'John Doe', required: false })
   @IsOptional()
   @IsString()
   @MaxLength(255)
-  name?: string;
+  full_name?: string;
 
-  @ApiProperty({ description: 'Phone number', example: '712345678', required: false })
+  @ApiProperty({ example: '12345678', required: false })
   @IsOptional()
   @IsString()
-  @Matches(/^[0-9]{9,15}$/, { message: 'Invalid phone number format' })
+  national_id?: string;
+
+  @ApiProperty({ example: '+254712345678' })
+  @IsOptional()
+  @IsPhoneNumber()
   phone_number?: string;
 
   @ApiProperty({ description: 'Country calling code', example: '+254', required: false })
@@ -45,10 +35,62 @@ export class UpdateProfileDto {
   @IsDateString()
   date_of_birth?: Date;
 
-  @ApiProperty({ description: 'Gender', enum: ['male', 'female', 'other', 'prefer_not_to_say'], required: false })
+  @ApiProperty({ 
+    example: 'male', 
+    enum: ['male', 'female', 'other', 'prefer_not_to_say'], 
+    required: false 
+  })
   @IsOptional()
-  @IsEnum(['male', 'female', 'other', 'prefer_not_to_say'])
+  @IsIn(['male', 'female', 'other', 'prefer_not_to_say'])
   gender?: string;
+
+  @ApiProperty({ example: 5, description: 'Years of experience', required: false })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  years_of_experience?: number;
+
+  @ApiProperty({ 
+    example: 'layers', 
+    enum: ['layers', 'broilers', 'both', 'indigenous', 'other'],
+    required: false 
+  })
+  @IsOptional()
+  @IsIn(['layers', 'broilers', 'both', 'indigenous', 'other'])
+  poultry_type?: string;
+
+  @ApiProperty({ example: 1000, required: false })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  chicken_house_capacity?: number;
+
+  @ApiProperty({ example: 500, required: false })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  current_number_of_chickens?: number;
+
+  @ApiProperty({ example: 'Farmers Choice Agrovet', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_agrovet_name?: string;
+
+  @ApiProperty({ example: 'Pembe Feeds', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_feed_company?: string;
+
+  @ApiProperty({ example: 'Kenchic Hatcheries', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_chicks_company?: string;
+
+  @ApiProperty({ example: 'County Eggs Collector', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_offtaker_agent?: string;
+
 }
 
 export class UpdateEmailDto {

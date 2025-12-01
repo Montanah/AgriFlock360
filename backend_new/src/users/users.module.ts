@@ -5,6 +5,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 import { User } from '../database/entities/User.entity';
+import { Profile } from '../database/entities/Profile.entity';
 import { UserPreferences } from '../database/entities/UserPreferences.entity';
 import { DeviceToken } from '../database/entities/DeviceToken.entity';
 import { UserActivity } from '../database/entities/UserActivity.entity';
@@ -19,6 +20,7 @@ import { AuditService } from '../services/audit.service';
   imports: [
     TypeOrmModule.forFeature([
       User,
+      Profile,
       UserPreferences,
       DeviceToken,
       UserActivity,

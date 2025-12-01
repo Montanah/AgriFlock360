@@ -1,5 +1,5 @@
 // batchs/services/farms.service.ts
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Farm } from '../database/entities/Farm.entity';
@@ -15,6 +15,15 @@ export class FarmsService {
   ) {}
 
   async create(createFarmDto: CreateFarmDto, userId: string) {
+    //check if the same name exists for the user
+    const existingFarm = await this.farmRepository.findOne({
+      where: { farm_name: createFarmDto.farm_name, user_id: userId },
+    })
+
+    if (existingFarm) {
+      throw new ConflictException('Farm name already exists for this user');
+    }
+    
     const farm = this.farmRepository.create({
       ...createFarmDto,
       user_id: userId,

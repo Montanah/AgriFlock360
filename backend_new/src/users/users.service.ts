@@ -22,12 +22,16 @@ import * as QRCode from 'qrcode';
 import * as crypto from 'crypto';
 import { EmailService } from '../services/email.service';
 import { AuditService } from '../services/audit.service';
+import { Profile } from '../database/entities/Profile.entity';
+
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Profile)
+    private profileRepository: Repository<Profile>,
     @InjectRepository(UserPreferences)
     private preferencesRepository: Repository<UserPreferences>,
     @InjectRepository(DeviceToken)
@@ -43,19 +47,13 @@ export class UsersService {
   async getProfile(userId: string): Promise<any> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['role', 'farm'],
+      relations: ['role', 'profile.farm', 'profile'],
       select: {
         id: true,
         email: true,
         name: true,
-        first_name: true,
-        last_name: true,
         phone_number: true,
-        calling_code: true,
-        location: true,
         avatar: true,
-        date_of_birth: true,
-        gender: true,
         status: true,
         is_2fa_enabled: true,
         oauth_provider: true,
@@ -68,8 +66,6 @@ export class UsersService {
       throw new NotFoundException('User not found');
     }
 
-    console.log("I reached here", user.id);
-
     // Get user preferences
     const preferences = await this.getUserPreferences(user.id);
 
@@ -79,38 +75,113 @@ export class UsersService {
     };
   }
 
+  // async updateProfile(userId: string, updateDto: UpdateProfileDto): Promise<User> {
+  //   const user = await this.userRepository.findOne({ where: { id: userId } });
+    
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
+
+  //   // Check if phone number is being updated and if it's already taken
+  //   if (updateDto.phone_number && updateDto.phone_number !== user.phone_number) {
+  //     const existingUser = await this.userRepository.findOne({
+  //       where: { phone_number: updateDto.phone_number },
+  //     });
+
+  //     if (existingUser) {
+  //       throw new ConflictException('Phone number already in use');
+  //     }
+  //   }
+    
+  //   // Calculate age from date of birth
+  //   if (updateDto.date_of_birth) {
+  //     const age = this.calculateAge(new Date(updateDto.date_of_birth));
+  //     Object.assign(user, { ...updateDto, age: age.toString() });
+  //   } else {
+  //     Object.assign(user, updateDto);
+  //   }
+
+  //   await this.userRepository.save(user);
+
+  //   const profile = await this.profileRepository.findOne({ 
+  //     where: { user_id: userId } 
+  //   });
+
+  //   if (!profile) {
+  //     throw new NotFoundException('Profile not found');
+  //   }
+
+  //   // Check if phone number is being updated and if it's already taken
+  //   if (updateDto.phone_number && updateDto.phone_number !== profile.phone_number) {
+  //     const existingProfile = await this.profileRepository.findOne({
+  //       where: { phone_number: updateDto.phone_number },
+  //     });
+
+  //     if (existingProfile) {
+  //       throw new ConflictException('Phone number already in use');
+  //     }
+  //   }
+
+  //   // Calculate age from date of birth
+  //   if (updateDto.date_of_birth) {
+  //     const age = this.calculateAge(new Date(updateDto.date_of_birth));
+  //     Object.assign(profile, { ...updateDto, age: age.toString() });
+  //   } else {
+  //     Object.assign(profile, updateDto);
+  //   }
+
+  //   Object.assign(profile, updateDto);
+  //   await this.profileRepository.save(profile);
+
+
+  //   this.logger.log(`Profile updated for user ${userId}`);
+
+  //   return user;
+  // }
+
   async updateProfile(userId: string, updateDto: UpdateProfileDto): Promise<User> {
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+  const user = await this.userRepository.findOne({ where: { id: userId } });
+  if (!user) throw new NotFoundException('User not found');
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+  const profile = await this.profileRepository.findOne({ where: { user_id: userId } });
+  if (!profile) throw new NotFoundException('Profile not found');
 
-    // Check if phone number is being updated and if it's already taken
-    if (updateDto.phone_number && updateDto.phone_number !== user.phone_number) {
-      const existingUser = await this.userRepository.findOne({
-        where: { phone_number: updateDto.phone_number },
-      });
-
-      if (existingUser) {
-        throw new ConflictException('Phone number already in use');
-      }
-    }
-
-    // Calculate age from date of birth
-    if (updateDto.date_of_birth) {
-      const age = this.calculateAge(new Date(updateDto.date_of_birth));
-      Object.assign(user, { ...updateDto, age: age.toString() });
-    } else {
-      Object.assign(user, updateDto);
-    }
-
-    await this.userRepository.save(user);
-
-    this.logger.log(`Profile updated for user ${userId}`);
-
-    return user;
+  // --- Handle USER fields (name & phone only) ---
+  if (updateDto.phone_number && updateDto.phone_number !== user.phone_number) {
+    const existingUser = await this.userRepository.findOne({
+      where: { phone_number: updateDto.phone_number },
+    });
+    if (existingUser) throw new ConflictException('Phone number already in use');
+    user.phone_number = updateDto.phone_number;
   }
+
+  if (updateDto.full_name) {
+    user.name = updateDto.full_name;
+  }
+
+  await this.userRepository.save(user);
+
+  // --- Handle PROFILE fields ---
+  const profileUpdateData = { ...updateDto };
+
+  // Prevent phone_number & name from being saved into profile
+  // delete profileUpdateData.phone_number;
+  // delete profileUpdateData.name;
+
+  // Calculate age if DOB updated
+  if (profileUpdateData.date_of_birth) {
+    const age = this.calculateAge(new Date(profileUpdateData.date_of_birth));
+      Object.assign(profile, { ...updateDto, age: age.toString() });
+    // profileUpdateData.age = this.calculateAge(new Date(profileUpdateData.date_of_birth)).toString();
+  }
+
+  Object.assign(profile, profileUpdateData);
+  await this.profileRepository.save(profile);
+
+  this.logger.log(`Profile updated for user ${userId}`);
+  return user;
+}
+
 
   async updateAvatar(userId: string, file: any): Promise<{ avatar_url: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
@@ -130,6 +201,8 @@ export class UsersService {
     // Update user avatar
     user.avatar = upload.file_url;
     await this.userRepository.save(user);
+
+    await this.profileRepository.update({ user_id: userId }, { avatar: upload.file_url });
 
     this.logger.log(`Avatar updated for user ${userId}`);
 
@@ -159,6 +232,9 @@ export class UsersService {
 
     user.avatar = null;
     await this.userRepository.save(user);
+
+    //delete from profile too
+    await this.profileRepository.update({ user_id: userId }, { avatar: null });
 
     this.logger.log(`Avatar deleted for user ${userId}`);
   }

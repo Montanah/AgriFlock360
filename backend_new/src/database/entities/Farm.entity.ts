@@ -32,6 +32,12 @@ export class Farm {
   @Column({ type: 'text', nullable: true })
   location: string;
 
+  @Column({ type: 'jsonb', nullable: true })
+  gps_coordinates: {
+    latitude?: number;
+    longitude?: number;
+  };
+
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
   total_area: number;
 

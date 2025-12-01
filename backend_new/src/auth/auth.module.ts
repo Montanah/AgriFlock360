@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { User } from '../database/entities/User.entity';
 import { Role } from '../database/entities/Role.entity';
 import { Farm } from '../database/entities/Farm.entity';
+import { Profile } from '../database/entities/Profile.entity';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -34,7 +35,7 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Role, Farm, TwoFactorAuth,
+    TypeOrmModule.forFeature([User, Role, Farm, Profile, TwoFactorAuth,
       LoginAttempt,
       UserSession,
       RateLimitLog,

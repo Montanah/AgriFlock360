@@ -32,6 +32,7 @@ import { RolesController } from './roles/roles.controller';
 import { RolesModule } from './roles/roles.module';
 import { VaccineCatalogModule } from './vaccine-catalog/vaccine-catalog.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { HousingModule } from './housing/housing.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { InventoryModule } from './inventory/inventory.module';
     RolesModule,
     VaccineCatalogModule,
     InventoryModule,
+    HousingModule,
   ],
   controllers: [AppController, NotificationsController, RolesController],
   providers: [AppService,

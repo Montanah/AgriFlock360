@@ -7,6 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors();
+  app.setGlobalPrefix('api/v1');
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -32,6 +33,7 @@ async function bootstrap() {
   await app.listen(port);
 
   console.log(`🚀 Application is running on: http://localhost:${port}`);
+  console.log(`🌐 API Base URL: http://localhost:${port}/api/v1`);
   console.log(
     `📚 API Documentation available at: http://localhost:${port}/api-docs`,
   );

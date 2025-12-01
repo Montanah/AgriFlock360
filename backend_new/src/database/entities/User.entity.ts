@@ -6,11 +6,12 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  Index,
+  OneToOne,
   DeleteDateColumn,
 } from 'typeorm';
 import { Role } from './Role.entity';
 import { Farm } from './Farm.entity';
+import { Profile } from './Profile.entity';
 
 export type UserStatus = 'active' | 'inactive' | 'deleted' | 'pending';
 
@@ -28,27 +29,8 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   name: string;
 
-  @Column({ type: 'text', nullable: true })
-  location: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  first_name: string;
-
-  @Column({ type: 'varchar', length: 255, nullable: true })
-  last_name: string;
-
   @Column({ type: 'varchar', length: 20, unique: true, nullable: true })
   phone_number: string;
-
-  @Column({ type: 'uuid', nullable: true })
-  farm_id: string;
-
-  @ManyToOne(() => Farm, { onDelete: 'SET NULL' })
-  @JoinColumn({ name: 'farm_id' })
-  farm?: Farm;
-
-  @Column({ type: 'varchar', length: 10, default: '+254' })
-  calling_code: string;
 
   @Column({ type: 'boolean', default: false })
   is_2fa_enabled: boolean;
@@ -77,14 +59,9 @@ export class User {
   @Column({ type: 'varchar', length: 255, nullable: true })
   avatar: string | null;
 
-  @Column({ type: 'date', nullable: true })
-  date_of_birth: Date;
-
-  @Column({ type: 'text', nullable: true })
-  age: string;
-
-  @Column({ type: 'text', nullable: true })
-  gender: string;
+  // Relationship to Profile
+  @OneToOne(() => Profile, profile => profile.user, { cascade: true })
+  profile?: Profile;
 
   // OAuth fields
   @Column({ type: 'text', nullable: true })

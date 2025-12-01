@@ -31,9 +31,10 @@ export class CreateFarmDto {
   @ApiPropertyOptional()
   @IsOptional()
   @IsObject()
-  contact_info?: {
-    phone?: string;
-    email?: string;
-    address?: string;
+  gps_coordinates?: {
+    latitude?: number;
+    longitude?: number;
   };
+
+  
 }

@@ -6,6 +6,10 @@ import {
   IsPhoneNumber,
   Matches,
   IsEmail,
+  IsIn,
+  IsInt,
+  Min,
+  IsDateString,
   ValidateIf,
   IsBoolean,
   IsNotEmpty,
@@ -19,7 +23,7 @@ export class RegisterDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'password' })
+  @ApiProperty({ example: 'Password123!' })
   @IsString()
   @MinLength(6)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
@@ -27,46 +31,102 @@ export class RegisterDto {
   })
   password: string;
 
-  @ApiProperty({ example: 'My Awesome Farm', required: false })
-  @IsString()
-  @IsOptional()
-  farm_name: string;                       
-
   @ApiProperty({ example: 'user', required: false, default: 'user' })
   @IsOptional()
   @IsString()
   role?: string = 'user';
 
-  @ApiProperty({ example: 'John Doe', required: true})
+  // Basic Profile Information
+  @ApiProperty({ example: 'John Doe Kamau' })
   @IsString()
-  name: string;
+  @IsNotEmpty()
+  full_name: string;
 
-  @ApiProperty({ example: 'John', required: false })
+  @ApiProperty({ example: '12345678', required: false })
   @IsOptional()
   @IsString()
-  first_name?: string;
+  national_id?: string;
 
-  @ApiProperty({ example: 'Doe', required: false })
-  @IsOptional()
-  @IsString()
-  last_name?: string;
-
-  @ApiProperty({ example: '+254712345678', required: false })
-  @IsOptional()
+  @ApiProperty({ example: '+254712345678' })
   @IsPhoneNumber()
-  phone_number?: string;
+  @IsNotEmpty()
+  phone_number: string;
+
+  @ApiProperty({ example: '1990-01-15', required: false })
+  @IsOptional()
+  @IsDateString()
+  date_of_birth?: string;
+
+  @ApiProperty({ example: 'male', enum: ['male', 'female', 'other', 'prefer_not_to_say'], required: false })
+  @IsOptional()
+  @IsIn(['male', 'female', 'other', 'prefer_not_to_say'])
+  gender?: string;
 
   @ApiProperty({ example: 'Nairobi, Kenya', required: false })
   @IsOptional()
   @IsString()
   location?: string;
 
-  @ApiProperty({ example: true, required: true })
+  // Farm Information
+  @ApiProperty({ example: 'My Awesome Farm', required: false })
+  @IsOptional()
+  @IsString()
+  farm_name?: string;
+
+  @ApiProperty({ example: 5, description: 'Years of poultry farming experience', required: false })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  years_of_experience?: number;
+
+  @ApiProperty({ 
+    example: 'layers', 
+    enum: ['layers', 'broilers', 'both', 'indigenous', 'other'],
+    required: false 
+  })
+  @IsOptional()
+  @IsIn(['layers', 'broilers', 'both', 'indigenous', 'other'])
+  poultry_type?: string;
+
+  @ApiProperty({ example: 1000, description: 'Maximum chicken house capacity', required: false })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  chicken_house_capacity?: number;
+
+  @ApiProperty({ example: 500, description: 'Current number of chickens', required: false })
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  current_number_of_chickens?: number;
+
+  // Preferred Suppliers
+  @ApiProperty({ example: 'Farmers Choice Agrovet', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_agrovet_name?: string;
+
+  @ApiProperty({ example: 'Pembe Feeds', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_feed_company?: string;
+
+  @ApiProperty({ example: 'Kenchic Hatcheries', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_chicks_company?: string;
+
+  @ApiProperty({ example: 'County Eggs Collector', required: false })
+  @IsOptional()
+  @IsString()
+  preferred_offtaker_agent?: string;
+
+  // Terms and Conditions
+  @ApiProperty({ example: true })
   @IsBoolean()
   @IsNotEmpty()
   @Equals(true, { message: 'You must agree to the terms and conditions' })
   agreed_to_terms: boolean;
-
 }
 
 export class LoginDto {
