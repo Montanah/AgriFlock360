@@ -29,14 +29,14 @@ export class VaccinationsService {
     createVaccinationDto: CreateVaccinationDto,
     userId: string,
   ) {
-    const batch = await this.batchRepository.findOne({ 
-      where: { id: batchId },
-      relations: ['flock'],
+    const batch = await this.batchRepository.findOne({
+      where: { id: batchId }
     });
 
     if (!batch) {
       throw new NotFoundException('Batch not found');
     }
+
 
     if (batch.user_id !== userId) {
       throw new ForbiddenException('Not authorized');
@@ -242,9 +242,9 @@ export class VaccinationsService {
   }
 
   async getRecommendedVaccines(batchId: string, userId: string) {
-    const batch = await this.batchRepository.findOne({ 
+    const batch = await this.batchRepository.findOne({
       where: { id: batchId },
-      relations: ['flock'],
+      relations: ['bird_type'],
     });
 
     if (!batch || batch.user_id !== userId) {

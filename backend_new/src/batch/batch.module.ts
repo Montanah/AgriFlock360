@@ -13,6 +13,8 @@ import { FeedingRecord } from '../database/entities/FeedingRecord.entity';
 import { WeightSample } from '../database/entities/WeightSample.entity';
 import { AuditLog } from '../database/entities/AuditLog.entity';
 import { BirdType } from 'src/database/entities/BirdType.entity';
+import { UploadsModule } from '../uploads/uploads.module';
+
 
 @Module({
   imports: [
@@ -25,7 +27,7 @@ import { BirdType } from 'src/database/entities/BirdType.entity';
       WeightSample,
       AuditLog,
       BirdType,
-    ]),
+    ]), UploadsModule,
   ],
   controllers: [
     BatchController,

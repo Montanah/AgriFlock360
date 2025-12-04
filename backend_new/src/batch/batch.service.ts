@@ -20,6 +20,8 @@ import { UpdateBatchCountDto } from './dto/update-batch-count.dto';
 import { QueryBatchDto } from './dto/query-batch.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 import { AuditService, AuditAction } from '../services/audit.service';
+import { FileCategory } from 'src/uploads/dto/upload-file.dto';
+import { UploadsService } from 'src/uploads/uploads.service';
 
 @Injectable()
 export class BatchService {
@@ -40,6 +42,7 @@ export class BatchService {
     private birdTypeRepository: Repository<BirdType>,
     private logger: CustomLogger,
     private auditService: AuditService,
+    private uploadsService: UploadsService
   ) {}
 
   async create(
@@ -500,4 +503,63 @@ export class BatchService {
 
     await this.batchHistoryRepository.save(history);
   }
+
+  async updateBatchAvatar(batchId: string, file: any, userId: string): Promise<{ avatar_url: string }> {
+      const batch = await this.batchRepository.findOne({ where: { id: batchId } });
+  
+      if (!batch) {
+        throw new NotFoundException('Batch not found');
+      }
+  
+      if (batch.user_id !== userId) {
+        throw new NotFoundException('Batch not found');
+      }
+    
+        // Upload avatar using uploads service
+        const upload = await this.uploadsService.uploadFile(file, batchId, {
+          category: FileCategory.IMAGE,
+          entity_type: 'batchs',
+          entity_id: batchId,
+          is_public: true,
+        });
+    
+        // Update batch avatar
+        batch.batchPhoto = upload.file_url;
+        await this.batchRepository.save(batch);
+    
+        this.logger.log(`Farm Avatar updated for farm ${batch.batch_name}`);
+    
+        return { avatar_url: upload.file_url };
+      }
+    
+      async deleteBatchAvatar(batchId: string, userId: string): Promise<void> {
+        const batch = await this.batchRepository.findOne({ where: { id: batchId } });
+  
+        if (!batch) {
+          throw new NotFoundException('Batch not found');
+        }
+  
+        if (batch.user_id !== userId) {
+          throw new ForbiddenException('Not authorized to access this batch');
+        }
+  
+        if (!batch.batchPhoto) {
+          throw new BadRequestException('No batch to delete');
+        }
+    
+        // Find and delete the avatar upload
+        const uploads = await this.uploadsService.getUploads(batchId, {
+          category: 'batchAvatar',
+          entity_type: 'batchs',
+        });
+    
+        if (uploads.uploads.length > 0) {
+          await this.uploadsService.deleteUpload(uploads.uploads[0].id, batchId);
+        }
+    
+        batch.batchPhoto = null;
+        await this.batchRepository.save(batch);
+    
+        this.logger.log(`Farm Avatar deleted for farm ${batchId}`);
+      }
 }

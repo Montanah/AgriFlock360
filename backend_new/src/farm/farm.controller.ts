@@ -9,12 +9,18 @@ import {
   Param,
   UseGuards,
   Req,
+  UseInterceptors,
+  UploadedFile,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { FarmsService } from './farm.service';
 import { CreateFarmDto } from './dto/create-farm.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import multer from 'multer';
 
 @ApiTags('Farms')
 @Controller('farms')
@@ -58,6 +64,51 @@ export class FarmsController {
     return this.farmsService.update(farmId, updateData, user.userId);
   }
 
+    @Post(':farmId/photo')
+    @ApiOperation({ summary: 'Upload farm avatar' })
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({
+        schema: {
+          type: 'object',
+          properties: {
+            file: {
+              type: 'string',
+              format: 'binary',
+            },
+          },
+        },
+      })
+    @ApiResponse({ status: 200, description: 'Farm Avatar uploaded successfully' })
+    @UseInterceptors(
+      FileInterceptor('file', {
+        storage: multer.memoryStorage(),
+        limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+        fileFilter: (req, file, cb) => {
+          if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+            return cb(new Error('Only image files are allowed'), false);
+          }
+          cb(null, true);
+        },
+      }),
+    )
+    async updateAvatar(@Param('farmId') farmId: string, @UploadedFile() file: Express.Multer.File, @CurrentUser() user: any) {
+      const result = await this.farmsService.updateFarmAvatar(farmId, file, user.userId);
+
+      return {
+        success: true,
+        message: 'Farm avatar updated successfully',
+        data: result,
+      };
+    }
+
+    @Delete(':farmId/photo')
+    @HttpCode(HttpStatus.NO_CONTENT)
+    @ApiOperation({ summary: 'Delete farm avatar' })
+    @ApiResponse({ status: 204, description: 'Avatar deleted successfully' })
+    async deleteAvatar(@Param('farmId') farmId: string, @CurrentUser() user: any) {
+      await this.farmsService.deleteFarmAvatar(farmId, user.userId);
+    }
+
   @Delete(':farmId')
   @ApiOperation({ summary: 'Delete farm' })
   @ApiResponse({ status: 200, description: 'Farm deleted' })
@@ -65,4 +116,3 @@ export class FarmsController {
     return this.farmsService.remove(farmId, user.userId);
   }
 }
-

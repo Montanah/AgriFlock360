@@ -57,6 +57,9 @@ export class Farm {
   @Column({ type: 'boolean', default: true })
   is_active: boolean;
 
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  farmPhoto: string | null;
+
   @OneToMany(() => Batch, (batch) => batch.farm)
   batchs: Batch[];
 
@@ -66,4 +69,3 @@ export class Farm {
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 }
-

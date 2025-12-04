@@ -19,6 +19,8 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
+import { RequirePermissions } from 'src/auth/decorators/permissions.decorator';
 
 @ApiTags('Firmware')
 @Controller('firmware')
@@ -28,6 +30,8 @@ export class FirmwareController {
   @Post('upload')
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(PermissionsGuard)
+  @RequirePermissions('firmware.create', 'firmware.update', 'firmware.manage', 'system.admin')
   @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Upload new firmware (Admin only)' })
@@ -54,8 +58,9 @@ export class FirmwareController {
   }
 
   @Patch(':firmwareId/release')
-  @Roles('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'super_admin')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
+  @RequirePermissions('firmware.manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Release firmware version (Admin only)' })
   async releaseFirmware(@Param('firmwareId') firmwareId: string) {
@@ -63,8 +68,9 @@ export class FirmwareController {
   }
 
   @Get()
-  @Roles('admin')
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin', 'super_admin')
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
+  @RequirePermissions('firmware.manage')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get all firmware versions' })
   async getAllFirmware(@Query('device_type') deviceType?: string) {

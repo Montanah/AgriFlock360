@@ -66,9 +66,30 @@ export class Batch {
   @Column({ type: 'uuid', nullable: true })
   bird_type_id: string;
 
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  batch_type: string;
+
   @ManyToOne(() => BirdType)
   @JoinColumn({ name: 'bird_type_id' })
   bird_type: BirdType;
+
+  @Column({ type: 'integer' })
+  age: number;  
+
+  @Column({ type: 'integer' })
+  birds_alive: number;
+
+  @Column({ type: 'integer' })
+  current_weight: number;
+
+  @Column({ type: 'integer' })
+  expected_weight: number;
+
+  @Column ({ type: 'varchar', length: 255, nullable: true })
+  feeding_time: string;
+
+  @Column({ type: 'jsonb', nullable: true })
+  feeding_schedule: string[];
 
   @Column({ type: 'integer' })
   current_count: number;
@@ -108,6 +129,9 @@ export class Batch {
 
   @OneToMany(() => WeightSample, (sample) => sample.batch)
   weight_samples: WeightSample[];
+
+  @Column({ type: 'varchar', length: 500, nullable: true })
+  batchPhoto: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;

@@ -33,6 +33,10 @@ import { RolesModule } from './roles/roles.module';
 import { VaccineCatalogModule } from './vaccine-catalog/vaccine-catalog.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { HousingModule } from './housing/housing.module';
+import { ExtensionOfficerModule } from './extension-officer/extension-officer.module';
+
+import { SubscriptionModule } from './subscriptions/subscriptions.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
   imports: [
@@ -79,6 +83,9 @@ import { HousingModule } from './housing/housing.module';
     VaccineCatalogModule,
     InventoryModule,
     HousingModule,
+    ExtensionOfficerModule,
+    SubscriptionModule,
+    ProductsModule,
   ],
   controllers: [AppController, NotificationsController, RolesController],
   providers: [AppService,

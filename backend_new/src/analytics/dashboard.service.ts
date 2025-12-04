@@ -119,6 +119,13 @@ export class DashboardService {
       (p) => p.status === 'completed',
     ).length;
 
+    //calculate total birds
+    const totalBirds = await this.batchRepository
+      .createQueryBuilder('batch')
+      .select('SUM(batch.current_count)', 'total_birds')
+      .where('batch.user_id = :userId', { userId })
+      .getRawOne();
+
     return {
       devices: {
         total: totalDevices,
@@ -145,6 +152,9 @@ export class DashboardService {
       vaccinations: {
         upcoming_count: upcomingVaccinations.length,
         upcoming: upcomingVaccinations,
+      },
+      birds: {
+        total: totalBirds.total_birds,
       },
     };
   }

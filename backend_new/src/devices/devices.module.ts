@@ -25,6 +25,8 @@ import { FirmwareService } from './firmware.service';
 import { OtaService } from './ota.service';
 import { FirmwareVersion } from '../database/entities/Firmware.entity';
 import { OtaUpdate } from '../database/entities/OtaUpdate.entity';
+import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
@@ -39,6 +41,7 @@ import { OtaUpdate } from '../database/entities/OtaUpdate.entity';
       FirmwareVersion,
       OtaUpdate,
     ]),
+    UsersModule,
     NotificationsModule,
     MqttModule,
     TelemetryModule,
@@ -49,8 +52,7 @@ import { OtaUpdate } from '../database/entities/OtaUpdate.entity';
     }),
   ],
   controllers: [DevicesController, TelemetryController, AlertsController, FirmwareController, OtaController,],
-  providers: [DevicesService, CustomLogger, AuditService,  FirmwareService,
-    OtaService,],
+  providers: [DevicesService, CustomLogger, AuditService,  FirmwareService, PermissionsGuard, OtaService,],
   exports: [DevicesService, FirmwareService, OtaService],
   
 })

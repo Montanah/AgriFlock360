@@ -207,7 +207,7 @@ export class FeedingRecommendationsService {
   // Seed default recommendations
   async seedDefaultRecommendations(): Promise<void> {
     const defaultRecommendations = await this.getDefaultRecommendationsData();
-
+    console.log(defaultRecommendations);
     for (const recData of defaultRecommendations) {
       try {
         // Find bird type
@@ -237,6 +237,8 @@ export class FeedingRecommendationsService {
         if (!existing) {
           const recommendation = this.recommendationRepository.create({
             bird_type_id: birdType.id,
+            stage_name: recData.stage_name,
+            age_start: recData.age_start,
             ...recData.recommendation,
             is_system_default: true,
           });

@@ -11,6 +11,7 @@ import {
 import { User } from './User.entity';
 import { DeviceStatus } from './DeviceStatus.entity';
 import { FirmwareVersion } from './Firmware.entity';
+import { Subscription } from './Subscription.entity';
 
 @Entity('devices')
 @Index('idx_devices_owner', ['owner_id'])
@@ -77,6 +78,17 @@ export class Device {
 
   @Column({ type: 'varchar', length: 255, nullable: true })
   location?: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  subscription_id: string;
+
+  @ManyToOne(() => Subscription, subscription => subscription.devices, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'subscription_id' })
+  subscription: Subscription;
+
 
   @Column({ type: 'text', nullable: true })
   notes?: string;

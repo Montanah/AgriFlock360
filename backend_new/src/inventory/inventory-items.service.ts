@@ -193,7 +193,7 @@ export class InventoryItemsService {
   ): Promise<InventoryTransaction> {
     const item = await this.getItem(itemId, userId);
 
-    const quantityBefore = item.current_stock;
+    const quantityBefore = Number(item.current_stock);
     let quantityAfter: number;
 
     // Calculate new stock based on transaction type

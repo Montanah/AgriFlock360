@@ -37,7 +37,7 @@ export class VaccinationsController {
     const vaccination = await this.vaccinationsService.create(
       batchId,
       createVaccinationDto,
-      user.id,
+      user.userId,
     );
 
     return {
@@ -51,7 +51,7 @@ export class VaccinationsController {
   @ApiOperation({ summary: 'Get all batch vaccinations with summary' })
   @ApiResponse({ status: 200, description: 'Vaccinations retrieved' })
   async findAll(@Param('batchId') batchId: string, @CurrentUser() user: any) {
-    const result = await this.vaccinationsService.findAll(batchId, user.id);
+    const result = await this.vaccinationsService.findAll(batchId, user.userId);
 
     return {
       success: true,
@@ -64,7 +64,7 @@ export class VaccinationsController {
   @ApiOperation({ summary: 'Get recommended vaccines for this batch based on age' })
   @ApiResponse({ status: 200, description: 'Recommended vaccines retrieved' })
   async getRecommendations(@Param('batchId') batchId: string, @CurrentUser() user: any) {
-    const result = await this.vaccinationsService.getRecommendedVaccines(batchId, user.id);
+    const result = await this.vaccinationsService.getRecommendedVaccines(batchId, user.userId);
 
     return {
       success: true,
@@ -83,7 +83,7 @@ export class VaccinationsController {
     @Param('vaccinationId') vaccinationId: string,
     @CurrentUser() user: any,
   ) {
-    const vaccination = await this.vaccinationsService.findOne(vaccinationId, user.id);
+    const vaccination = await this.vaccinationsService.findOne(vaccinationId, user.userId);
 
     return {
       success: true,
@@ -101,7 +101,7 @@ export class VaccinationsController {
   ) {
     const vaccination = await this.vaccinationsService.complete(
       vaccinationId,
-      user.id,
+      user.userId,
       completeDto,
     );
 
@@ -122,7 +122,7 @@ export class VaccinationsController {
   ) {
     const vaccination = await this.vaccinationsService.updateVaccination(
       vaccinationId,
-      user.id,
+      user.userId,
       updateDto,
     );
 
@@ -142,7 +142,7 @@ export class VaccinationsController {
   ) {
     const vaccination = await this.vaccinationsService.cancelVaccination(
       vaccinationId,
-      user.id,
+      user.userId,
     );
 
     return {
@@ -160,6 +160,6 @@ export class VaccinationsController {
     @Param('vaccinationId') vaccinationId: string,
     @CurrentUser() user: any,
   ) {
-    await this.vaccinationsService.deleteVaccination(vaccinationId, user.id);
+    await this.vaccinationsService.deleteVaccination(vaccinationId, user.userId);
   }
 }

@@ -33,7 +33,7 @@ export class InventoryItemsController {
     @Body() createDto: CreateInventoryItemDto,
     @CurrentUser() user: any,
   ) {
-    const item = await this.inventoryService.createItem(user.id, createDto);
+    const item = await this.inventoryService.createItem(user.userId, createDto);
 
     return {
       success: true,
@@ -46,7 +46,7 @@ export class InventoryItemsController {
   @ApiOperation({ summary: 'Get all inventory items with filters' })
   @ApiResponse({ status: 200, description: 'Returns paginated items' })
   async getItems(@Query() query: QueryInventoryDto, @CurrentUser() user: any) {
-    const result = await this.inventoryService.getItems(user.id, query);
+    const result = await this.inventoryService.getItems(user.userId, query);
 
     return {
       success: true,
@@ -59,7 +59,7 @@ export class InventoryItemsController {
   @ApiOperation({ summary: 'Get low stock items' })
   @ApiResponse({ status: 200, description: 'Returns items at or below minimum stock' })
   async getLowStockItems(@CurrentUser() user: any) {
-    const items = await this.inventoryService.getLowStockItems(user.id);
+    const items = await this.inventoryService.getLowStockItems(user.userId);
 
     return {
       success: true,
@@ -75,7 +75,7 @@ export class InventoryItemsController {
     @Query('days') days: number = 30,
     @CurrentUser() user: any,
   ) {
-    const items = await this.inventoryService.getExpiringItems(user.id, days);
+    const items = await this.inventoryService.getExpiringItems(user.userId, days);
 
     return {
       success: true,
@@ -88,7 +88,7 @@ export class InventoryItemsController {
   @ApiOperation({ summary: 'Get inventory summary and analytics' })
   @ApiResponse({ status: 200, description: 'Returns inventory statistics' })
   async getInventorySummary(@CurrentUser() user: any) {
-    const summary = await this.inventoryService.getInventorySummary(user.id);
+    const summary = await this.inventoryService.getInventorySummary(user.userId);
 
     return {
       success: true,
@@ -100,7 +100,7 @@ export class InventoryItemsController {
   @ApiOperation({ summary: 'Get specific inventory item' })
   @ApiResponse({ status: 200, description: 'Returns item details' })
   async getItem(@Param('id') id: string, @CurrentUser() user: any) {
-    const item = await this.inventoryService.getItem(id, user.id);
+    const item = await this.inventoryService.getItem(id, user.userId);
 
     return {
       success: true,
@@ -116,7 +116,7 @@ export class InventoryItemsController {
     @Body() updateDto: UpdateInventoryItemDto,
     @CurrentUser() user: any,
   ) {
-    const item = await this.inventoryService.updateItem(id, user.id, updateDto);
+    const item = await this.inventoryService.updateItem(id, user.userId, updateDto);
 
     return {
       success: true,
@@ -130,7 +130,7 @@ export class InventoryItemsController {
   @ApiOperation({ summary: 'Delete inventory item' })
   @ApiResponse({ status: 204, description: 'Item deleted successfully' })
   async deleteItem(@Param('id') id: string, @CurrentUser() user: any) {
-    await this.inventoryService.deleteItem(id, user.id);
+    await this.inventoryService.deleteItem(id, user.userId);
   }
 
   // Transactions
@@ -145,7 +145,7 @@ export class InventoryItemsController {
   ) {
     const transaction = await this.inventoryService.createTransaction(
       id,
-      user.id,
+      user.userId,
       createDto,
     );
 
@@ -166,7 +166,7 @@ export class InventoryItemsController {
   ) {
     const result = await this.inventoryService.getItemTransactions(
       id,
-      user.id,
+      user.userId,
       query,
     );
 

@@ -62,28 +62,6 @@ export class FeedingController {
     return { schedules };
   }
 
-  @Get('records')
-  @ApiOperation({ summary: 'Get feeding records' })
-  async getRecords(
-    @Param('batchId') batchId: string,
-    @Query('start') start?: string,
-    @Query('end') end?: string,
-  ) {
-    const query: any = { batch_id: batchId };
-
-    if (start && end) {
-      query.fed_at = Between(new Date(start), new Date(end));
-    }
-
-    const records = await this.recordRepository.find({
-      where: query,
-      order: { fed_at: 'DESC' },
-      take: 100,
-    });
-
-    return { records };
-  }
-
  
   @Get('recommendations')
   @ApiOperation({ summary: 'Get feeding recommendations for batch' })
@@ -137,7 +115,7 @@ export class FeedingController {
   ) {
     const result = await this.feedingService.getFeedingRecords(
       batchId,
-      user.id,
+      user.userId,
       { start_date: startDate, end_date: endDate, page, limit },
     );
 
@@ -158,7 +136,7 @@ export class FeedingController {
   ) {
     const analytics = await this.feedingService.getFeedingAnalytics(
       batchId,
-      user.id,
+      user.userId,
       period,
     );
 

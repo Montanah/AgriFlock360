@@ -129,6 +129,7 @@ export class FeedingService {
   }
 
   async getFeedingRecords(batchId: string, userId: string, query: any) {
+    console.log('Query:', query, userId, batchId);
     const batch = await this.batchRepository.findOne({
       where: { id: batchId },
     });
