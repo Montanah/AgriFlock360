@@ -21,10 +21,7 @@ export class LoggingInterceptor implements NestInterceptor {
     // Mask sensitive data
     const sanitizedBody = this.sanitizeBody(body);
 
-    this.logger.log(
-      `Incoming Request: ${method} ${url}`,
-      'HTTP',
-    );
+    this.logger.log(`Incoming Request: ${method} ${url}`, 'HTTP');
 
     return next.handle().pipe(
       tap({
@@ -52,16 +49,16 @@ export class LoggingInterceptor implements NestInterceptor {
 
   private sanitizeBody(body: any): any {
     if (!body) return body;
-    
+
     const sensitiveFields = ['password', 'token', 'secret', 'apiKey'];
     const sanitized = { ...body };
-    
+
     for (const field of sensitiveFields) {
       if (sanitized[field]) {
         sanitized[field] = '***REDACTED***';
       }
     }
-    
+
     return sanitized;
   }
 }

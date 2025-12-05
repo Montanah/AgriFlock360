@@ -73,10 +73,13 @@ describe('AuthService', () => {
       };
 
       const mockRole = { id: '1', name: 'user' };
-      
+
       mockUserRepository.findOne.mockResolvedValue(null);
       mockRoleRepository.findOne.mockResolvedValue(mockRole);
-      mockUserRepository.create.mockReturnValue({ ...registerDto, role_id: mockRole.id });
+      mockUserRepository.create.mockReturnValue({
+        ...registerDto,
+        role_id: mockRole.id,
+      });
       mockUserRepository.save.mockResolvedValue({ id: '1', ...registerDto });
       mockJwtService.sign.mockReturnValue('mock-token');
 
@@ -93,7 +96,10 @@ describe('AuthService', () => {
         password: 'Password123!',
       };
 
-      mockUserRepository.findOne.mockResolvedValue({ id: '1', email: registerDto.email });
+      mockUserRepository.findOne.mockResolvedValue({
+        id: '1',
+        email: registerDto.email,
+      });
 
       await expect(service.register(registerDto)).rejects.toThrow();
     });

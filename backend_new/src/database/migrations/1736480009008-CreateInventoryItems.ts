@@ -1,5 +1,11 @@
 // migrations/XXXXXX-create-inventory-items.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateInventoryItems1736480009008 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

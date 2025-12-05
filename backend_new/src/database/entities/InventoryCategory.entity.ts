@@ -25,7 +25,7 @@ export class InventoryCategory {
   @Column({ type: 'boolean', default: true })
   is_active: boolean;
 
-  @OneToMany(() => InventoryItem, item => item.category)
+  @OneToMany(() => InventoryItem, (item) => item.category)
   items: InventoryItem[];
 
   @CreateDateColumn({ type: 'timestamptz' })
@@ -34,5 +34,3 @@ export class InventoryCategory {
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 }
-
-

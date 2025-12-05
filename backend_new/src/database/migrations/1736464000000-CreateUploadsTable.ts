@@ -1,5 +1,11 @@
 // migrations/XXXXXX-create-uploads-table.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateUploadsTable1736464000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -146,10 +152,10 @@ export class CreateUploadsTable1736464000000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable('uploads');
-    
+
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('user_id') !== -1,
+        (fk) => fk.columnNames.indexOf('user_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('uploads', foreignKey);

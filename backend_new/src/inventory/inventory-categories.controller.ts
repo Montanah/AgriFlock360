@@ -17,16 +17,19 @@ import { CreateCategoryDto, UpdateCategoryDto } from './dto/inventory.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Inventory Categories')
 @Controller('inventory/categories')
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class InventoryCategoriesController {
-  constructor(
-    private readonly categoriesService: InventoryCategoriesService,
-  ) {}
+  constructor(private readonly categoriesService: InventoryCategoriesService) {}
 
   @Post()
   @UseGuards(PermissionsGuard)
@@ -59,7 +62,10 @@ export class InventoryCategoriesController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get category details' })
-  @ApiResponse({ status: 200, description: 'Returns category with items count' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns category with items count',
+  })
   async getCategory(@Param('id') id: string) {
     const category = await this.categoriesService.getCategory(id);
 

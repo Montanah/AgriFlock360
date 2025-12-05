@@ -21,15 +21,10 @@ export class ExtensionOfficerService {
     private readonly officerRepository: Repository<ExtensionOfficer>,
   ) {}
 
-  async create(
-    dto: CreateExtensionOfficerDto,
-  ): Promise<ExtensionOfficer> {
+  async create(dto: CreateExtensionOfficerDto): Promise<ExtensionOfficer> {
     // Check for duplicate email or phone
     const existing = await this.officerRepository.findOne({
-      where: [
-        { email: dto.email },
-        { phone_number: dto.phone_number },
-      ],
+      where: [{ email: dto.email }, { phone_number: dto.phone_number }],
     });
 
     if (existing) {
@@ -47,9 +42,12 @@ export class ExtensionOfficerService {
     return await this.officerRepository.save(officer);
   }
 
-  async findAll(
-    query: QueryExtensionOfficerDto,
-  ): Promise<{ data: ExtensionOfficer[]; total: number; page: number; limit: number }> {
+  async findAll(query: QueryExtensionOfficerDto): Promise<{
+    data: ExtensionOfficer[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     const {
       officer_type,
       region,
@@ -93,10 +91,7 @@ export class ExtensionOfficerService {
       );
     }
 
-    queryBuilder
-      .orderBy('officer.created_at', 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy('officer.created_at', 'DESC').skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -159,10 +154,7 @@ export class ExtensionOfficerService {
     return await this.officerRepository.save(officer);
   }
 
-  async verify(
-    id: string,
-    verifiedBy: string,
-  ): Promise<ExtensionOfficer> {
+  async verify(id: string, verifiedBy: string): Promise<ExtensionOfficer> {
     const officer = await this.findOne(id);
 
     officer.is_verified = true;
@@ -204,7 +196,7 @@ export class ExtensionOfficerService {
 
     const appraisals = officer.appraisals || [];
     const totalAppraisals = appraisals.length;
-    
+
     const ratingsCount = appraisals.filter(
       (a) => a.farmer_rating !== null && a.farmer_rating !== undefined,
     ).length;
@@ -213,8 +205,7 @@ export class ExtensionOfficerService {
       ratingsCount > 0
         ? appraisals
             .filter((a) => a.farmer_rating !== null)
-            .reduce((sum, a) => sum + (a.farmer_rating || 0), 0) /
-          ratingsCount
+            .reduce((sum, a) => sum + (a.farmer_rating || 0), 0) / ratingsCount
         : 0;
 
     officer.total_appraisals = totalAppraisals;

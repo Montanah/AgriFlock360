@@ -42,8 +42,8 @@ export class InventoryItem {
   @Column({ type: 'uuid' })
   category_id: string;
 
-  @ManyToOne(() => InventoryCategory, category => category.items, { 
-    onDelete: 'RESTRICT' 
+  @ManyToOne(() => InventoryCategory, (category) => category.items, {
+    onDelete: 'RESTRICT',
   })
   @JoinColumn({ name: 'category_id' })
   category: InventoryCategory;
@@ -101,7 +101,10 @@ export class InventoryItem {
     images?: string[];
   };
 
-  @OneToMany(() => InventoryTransaction, transaction => transaction.inventory_item)
+  @OneToMany(
+    () => InventoryTransaction,
+    (transaction) => transaction.inventory_item,
+  )
   transactions: InventoryTransaction[];
 
   @CreateDateColumn({ type: 'timestamptz' })

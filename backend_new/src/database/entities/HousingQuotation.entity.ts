@@ -1,4 +1,3 @@
-
 // database/entities/HousingQuotation.entity.ts
 import {
   Entity,

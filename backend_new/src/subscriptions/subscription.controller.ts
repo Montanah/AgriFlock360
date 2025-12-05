@@ -81,11 +81,7 @@ export class SubscriptionController {
     @Param('id') id: string,
     @Body() body: { reason?: string; notes?: string },
   ) {
-    return await this.subscriptionService.cancel(
-      id,
-      body.reason,
-      body.notes,
-    );
+    return await this.subscriptionService.cancel(id, body.reason, body.notes);
   }
 
   @Patch(':id/suspend')

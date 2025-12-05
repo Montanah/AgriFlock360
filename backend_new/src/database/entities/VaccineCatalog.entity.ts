@@ -92,7 +92,7 @@ export class VaccineCatalog {
     documents?: string[];
   };
 
-  @OneToMany(() => Vaccination, vaccination => vaccination.vaccine_catalog)
+  @OneToMany(() => Vaccination, (vaccination) => vaccination.vaccine_catalog)
   vaccinations: Vaccination[];
 
   @CreateDateColumn({ type: 'timestamptz' })

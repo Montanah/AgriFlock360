@@ -26,7 +26,7 @@ export class FieldAppraisal {
   @Column({ type: 'uuid' })
   officer_id: string;
 
-  @ManyToOne(() => ExtensionOfficer, officer => officer.appraisals, {
+  @ManyToOne(() => ExtensionOfficer, (officer) => officer.appraisals, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'officer_id' })

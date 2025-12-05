@@ -10,7 +10,13 @@ import { Repository, LessThanOrEqual } from 'typeorm';
 import { InventoryItem } from '../database/entities/InventoryItem.entity';
 import { InventoryCategory } from '../database/entities/InventoryCategory.entity';
 import { InventoryTransaction } from '../database/entities/InventoryTransaction.entity';
-import { CreateInventoryItemDto, UpdateInventoryItemDto, CreateTransactionDto, QueryInventoryDto, QueryTransactionsDto } from './dto/inventory.dto';
+import {
+  CreateInventoryItemDto,
+  UpdateInventoryItemDto,
+  CreateTransactionDto,
+  QueryInventoryDto,
+  QueryTransactionsDto,
+} from './dto/inventory.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 
 @Injectable()
@@ -49,7 +55,10 @@ export class InventoryItemsService {
     }
 
     // Determine initial status
-    item.status = this.determineStatus(item.current_stock, item.minimum_stock_level);
+    item.status = this.determineStatus(
+      item.current_stock,
+      item.minimum_stock_level,
+    );
     item.last_restock_date = new Date();
 
     await this.inventoryRepository.save(item);
@@ -64,7 +73,9 @@ export class InventoryItemsService {
       });
     }
 
-    this.logger.log(`Inventory item created: ${item.item_name} by user ${userId}`);
+    this.logger.log(
+      `Inventory item created: ${item.item_name} by user ${userId}`,
+    );
 
     return this.getItem(item.id, userId);
   }
@@ -166,7 +177,10 @@ export class InventoryItemsService {
 
     // Recalculate status if minimum stock changed
     if (updateDto.minimum_stock_level !== undefined) {
-      item.status = this.determineStatus(item.current_stock, item.minimum_stock_level);
+      item.status = this.determineStatus(
+        item.current_stock,
+        item.minimum_stock_level,
+      );
     }
 
     await this.inventoryRepository.save(item);
@@ -205,7 +219,9 @@ export class InventoryItemsService {
       case 'usage':
       case 'wastage':
         if (quantityBefore < createDto.quantity) {
-          throw new BadRequestException('Insufficient stock for this transaction');
+          throw new BadRequestException(
+            'Insufficient stock for this transaction',
+          );
         }
         quantityAfter = quantityBefore - createDto.quantity;
         break;
@@ -213,7 +229,9 @@ export class InventoryItemsService {
         // Adjustment can be positive or negative
         quantityAfter = quantityBefore + createDto.quantity;
         if (quantityAfter < 0) {
-          throw new BadRequestException('Adjustment would result in negative stock');
+          throw new BadRequestException(
+            'Adjustment would result in negative stock',
+          );
         }
         break;
       default:
@@ -249,7 +267,7 @@ export class InventoryItemsService {
 
     if (createDto.transaction_type === 'purchase') {
       item.last_restock_date = createDto.transaction_date;
-      
+
       // Update cost per unit if provided
       if (createDto.cost_per_unit) {
         item.cost_per_unit = createDto.cost_per_unit;
@@ -272,7 +290,13 @@ export class InventoryItemsService {
   ) {
     const item = await this.getItem(itemId, userId);
 
-    const { transaction_type, start_date, end_date, page = 1, limit = 20 } = query;
+    const {
+      transaction_type,
+      start_date,
+      end_date,
+      page = 1,
+      limit = 20,
+    } = query;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.transactionRepository
@@ -284,17 +308,24 @@ export class InventoryItemsService {
       .addOrderBy('transaction.created_at', 'DESC');
 
     if (transaction_type) {
-      queryBuilder.andWhere('transaction.transaction_type = :transaction_type', {
-        transaction_type,
-      });
+      queryBuilder.andWhere(
+        'transaction.transaction_type = :transaction_type',
+        {
+          transaction_type,
+        },
+      );
     }
 
     if (start_date) {
-      queryBuilder.andWhere('transaction.transaction_date >= :start_date', { start_date });
+      queryBuilder.andWhere('transaction.transaction_date >= :start_date', {
+        start_date,
+      });
     }
 
     if (end_date) {
-      queryBuilder.andWhere('transaction.transaction_date <= :end_date', { end_date });
+      queryBuilder.andWhere('transaction.transaction_date <= :end_date', {
+        end_date,
+      });
     }
 
     const [transactions, total] = await queryBuilder.getManyAndCount();
@@ -319,18 +350,23 @@ export class InventoryItemsService {
   // Analytics & Reports
 
   async getLowStockItems(userId: string): Promise<InventoryItem[]> {
-    return this.inventoryRepository.find({
-      where: {
-        user_id: userId,
-      },
-      relations: ['category'],
-      order: { item_name: 'ASC' },
-    }).then(items => 
-      items.filter(item => item.current_stock <= item.minimum_stock_level)
-    );
+    return this.inventoryRepository
+      .find({
+        where: {
+          user_id: userId,
+        },
+        relations: ['category'],
+        order: { item_name: 'ASC' },
+      })
+      .then((items) =>
+        items.filter((item) => item.current_stock <= item.minimum_stock_level),
+      );
   }
 
-  async getExpiringItems(userId: string, daysAhead: number = 30): Promise<InventoryItem[]> {
+  async getExpiringItems(
+    userId: string,
+    daysAhead: number = 30,
+  ): Promise<InventoryItem[]> {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + daysAhead);
 
@@ -352,25 +388,28 @@ export class InventoryItemsService {
 
     const totalItems = items.length;
     const totalValue = items.reduce(
-      (sum, item) => sum + (item.current_stock * (item.cost_per_unit || 0)),
+      (sum, item) => sum + item.current_stock * (item.cost_per_unit || 0),
       0,
     );
 
     const byStatus = {
-      in_stock: items.filter(i => i.status === 'in_stock').length,
-      low_stock: items.filter(i => i.status === 'low_stock').length,
-      out_of_stock: items.filter(i => i.status === 'out_of_stock').length,
-      discontinued: items.filter(i => i.status === 'discontinued').length,
+      in_stock: items.filter((i) => i.status === 'in_stock').length,
+      low_stock: items.filter((i) => i.status === 'low_stock').length,
+      out_of_stock: items.filter((i) => i.status === 'out_of_stock').length,
+      discontinued: items.filter((i) => i.status === 'discontinued').length,
     };
 
-    const byCategory = items.reduce((acc, item) => {
-      const categoryName = item.category?.name || 'Uncategorized';
-      if (!acc[categoryName]) {
-        acc[categoryName] = 0;
-      }
-      acc[categoryName]++;
-      return acc;
-    }, {} as Record<string, number>);
+    const byCategory = items.reduce(
+      (acc, item) => {
+        const categoryName = item.category?.name || 'Uncategorized';
+        if (!acc[categoryName]) {
+          acc[categoryName] = 0;
+        }
+        acc[categoryName]++;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     return {
       total_items: totalItems,

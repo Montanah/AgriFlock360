@@ -21,7 +21,7 @@ export class EmailService {
 
   async sendVerificationEmail(email: string, code: string) {
     const url = `${this.configService.get('FRONTEND_URL')}/verify-email?code=${code}`;
-    
+
     await this.transporter.sendMail({
       from: this.configService.get('EMAIL_FROM'),
       to: email,
@@ -38,7 +38,7 @@ export class EmailService {
 
   async sendPasswordResetEmail(email: string, token: string) {
     const url = `${this.configService.get('FRONTEND_URL')}/reset-password?token=${token}`;
-    
+
     await this.transporter.sendMail({
       from: this.configService.get('EMAIL_FROM'),
       to: email,
@@ -184,12 +184,12 @@ export class EmailService {
     });
   }
 
- async sendEmailVerification(email: string, verificationCode: string) {
-   await this.transporter.sendMail({
-     from: this.configService.get('EMAIL_FROM'),
-     to: email,
-     subject: 'Email Verification - AgriFlock360',
-     html: `
+  async sendEmailVerification(email: string, verificationCode: string) {
+    await this.transporter.sendMail({
+      from: this.configService.get('EMAIL_FROM'),
+      to: email,
+      subject: 'Email Verification - AgriFlock360',
+      html: `
        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
          <h2 style="color: #4CAF50;">Email Verification</h2>
          <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px;">
@@ -198,21 +198,20 @@ export class EmailService {
          <p style="margin-top: 20px;">Please enter the verification code to verify your email address.</p>
        </div>
      `,
-   });
- }
+    });
+  }
 
- async sendPasswordChangeAlert(email: string) {
-   await this.transporter.sendMail({
-     from: this.configService.get('EMAIL_FROM'),
-     to: email,
-     subject: 'Password Change Alert - AgriFlock360',
-     html: `
+  async sendPasswordChangeAlert(email: string) {
+    await this.transporter.sendMail({
+      from: this.configService.get('EMAIL_FROM'),
+      to: email,
+      subject: 'Password Change Alert - AgriFlock360',
+      html: `
        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
          <h2 style="color: #4CAF50;">Password Change Alert</h2>
          <p style="margin-top: 20px;">You have recently changed your password. If this was not you, please contact our support team immediately.</p>
        </div>
      `,
-   });
- }
-
+    });
+  }
 }

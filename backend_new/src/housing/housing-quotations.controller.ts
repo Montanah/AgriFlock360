@@ -1,4 +1,4 @@
-// housing/housing-quotations.controller.ts 
+// housing/housing-quotations.controller.ts
 import {
   Controller,
   Get,
@@ -17,7 +17,12 @@ import { HousingMaterialsService } from './housing-materials.service';
 import { GenerateQuotationDto } from './dto/housing.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Housing Quotations')
 @Controller('housing/quotations')
@@ -97,7 +102,8 @@ export class HousingQuotationsController {
   @ApiOperation({ summary: 'Preview costs for specific capacity' })
   @ApiResponse({ status: 200, description: 'Returns cost preview' })
   async previewCosts(@Param('capacity') capacity: number) {
-    const quantities = await this.materialsService.getQuantitiesByCapacity(+capacity);
+    const quantities =
+      await this.materialsService.getQuantitiesByCapacity(+capacity);
 
     if (quantities.length === 0) {
       return {
@@ -106,13 +112,15 @@ export class HousingQuotationsController {
       };
     }
 
-    const materials = quantities.map(q => ({
+    const materials = quantities.map((q) => ({
       name: q.material.name,
       category: q.material.category,
       unit: q.material.unit,
       unit_price: parseFloat(q.material.unit_price.toString()),
       quantity: parseFloat(q.quantity_needed.toString()),
-      total: parseFloat(q.material.unit_price.toString()) * parseFloat(q.quantity_needed.toString()),
+      total:
+        parseFloat(q.material.unit_price.toString()) *
+        parseFloat(q.quantity_needed.toString()),
       specifications: q.material.specifications,
     }));
 

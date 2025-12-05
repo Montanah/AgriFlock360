@@ -18,7 +18,7 @@ export class SessionService {
     refreshToken: string,
   ) {
     const sessionId = crypto.randomUUID();
-    
+
     const session = this.sessionRepository.create({
       id: sessionId,
       user_id: userId,
@@ -33,7 +33,10 @@ export class SessionService {
     return sessionId;
   }
 
-  async validateSession(sessionId: string, refreshToken: string): Promise<boolean> {
+  async validateSession(
+    sessionId: string,
+    refreshToken: string,
+  ): Promise<boolean> {
     const session = await this.sessionRepository.findOne({
       where: { id: sessionId, is_active: true },
     });
@@ -45,8 +48,11 @@ export class SessionService {
       return false;
     }
 
-    const isValid = await this.verifyToken(refreshToken, session.refresh_token_hash);
-    
+    const isValid = await this.verifyToken(
+      refreshToken,
+      session.refresh_token_hash,
+    );
+
     if (isValid) {
       // Update last activity
       await this.sessionRepository.update(sessionId, {

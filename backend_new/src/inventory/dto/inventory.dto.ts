@@ -1,5 +1,18 @@
 // create-category.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsBoolean,  IsNumber, IsUUID, IsDateString, Min, IsObject, IsEnum, IsInt, Max, } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+  IsUUID,
+  IsDateString,
+  Min,
+  IsObject,
+  IsEnum,
+  IsInt,
+  Max,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 
@@ -50,7 +63,11 @@ export class CreateInventoryItemDto {
   @IsNotEmpty()
   item_name: string;
 
-  @ApiProperty({ description: 'Item code/SKU', example: 'FEED-001', required: false })
+  @ApiProperty({
+    description: 'Item code/SKU',
+    example: 'FEED-001',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   item_code?: string;
@@ -83,7 +100,7 @@ export class CreateInventoryItemDto {
   @Min(0)
   reorder_point?: number;
 
-  @ApiProperty({ description: 'Cost per unit', example: 45.50, required: false })
+  @ApiProperty({ description: 'Cost per unit', example: 45.5, required: false })
   @IsOptional()
   @IsNumber()
   @Min(0)
@@ -99,12 +116,20 @@ export class CreateInventoryItemDto {
   @IsString()
   supplier_contact?: string;
 
-  @ApiProperty({ description: 'Storage location', example: 'Warehouse A', required: false })
+  @ApiProperty({
+    description: 'Storage location',
+    example: 'Warehouse A',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   storage_location?: string;
 
-  @ApiProperty({ description: 'Expiry date', example: '2025-12-31', required: false })
+  @ApiProperty({
+    description: 'Expiry date',
+    example: '2025-12-31',
+    required: false,
+  })
   @IsOptional()
   @IsDateString()
   expiry_date?: Date;
@@ -199,10 +224,10 @@ export class UpdateInventoryItemDto {
   @IsString()
   notes?: string;
 
-  @ApiProperty({ 
-    description: 'Item status', 
+  @ApiProperty({
+    description: 'Item status',
     enum: ['in_stock', 'low_stock', 'out_of_stock', 'discontinued'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsEnum(['in_stock', 'low_stock', 'out_of_stock', 'discontinued'])
@@ -216,9 +241,9 @@ export class UpdateInventoryItemDto {
 
 // create-transaction.dto.ts
 export class CreateTransactionDto {
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Transaction type',
-    enum: ['purchase', 'usage', 'adjustment', 'wastage', 'transfer', 'return']
+    enum: ['purchase', 'usage', 'adjustment', 'wastage', 'transfer', 'return'],
   })
   @IsEnum(['purchase', 'usage', 'adjustment', 'wastage', 'transfer', 'return'])
   @IsNotEmpty()
@@ -240,7 +265,10 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   transaction_date: Date;
 
-  @ApiProperty({ description: 'Reference number (invoice, PO)', required: false })
+  @ApiProperty({
+    description: 'Reference number (invoice, PO)',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   reference_number?: string;
@@ -282,10 +310,10 @@ export class QueryInventoryDto {
   @IsUUID()
   farm_id?: string;
 
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Filter by status',
     enum: ['in_stock', 'low_stock', 'out_of_stock', 'discontinued'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsEnum(['in_stock', 'low_stock', 'out_of_stock', 'discontinued'])
@@ -314,21 +342,29 @@ export class QueryInventoryDto {
 
 // query-transactions.dto.ts
 export class QueryTransactionsDto {
-  @ApiProperty({ 
+  @ApiProperty({
     description: 'Filter by transaction type',
     enum: ['purchase', 'usage', 'adjustment', 'wastage', 'transfer', 'return'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsEnum(['purchase', 'usage', 'adjustment', 'wastage', 'transfer', 'return'])
   transaction_type?: string;
 
-  @ApiProperty({ description: 'Start date', example: '2024-01-01', required: false })
+  @ApiProperty({
+    description: 'Start date',
+    example: '2024-01-01',
+    required: false,
+  })
   @IsOptional()
   @IsDateString()
   start_date?: string;
 
-  @ApiProperty({ description: 'End date', example: '2024-12-31', required: false })
+  @ApiProperty({
+    description: 'End date',
+    example: '2024-12-31',
+    required: false,
+  })
   @IsOptional()
   @IsDateString()
   end_date?: string;

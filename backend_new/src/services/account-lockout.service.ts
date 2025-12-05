@@ -112,10 +112,7 @@ export class AccountLockoutService {
 
   private async findUserByIdentifier(identifier: string): Promise<User | null> {
     return await this.userRepository.findOne({
-      where: [
-        { email: identifier },
-        { phone_number: identifier },
-      ],
+      where: [{ email: identifier }, { phone_number: identifier }],
       select: ['id', 'locked_until'],
     });
   }

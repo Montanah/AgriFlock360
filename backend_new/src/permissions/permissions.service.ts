@@ -10,7 +10,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, ILike } from 'typeorm';
 import type { QueryRunner } from 'typeorm';
 import { Permission } from '../database/entities/Permission.entity';
-import { CreatePermissionDto, UpdatePermissionDto, QueryPermissionsDto } from './dto/permissions.dto';
+import {
+  CreatePermissionDto,
+  UpdatePermissionDto,
+  QueryPermissionsDto,
+} from './dto/permissions.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 
 @Injectable()
@@ -22,7 +26,8 @@ export class PermissionsService {
     @Optional() private queryRunner?: QueryRunner,
   ) {
     if (this.queryRunner) {
-      this.permissionRepository = this.queryRunner.manager.getRepository(Permission);
+      this.permissionRepository =
+        this.queryRunner.manager.getRepository(Permission);
     }
   }
 
@@ -44,7 +49,9 @@ export class PermissionsService {
     return permission;
   }
 
-  async createBulkPermissions(permissions: CreatePermissionDto[]): Promise<Permission[]> {
+  async createBulkPermissions(
+    permissions: CreatePermissionDto[],
+  ): Promise<Permission[]> {
     const createdPermissions: Permission[] = [];
 
     for (const permDto of permissions) {
@@ -53,7 +60,8 @@ export class PermissionsService {
         createdPermissions.push(permission);
       } catch (error) {
         if (error instanceof ConflictException) {
-          if (this.logger) this.logger.warn(`Permission already exists: ${permDto.name}`);
+          if (this.logger)
+            this.logger.warn(`Permission already exists: ${permDto.name}`);
         } else {
           throw error;
         }
@@ -119,7 +127,10 @@ export class PermissionsService {
     return this.permissionRepository.findOne({ where: { name } });
   }
 
-  async updatePermission(id: string, updateDto: UpdatePermissionDto): Promise<Permission> {
+  async updatePermission(
+    id: string,
+    updateDto: UpdatePermissionDto,
+  ): Promise<Permission> {
     const permission = await this.getPermission(id);
 
     // Check if new name conflicts
@@ -165,7 +176,7 @@ export class PermissionsService {
       .orderBy('permission.module', 'ASC')
       .getRawMany();
 
-    return result.map(r => r.module);
+    return result.map((r) => r.module);
   }
 
   async getPermissionsByModule(module: string): Promise<Permission[]> {
@@ -176,7 +187,10 @@ export class PermissionsService {
   }
 
   // Helper method to check if a user has a specific permission
-  async userHasPermission(userId: string, permissionName: string): Promise<boolean> {
+  async userHasPermission(
+    userId: string,
+    permissionName: string,
+  ): Promise<boolean> {
     const permission = await this.permissionRepository
       .createQueryBuilder('permission')
       .leftJoinAndSelect('permission.roles', 'role')
@@ -196,14 +210,23 @@ export class PermissionsService {
   }
 
   private getDefaultPermissions(): CreatePermissionDto[] {
-    const modules = ['users', 'roles', 'permissions', 'devices', 'batchs', 'farms', 'reports', 'uploads'];
+    const modules = [
+      'users',
+      'roles',
+      'permissions',
+      'devices',
+      'batchs',
+      'farms',
+      'reports',
+      'uploads',
+    ];
     const actions = ['create', 'read', 'update', 'delete', 'manage'];
-    
+
     const permissions: CreatePermissionDto[] = [];
 
     // Generate CRUD permissions for each module
-    modules.forEach(module => {
-      actions.forEach(action => {
+    modules.forEach((module) => {
+      actions.forEach((action) => {
         permissions.push({
           name: `${module}.${action}`,
           description: `${action.charAt(0).toUpperCase() + action.slice(1)} ${module}`,

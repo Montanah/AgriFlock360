@@ -12,7 +12,12 @@ import { TelemetryService } from './telemetry.service';
 import type { TelemetryData } from './telemetry.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('Telemetry')
 @Controller('telemetry')
@@ -50,7 +55,9 @@ export class TelemetryController {
     @Query('end') end: string,
     @Query('limit') limit: number = 100,
   ) {
-    const startDate = start ? new Date(start) : new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const startDate = start
+      ? new Date(start)
+      : new Date(Date.now() - 24 * 60 * 60 * 1000);
     const endDate = end ? new Date(end) : new Date();
 
     return this.telemetryService.getTelemetryHistory(

@@ -1,4 +1,3 @@
-
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -29,7 +28,7 @@ export class TokenRotationService {
 
     // Generate new tokens
     const payload = { sub: userId };
-    
+
     const newAccessToken = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_SECRET'),
       expiresIn: '15m',
@@ -44,7 +43,9 @@ export class TokenRotationService {
     // Cleanup old used tokens (keep last 1000)
     if (this.usedTokens.size > 1000) {
       const tokensArray = Array.from(this.usedTokens);
-      tokensArray.slice(0, 500).forEach(token => this.usedTokens.delete(token));
+      tokensArray
+        .slice(0, 500)
+        .forEach((token) => this.usedTokens.delete(token));
     }
 
     return {

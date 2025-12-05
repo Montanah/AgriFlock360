@@ -14,12 +14,17 @@ import {
 } from '@nestjs/common';
 import { RolesService } from './roles.service';
 import { CreateRoleDto, UpdateRoleDto } from './dto/role.dto';
-import { AssignPermissionsDto} from '../permissions/dto/permissions.dto';
+import { AssignPermissionsDto } from '../permissions/dto/permissions.dto';
 import { QueryRolesDto } from './dto/role.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Roles')
 @Controller('roles')
@@ -59,7 +64,10 @@ export class RolesController {
   @Get(':id')
   @RequirePermissions('roles.read')
   @ApiOperation({ summary: 'Get a specific role' })
-  @ApiResponse({ status: 200, description: 'Returns role details with permissions' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns role details with permissions',
+  })
   async getRole(@Param('id') id: string) {
     const role = await this.rolesService.getRole(id);
 
@@ -72,7 +80,10 @@ export class RolesController {
   @Get(':id/permissions')
   @RequirePermissions('roles.read')
   @ApiOperation({ summary: 'Get role permissions grouped by module' })
-  @ApiResponse({ status: 200, description: 'Returns permissions grouped by module' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns permissions grouped by module',
+  })
   async getRolePermissions(@Param('id') id: string) {
     const permissions = await this.rolesService.getRolePermissionsByModule(id);
 
@@ -108,8 +119,14 @@ export class RolesController {
   @Post(':id/permissions')
   @RequirePermissions('roles.update')
   @ApiOperation({ summary: 'Assign permissions to a role (replaces all)' })
-  @ApiResponse({ status: 200, description: 'Permissions assigned successfully' })
-  async assignPermissions(@Param('id') id: string, @Body() assignDto: AssignPermissionsDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Permissions assigned successfully',
+  })
+  async assignPermissions(
+    @Param('id') id: string,
+    @Body() assignDto: AssignPermissionsDto,
+  ) {
     const role = await this.rolesService.assignPermissions(id, assignDto);
 
     return {
@@ -123,7 +140,10 @@ export class RolesController {
   @RequirePermissions('roles.update')
   @ApiOperation({ summary: 'Add a single permission to role' })
   @ApiResponse({ status: 200, description: 'Permission added successfully' })
-  async addPermission(@Param('id') id: string, @Param('permissionId') permissionId: string) {
+  async addPermission(
+    @Param('id') id: string,
+    @Param('permissionId') permissionId: string,
+  ) {
     const role = await this.rolesService.addPermissionToRole(id, permissionId);
 
     return {
@@ -138,8 +158,14 @@ export class RolesController {
   @RequirePermissions('roles.update')
   @ApiOperation({ summary: 'Remove a permission from role' })
   @ApiResponse({ status: 200, description: 'Permission removed successfully' })
-  async removePermission(@Param('id') id: string, @Param('permissionId') permissionId: string) {
-    const role = await this.rolesService.removePermissionFromRole(id, permissionId);
+  async removePermission(
+    @Param('id') id: string,
+    @Param('permissionId') permissionId: string,
+  ) {
+    const role = await this.rolesService.removePermissionFromRole(
+      id,
+      permissionId,
+    );
 
     return {
       success: true,

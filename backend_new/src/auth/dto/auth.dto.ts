@@ -13,7 +13,7 @@ import {
   ValidateIf,
   IsBoolean,
   IsNotEmpty,
-  Equals
+  Equals,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { ValidateLoginCredentials } from './custom-validators';
@@ -57,7 +57,11 @@ export class RegisterDto {
   @IsDateString()
   date_of_birth?: string;
 
-  @ApiProperty({ example: 'male', enum: ['male', 'female', 'other', 'prefer_not_to_say'], required: false })
+  @ApiProperty({
+    example: 'male',
+    enum: ['male', 'female', 'other', 'prefer_not_to_say'],
+    required: false,
+  })
   @IsOptional()
   @IsIn(['male', 'female', 'other', 'prefer_not_to_say'])
   gender?: string;
@@ -73,28 +77,40 @@ export class RegisterDto {
   @IsString()
   farm_name?: string;
 
-  @ApiProperty({ example: 5, description: 'Years of poultry farming experience', required: false })
+  @ApiProperty({
+    example: 5,
+    description: 'Years of poultry farming experience',
+    required: false,
+  })
   @IsOptional()
   @IsInt()
   @Min(0)
   years_of_experience?: number;
 
-  @ApiProperty({ 
-    example: 'layers', 
+  @ApiProperty({
+    example: 'layers',
     enum: ['layers', 'broilers', 'both', 'indigenous', 'other'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsIn(['layers', 'broilers', 'both', 'indigenous', 'other'])
   poultry_type?: string;
 
-  @ApiProperty({ example: 1000, description: 'Maximum chicken house capacity', required: false })
+  @ApiProperty({
+    example: 1000,
+    description: 'Maximum chicken house capacity',
+    required: false,
+  })
   @IsOptional()
   @IsInt()
   @Min(0)
   chicken_house_capacity?: number;
 
-  @ApiProperty({ example: 500, description: 'Current number of chickens', required: false })
+  @ApiProperty({
+    example: 500,
+    description: 'Current number of chickens',
+    required: false,
+  })
   @IsOptional()
   @IsInt()
   @Min(0)

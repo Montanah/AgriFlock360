@@ -55,7 +55,10 @@ export class PaygController {
 
   @Get('balance')
   @ApiOperation({ summary: 'Get PAYG balance and status' })
-  async getBalance(@Param('deviceId') deviceId: string, @CurrentUser() user: any) {
+  async getBalance(
+    @Param('deviceId') deviceId: string,
+    @CurrentUser() user: any,
+  ) {
     return this.paygService.getBalance(deviceId, user.userId);
   }
 

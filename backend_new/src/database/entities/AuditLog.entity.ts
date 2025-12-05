@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn, } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Index,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity('audit_logs')
 @Index('idx_audit_user', ['user_id'])

@@ -13,11 +13,20 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { VaccineCatalogService } from './vaccine-catalog.service';
-import { CreateVaccineDto, UpdateVaccineDto, QueryVaccinesDto } from '../vaccination/dto/vaccination.dto';
+import {
+  CreateVaccineDto,
+  UpdateVaccineDto,
+  QueryVaccinesDto,
+} from '../vaccination/dto/vaccination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Vaccine Catalog')
 @Controller('vaccine-catalog')
@@ -58,7 +67,8 @@ export class VaccineCatalogController {
   @ApiOperation({ summary: 'Get recommended vaccines' })
   @ApiResponse({ status: 200, description: 'Returns recommended vaccines' })
   async getRecommendedVaccines(@Query('bird_type') birdType?: string) {
-    const vaccines = await this.vaccineCatalogService.getRecommendedVaccines(birdType);
+    const vaccines =
+      await this.vaccineCatalogService.getRecommendedVaccines(birdType);
 
     return {
       success: true,
@@ -68,12 +78,18 @@ export class VaccineCatalogController {
 
   @Get('by-age/:age')
   @ApiOperation({ summary: 'Get vaccines appropriate for specific batch age' })
-  @ApiResponse({ status: 200, description: 'Returns vaccines suitable for the age' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns vaccines suitable for the age',
+  })
   async getVaccinesByAge(
     @Param('age') age: number,
     @Query('bird_type') birdType?: string,
   ) {
-    const vaccines = await this.vaccineCatalogService.getVaccinesByAge(+age, birdType);
+    const vaccines = await this.vaccineCatalogService.getVaccinesByAge(
+      +age,
+      birdType,
+    );
 
     return {
       success: true,
@@ -110,7 +126,9 @@ export class VaccineCatalogController {
   @ApiOperation({ summary: 'Get most used vaccines' })
   @ApiResponse({ status: 200, description: 'Returns popular vaccines' })
   async getPopularVaccines(@Query('limit') limit?: number) {
-    const vaccines = await this.vaccineCatalogService.getPopularVaccines(limit ? +limit : 10);
+    const vaccines = await this.vaccineCatalogService.getPopularVaccines(
+      limit ? +limit : 10,
+    );
 
     return {
       success: true,
@@ -135,8 +153,14 @@ export class VaccineCatalogController {
   @RequirePermissions('vaccines.update')
   @ApiOperation({ summary: 'Update a vaccine (Admin only)' })
   @ApiResponse({ status: 200, description: 'Vaccine updated successfully' })
-  async updateVaccine(@Param('id') id: string, @Body() updateDto: UpdateVaccineDto) {
-    const vaccine = await this.vaccineCatalogService.updateVaccine(id, updateDto);
+  async updateVaccine(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateVaccineDto,
+  ) {
+    const vaccine = await this.vaccineCatalogService.updateVaccine(
+      id,
+      updateDto,
+    );
 
     return {
       success: true,

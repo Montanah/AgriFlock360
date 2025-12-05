@@ -43,7 +43,12 @@ export class MetricsService {
     promClient.collectDefaultMetrics({ register: this.register });
   }
 
-  recordHttpRequest(method: string, route: string, statusCode: number, duration: number) {
+  recordHttpRequest(
+    method: string,
+    route: string,
+    statusCode: number,
+    duration: number,
+  ) {
     this.httpRequestDuration.observe(
       { method, route, status_code: statusCode },
       duration,

@@ -30,9 +30,9 @@ export enum AuditAction {
   BATCH_COUNT_UPDATED = 'BATCH_COUNT_UPDATED',
   BATCH_ARCHIVED = 'BATCH_ARCHIVED',
   BATCH_COMPLETED = 'BATCH_COMPLETED',
-  PAYG_UNLOCKED = 'PAYG_UNLOCKED', 
+  PAYG_UNLOCKED = 'PAYG_UNLOCKED',
   PAYMENT_INITIATED = 'PAYMENT_INITIATED',
-  CONFIG_UPDATED ='CONFIG_UPDATED'
+  CONFIG_UPDATED = 'CONFIG_UPDATED',
 }
 
 @Injectable()
@@ -83,14 +83,13 @@ export class AuditService {
           AuditAction.PASSWORD_CHANGE,
           AuditAction.TWO_FA_ENABLED,
           AuditAction.ACCOUNT_LOCKED,
-    
         ] as any,
       },
       order: { created_at: 'DESC' },
       take: 50,
     });
   }
-  
+
   async getLoginHistory(userId: string, page = 1, limit = 20) {
     const skip = (page - 1) * limit;
 
@@ -102,7 +101,14 @@ export class AuditService {
       order: { created_at: 'DESC' },
       take: limit,
       skip,
-      select: ['id', 'action', 'ip_address', 'user_agent', 'meta', 'created_at'],
+      select: [
+        'id',
+        'action',
+        'ip_address',
+        'user_agent',
+        'meta',
+        'created_at',
+      ],
     });
 
     return { logs, total };

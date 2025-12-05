@@ -27,7 +27,10 @@ export class FeedingSchedule {
   @Column({ type: 'uuid', nullable: true })
   recommendation_id: string;
 
-  @ManyToOne(() => FeedingRecommendation, { onDelete: 'SET NULL', nullable: true })
+  @ManyToOne(() => FeedingRecommendation, {
+    onDelete: 'SET NULL',
+    nullable: true,
+  })
   @JoinColumn({ name: 'recommendation_id' })
   recommendation: FeedingRecommendation;
 

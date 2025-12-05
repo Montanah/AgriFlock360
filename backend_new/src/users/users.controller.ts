@@ -16,9 +16,28 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from './users.service';
-import { UpdateProfileDto, UpdateEmailDto, ChangePasswordDto, Enable2FADto, Verify2FADto, Disable2FADto, NotificationPreferencesDto, PrivacySettingsDto, RegisterDeviceTokenDto, DeactivateAccountDto, DeleteAccountDto  } from './dto/users.dto';
+import {
+  UpdateProfileDto,
+  UpdateEmailDto,
+  ChangePasswordDto,
+  Enable2FADto,
+  Verify2FADto,
+  Disable2FADto,
+  NotificationPreferencesDto,
+  PrivacySettingsDto,
+  RegisterDeviceTokenDto,
+  DeactivateAccountDto,
+  DeleteAccountDto,
+} from './dto/users.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import * as multer from 'multer';
 import type { Express } from 'express';
 
@@ -33,7 +52,10 @@ export class UsersController {
 
   @Get('profile')
   @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ status: 200, description: 'Returns user profile with preferences' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns user profile with preferences',
+  })
   async getProfile(@Req() req: any) {
     const userId = req.user.id;
     const profile = await this.usersService.getProfile(userId);
@@ -86,7 +108,10 @@ export class UsersController {
       },
     }),
   )
-  async updateAvatar(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
+  async updateAvatar(
+    @Req() req: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     const userId = req.user.id;
     const result = await this.usersService.updateAvatar(userId, file);
 
@@ -142,7 +167,10 @@ export class UsersController {
   @ApiOperation({ summary: 'Change password' })
   @ApiResponse({ status: 200, description: 'Password changed successfully' })
   @ApiResponse({ status: 401, description: 'Invalid current password' })
-  async changePassword(@Req() req: any, @Body() changePasswordDto: ChangePasswordDto) {
+  async changePassword(
+    @Req() req: any,
+    @Body() changePasswordDto: ChangePasswordDto,
+  ) {
     const userId = req.user.id;
     await this.usersService.changePassword(userId, changePasswordDto);
 
@@ -201,7 +229,8 @@ export class UsersController {
   @ApiResponse({ status: 200, description: 'Returns notification preferences' })
   async getNotificationPreferences(@Req() req: any) {
     const userId = req.user.id;
-    const preferences = await this.usersService.getNotificationPreferences(userId);
+    const preferences =
+      await this.usersService.getNotificationPreferences(userId);
 
     return {
       success: true,
@@ -217,7 +246,10 @@ export class UsersController {
     @Body() preferencesDto: NotificationPreferencesDto,
   ) {
     const userId = req.user.id;
-    await this.usersService.updateNotificationPreferences(userId, preferencesDto);
+    await this.usersService.updateNotificationPreferences(
+      userId,
+      preferencesDto,
+    );
 
     return {
       success: true,
@@ -242,8 +274,14 @@ export class UsersController {
 
   @Put('privacy')
   @ApiOperation({ summary: 'Update privacy settings' })
-  @ApiResponse({ status: 200, description: 'Privacy settings updated successfully' })
-  async updatePrivacySettings(@Req() req: any, @Body() privacyDto: PrivacySettingsDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Privacy settings updated successfully',
+  })
+  async updatePrivacySettings(
+    @Req() req: any,
+    @Body() privacyDto: PrivacySettingsDto,
+  ) {
     const userId = req.user.id;
     await this.usersService.updatePrivacySettings(userId, privacyDto);
 
@@ -257,8 +295,14 @@ export class UsersController {
 
   @Post('devices/register')
   @ApiOperation({ summary: 'Register device token for push notifications' })
-  @ApiResponse({ status: 200, description: 'Device token registered successfully' })
-  async registerDeviceToken(@Req() req: any, @Body() tokenDto: RegisterDeviceTokenDto) {
+  @ApiResponse({
+    status: 200,
+    description: 'Device token registered successfully',
+  })
+  async registerDeviceToken(
+    @Req() req: any,
+    @Body() tokenDto: RegisterDeviceTokenDto,
+  ) {
     const userId = req.user.id;
     await this.usersService.registerDeviceToken(userId, tokenDto);
 
@@ -271,7 +315,10 @@ export class UsersController {
   @Delete('devices/:token')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remove device token' })
-  @ApiResponse({ status: 204, description: 'Device token removed successfully' })
+  @ApiResponse({
+    status: 204,
+    description: 'Device token removed successfully',
+  })
   async removeDeviceToken(@Req() req: any, @Param('token') token: string) {
     const userId = req.user.id;
     await this.usersService.removeDeviceToken(userId, token);
@@ -279,7 +326,10 @@ export class UsersController {
 
   @Get('devices')
   @ApiOperation({ summary: 'Get all registered devices' })
-  @ApiResponse({ status: 200, description: 'Returns list of registered devices' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns list of registered devices',
+  })
   async getUserDevices(@Req() req: any) {
     const userId = req.user.id;
     const devices = await this.usersService.getUserDeviceTokens(userId);
@@ -295,7 +345,10 @@ export class UsersController {
   @Post('account/deactivate')
   @ApiOperation({ summary: 'Deactivate account (reversible)' })
   @ApiResponse({ status: 200, description: 'Account deactivated successfully' })
-  async deactivateAccount(@Req() req: any, @Body() deactivateDto: DeactivateAccountDto) {
+  async deactivateAccount(
+    @Req() req: any,
+    @Body() deactivateDto: DeactivateAccountDto,
+  ) {
     const userId = req.user.id;
     await this.usersService.deactivateAccount(userId, deactivateDto);
 
@@ -340,5 +393,4 @@ export class UsersController {
       data: history,
     };
   }
-  
 }

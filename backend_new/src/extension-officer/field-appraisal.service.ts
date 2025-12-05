@@ -61,13 +61,16 @@ export class FieldAppraisalService {
     // Convert 0-10 scores to 0-100 scale
     const totalScore = scores.reduce((sum, score) => sum + score, 0);
     const maxScore = scores.length * 10;
-    
+
     return Math.round((totalScore / maxScore) * 100);
   }
 
-  async findAll(
-    query: QueryFieldAppraisalDto,
-  ): Promise<{ data: FieldAppraisal[]; total: number; page: number; limit: number }> {
+  async findAll(query: QueryFieldAppraisalDto): Promise<{
+    data: FieldAppraisal[];
+    total: number;
+    page: number;
+    limit: number;
+  }> {
     const {
       officer_id,
       farmer_id,
@@ -130,10 +133,7 @@ export class FieldAppraisalService {
       });
     }
 
-    queryBuilder
-      .orderBy('appraisal.visit_date', 'DESC')
-      .skip(skip)
-      .take(limit);
+    queryBuilder.orderBy('appraisal.visit_date', 'DESC').skip(skip).take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -199,12 +199,12 @@ export class FieldAppraisalService {
     }
 
     const appraisal = await this.findOne(id);
-    
+
     appraisal.farmer_rating = rating;
     appraisal.farmer_feedback = feedback;
 
     const updated = await this.appraisalRepository.save(appraisal);
-    
+
     // Update officer statistics
     await this.officerService.updateStatistics(appraisal.officer_id);
 
@@ -235,14 +235,10 @@ export class FieldAppraisalService {
       );
     }
 
-    return await queryBuilder
-      .orderBy('appraisal.visit_date', 'DESC')
-      .getMany();
+    return await queryBuilder.orderBy('appraisal.visit_date', 'DESC').getMany();
   }
 
-  async getAppraisalsByFarmer(
-    farmerId: string,
-  ): Promise<FieldAppraisal[]> {
+  async getAppraisalsByFarmer(farmerId: string): Promise<FieldAppraisal[]> {
     return await this.appraisalRepository.find({
       where: { farmer_id: farmerId },
       relations: ['officer', 'farm'],
@@ -265,13 +261,9 @@ export class FieldAppraisalService {
     });
   }
 
-  async getStatistics(
-    officerId?: string,
-    startDate?: Date,
-    endDate?: Date,
-  ) {
-    const queryBuilder = this.appraisalRepository
-      .createQueryBuilder('appraisal');
+  async getStatistics(officerId?: string, startDate?: Date, endDate?: Date) {
+    const queryBuilder =
+      this.appraisalRepository.createQueryBuilder('appraisal');
 
     if (officerId) {
       queryBuilder.where('appraisal.officer_id = :officerId', {
@@ -290,7 +282,7 @@ export class FieldAppraisalService {
 
     const totalAppraisals = appraisals.length;
     const fraudFlags = appraisals.filter((a) => a.fraud_flag_raised).length;
-    
+
     const avgScore =
       totalAppraisals > 0
         ? appraisals.reduce((sum, a) => sum + a.overall_score, 0) /
@@ -311,8 +303,7 @@ export class FieldAppraisalService {
       average_score: Number(avgScore.toFixed(2)),
       average_rating: Number(avgRating.toFixed(2)),
       by_status: {
-        completed: appraisals.filter((a) => a.status === 'completed')
-          .length,
+        completed: appraisals.filter((a) => a.status === 'completed').length,
         pending: appraisals.filter((a) => a.status === 'pending').length,
         in_progress: appraisals.filter((a) => a.status === 'in_progress')
           .length,
@@ -326,9 +317,9 @@ export class FieldAppraisalService {
   async delete(id: string): Promise<void> {
     const appraisal = await this.findOne(id);
     const officerId = appraisal.officer_id;
-    
+
     await this.appraisalRepository.remove(appraisal);
-    
+
     // Update officer statistics
     await this.officerService.updateStatistics(officerId);
   }

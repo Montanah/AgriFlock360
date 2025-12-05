@@ -1,4 +1,3 @@
-
 // migrations/XXXXXX-create-housing-materials.ts
 import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
@@ -113,8 +112,14 @@ export class CreateHousingMaterials1736480009014 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('housing_materials', 'idx_housing_materials_category');
-    await queryRunner.dropIndex('housing_materials', 'idx_housing_materials_name');
+    await queryRunner.dropIndex(
+      'housing_materials',
+      'idx_housing_materials_category',
+    );
+    await queryRunner.dropIndex(
+      'housing_materials',
+      'idx_housing_materials_name',
+    );
     await queryRunner.dropTable('housing_materials');
   }
 }

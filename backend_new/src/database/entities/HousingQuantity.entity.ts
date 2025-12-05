@@ -21,7 +21,7 @@ export class HousingQuantity {
   @Column({ type: 'uuid' })
   material_id: string;
 
-  @ManyToOne(() => HousingMaterial, material => material.quantities, {
+  @ManyToOne(() => HousingMaterial, (material) => material.quantities, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'material_id' })

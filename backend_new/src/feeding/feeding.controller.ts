@@ -19,7 +19,12 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { FeedingService } from './feeding.service';
 import { FeedingRecommendationsService } from './feeding-recommendations.service';
 import { CreateFeedingRecordDto } from './dto/feeding.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Feeding')
 @Controller('batchs/:batchId/feeding')
@@ -62,10 +67,12 @@ export class FeedingController {
     return { schedules };
   }
 
- 
   @Get('recommendations')
   @ApiOperation({ summary: 'Get feeding recommendations for batch' })
-  @ApiResponse({ status: 200, description: 'Returns recommendations based on batch age and bird type' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns recommendations based on batch age and bird type',
+  })
   async getBatchRecommendations(
     @Param('batchId') batchId: string,
     @CurrentUser() user: any,

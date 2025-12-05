@@ -1,10 +1,30 @@
 // users/dto/update-profile.dto.ts
-import { IsOptional, IsString, IsEmail, IsDateString, IsBoolean, MinLength, MaxLength, Matches, IsEnum, IsNotEmpty, IsObject, IsIn, IsInt, Min, IsPhoneNumber } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEmail,
+  IsDateString,
+  IsBoolean,
+  MinLength,
+  MaxLength,
+  Matches,
+  IsEnum,
+  IsNotEmpty,
+  IsObject,
+  IsIn,
+  IsInt,
+  Min,
+  IsPhoneNumber,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 
 export class UpdateProfileDto {
-  @ApiProperty({ description: 'Display name', example: 'John Doe', required: false })
+  @ApiProperty({
+    description: 'Display name',
+    example: 'John Doe',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   @MaxLength(255)
@@ -20,7 +40,11 @@ export class UpdateProfileDto {
   @IsPhoneNumber()
   phone_number?: string;
 
-  @ApiProperty({ description: 'Country calling code', example: '+254', required: false })
+  @ApiProperty({
+    description: 'Country calling code',
+    example: '+254',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   calling_code?: string;
@@ -30,30 +54,38 @@ export class UpdateProfileDto {
   @IsString()
   location?: string;
 
-  @ApiProperty({ description: 'Date of birth', example: '1990-01-15', required: false })
+  @ApiProperty({
+    description: 'Date of birth',
+    example: '1990-01-15',
+    required: false,
+  })
   @IsOptional()
   @IsDateString()
   date_of_birth?: Date;
 
-  @ApiProperty({ 
-    example: 'male', 
-    enum: ['male', 'female', 'other', 'prefer_not_to_say'], 
-    required: false 
+  @ApiProperty({
+    example: 'male',
+    enum: ['male', 'female', 'other', 'prefer_not_to_say'],
+    required: false,
   })
   @IsOptional()
   @IsIn(['male', 'female', 'other', 'prefer_not_to_say'])
   gender?: string;
 
-  @ApiProperty({ example: 5, description: 'Years of experience', required: false })
+  @ApiProperty({
+    example: 5,
+    description: 'Years of experience',
+    required: false,
+  })
   @IsOptional()
   @IsInt()
   @Min(0)
   years_of_experience?: number;
 
-  @ApiProperty({ 
-    example: 'layers', 
+  @ApiProperty({
+    example: 'layers',
     enum: ['layers', 'broilers', 'both', 'indigenous', 'other'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsIn(['layers', 'broilers', 'both', 'indigenous', 'other'])
@@ -90,16 +122,21 @@ export class UpdateProfileDto {
   @IsOptional()
   @IsString()
   preferred_offtaker_agent?: string;
-
 }
 
 export class UpdateEmailDto {
-  @ApiProperty({ description: 'New email address', example: 'newemail@example.com' })
+  @ApiProperty({
+    description: 'New email address',
+    example: 'newemail@example.com',
+  })
   @IsEmail()
   @IsNotEmpty()
   new_email: string;
 
-  @ApiProperty({ description: 'Current password for verification', example: 'currentPassword123' })
+  @ApiProperty({
+    description: 'Current password for verification',
+    example: 'currentPassword123',
+  })
   @IsString()
   @IsNotEmpty()
   current_password: string;
@@ -116,11 +153,15 @@ export class ChangePasswordDto {
   @IsNotEmpty()
   @MinLength(8)
   @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/, {
-    message: 'Password must contain uppercase, lowercase, number and special character',
+    message:
+      'Password must contain uppercase, lowercase, number and special character',
   })
   new_password: string;
 
-  @ApiProperty({ description: 'Confirm new password', example: 'newPassword123!' })
+  @ApiProperty({
+    description: 'Confirm new password',
+    example: 'newPassword123!',
+  })
   @IsString()
   @IsNotEmpty()
   confirm_password: string;
@@ -128,7 +169,10 @@ export class ChangePasswordDto {
 
 // users/dto/enable-2fa.dto.ts
 export class Enable2FADto {
-  @ApiProperty({ description: 'Password confirmation', example: 'myPassword123!' })
+  @ApiProperty({
+    description: 'Password confirmation',
+    example: 'myPassword123!',
+  })
   @IsString()
   @IsNotEmpty()
   password: string;
@@ -149,7 +193,10 @@ export class Disable2FADto {
   @Matches(/^\d{6}$/, { message: 'OTP must be 6 digits' })
   otp_code: string;
 
-  @ApiProperty({ description: 'Password confirmation', example: 'myPassword123!' })
+  @ApiProperty({
+    description: 'Password confirmation',
+    example: 'myPassword123!',
+  })
   @IsString()
   @IsNotEmpty()
   password: string;
@@ -216,32 +263,56 @@ export class NotificationPreferencesDto {
 
 // users/dto/privacy-settings.dto.ts
 export class PrivacySettingsDto {
-  @ApiProperty({ description: 'Profile visibility', enum: ['public', 'private', 'connections'], required: false })
+  @ApiProperty({
+    description: 'Profile visibility',
+    enum: ['public', 'private', 'connections'],
+    required: false,
+  })
   @IsOptional()
   @IsEnum(['public', 'private', 'connections'])
   profile_visibility?: string;
 
-  @ApiProperty({ description: 'Show email to others', default: false, required: false })
+  @ApiProperty({
+    description: 'Show email to others',
+    default: false,
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   show_email?: boolean;
 
-  @ApiProperty({ description: 'Show phone number to others', default: false, required: false })
+  @ApiProperty({
+    description: 'Show phone number to others',
+    default: false,
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   show_phone?: boolean;
 
-  @ApiProperty({ description: 'Show location to others', default: false, required: false })
+  @ApiProperty({
+    description: 'Show location to others',
+    default: false,
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   show_location?: boolean;
 
-  @ApiProperty({ description: 'Allow search engines to index profile', default: false, required: false })
+  @ApiProperty({
+    description: 'Allow search engines to index profile',
+    default: false,
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   search_engine_indexing?: boolean;
 
-  @ApiProperty({ description: 'Allow data collection for analytics', default: true, required: false })
+  @ApiProperty({
+    description: 'Allow data collection for analytics',
+    default: true,
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   analytics_consent?: boolean;
@@ -249,16 +320,27 @@ export class PrivacySettingsDto {
 
 // users/dto/device-token.dto.ts
 export class RegisterDeviceTokenDto {
-  @ApiProperty({ description: 'FCM/APN device token', example: 'ExponentPushToken[xxxxxxxxxxxxxx]' })
+  @ApiProperty({
+    description: 'FCM/APN device token',
+    example: 'ExponentPushToken[xxxxxxxxxxxxxx]',
+  })
   @IsString()
   @IsNotEmpty()
   device_token: string;
 
-  @ApiProperty({ description: 'Device platform', enum: ['ios', 'android', 'web'], example: 'android' })
+  @ApiProperty({
+    description: 'Device platform',
+    enum: ['ios', 'android', 'web'],
+    example: 'android',
+  })
   @IsEnum(['ios', 'android', 'web'])
   platform: string;
 
-  @ApiProperty({ description: 'Device name/model', example: 'iPhone 14 Pro', required: false })
+  @ApiProperty({
+    description: 'Device name/model',
+    example: 'iPhone 14 Pro',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   device_name?: string;
@@ -266,7 +348,10 @@ export class RegisterDeviceTokenDto {
 
 // users/dto/deactivate-account.dto.ts
 export class DeactivateAccountDto {
-  @ApiProperty({ description: 'Password confirmation', example: 'myPassword123!' })
+  @ApiProperty({
+    description: 'Password confirmation',
+    example: 'myPassword123!',
+  })
   @IsString()
   @IsNotEmpty()
   password: string;
@@ -279,7 +364,10 @@ export class DeactivateAccountDto {
 
 // users/dto/delete-account.dto.ts
 export class DeleteAccountDto {
-  @ApiProperty({ description: 'Password confirmation', example: 'myPassword123!' })
+  @ApiProperty({
+    description: 'Password confirmation',
+    example: 'myPassword123!',
+  })
   @IsString()
   @IsNotEmpty()
   password: string;

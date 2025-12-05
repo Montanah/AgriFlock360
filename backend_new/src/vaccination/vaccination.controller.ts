@@ -17,7 +17,12 @@ import { CreateVaccinationDto } from './dto/vaccination.dto';
 import { CompleteVaccinationDto } from './dto/vaccination.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('Vaccinations')
 @Controller('batches/:batchId/vaccinations')
@@ -27,7 +32,9 @@ export class VaccinationsController {
   constructor(private readonly vaccinationsService: VaccinationsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Schedule vaccination for batch (from catalog or manual)' })
+  @ApiOperation({
+    summary: 'Schedule vaccination for batch (from catalog or manual)',
+  })
   @ApiResponse({ status: 201, description: 'Vaccination scheduled' })
   async create(
     @Param('batchId') batchId: string,
@@ -61,10 +68,18 @@ export class VaccinationsController {
   }
 
   @Get('recommendations')
-  @ApiOperation({ summary: 'Get recommended vaccines for this batch based on age' })
+  @ApiOperation({
+    summary: 'Get recommended vaccines for this batch based on age',
+  })
   @ApiResponse({ status: 200, description: 'Recommended vaccines retrieved' })
-  async getRecommendations(@Param('batchId') batchId: string, @CurrentUser() user: any) {
-    const result = await this.vaccinationsService.getRecommendedVaccines(batchId, user.userId);
+  async getRecommendations(
+    @Param('batchId') batchId: string,
+    @CurrentUser() user: any,
+  ) {
+    const result = await this.vaccinationsService.getRecommendedVaccines(
+      batchId,
+      user.userId,
+    );
 
     return {
       success: true,
@@ -83,7 +98,10 @@ export class VaccinationsController {
     @Param('vaccinationId') vaccinationId: string,
     @CurrentUser() user: any,
   ) {
-    const vaccination = await this.vaccinationsService.findOne(vaccinationId, user.userId);
+    const vaccination = await this.vaccinationsService.findOne(
+      vaccinationId,
+      user.userId,
+    );
 
     return {
       success: true,
@@ -160,6 +178,9 @@ export class VaccinationsController {
     @Param('vaccinationId') vaccinationId: string,
     @CurrentUser() user: any,
   ) {
-    await this.vaccinationsService.deleteVaccination(vaccinationId, user.userId);
+    await this.vaccinationsService.deleteVaccination(
+      vaccinationId,
+      user.userId,
+    );
   }
 }

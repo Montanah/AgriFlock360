@@ -72,7 +72,10 @@ import { Profile } from '../database/entities/Profile.entity';
     UsersModule,
   ],
   controllers: [AdminController, AdminManagementController],
-  providers: [AdminService, CustomLogger, AuditService,
+  providers: [
+    AdminService,
+    CustomLogger,
+    AuditService,
     AuthService,
     EmailService,
     TwoFAService,

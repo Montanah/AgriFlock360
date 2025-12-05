@@ -276,7 +276,7 @@ export class DashboardService {
         offline: totalDevices - activeDevices,
       },
       farms: {
-        total: totalFarms
+        total: totalFarms,
       },
       batches: {
         total: totalBatches,

@@ -1,6 +1,8 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddFirmwareVersionIdToDevices1764000000013 implements MigrationInterface {
+export class AddFirmwareVersionIdToDevices1764000000013
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE devices ADD COLUMN firmware_version_id UUID;

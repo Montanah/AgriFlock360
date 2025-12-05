@@ -45,5 +45,5 @@ export class Telemetry {
   meta?: Record<string, any>;
 
   @CreateDateColumn({ type: 'timestamptz' })
-    timestamp: Date;
+  timestamp: Date;
 }

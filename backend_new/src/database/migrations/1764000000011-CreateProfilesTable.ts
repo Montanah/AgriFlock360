@@ -1,4 +1,9 @@
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateProfilesTable1234567890123 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -131,7 +136,7 @@ export class CreateProfilesTable1234567890123 implements MigrationInterface {
             name: 'age',
             type: 'integer',
             isNullable: true,
-          }
+          },
         ],
       }),
       true,
@@ -193,13 +198,13 @@ export class CreateProfilesTable1234567890123 implements MigrationInterface {
     `);
 
     // Drop columns from users table
-   // await queryRunner.dropColumn('users', 'name');
+    // await queryRunner.dropColumn('users', 'name');
     await queryRunner.dropColumn('users', 'first_name');
     await queryRunner.dropColumn('users', 'last_name');
     //await queryRunner.dropColumn('users', 'phone_number');
     await queryRunner.dropColumn('users', 'calling_code');
     await queryRunner.dropColumn('users', 'location');
-  //  await queryRunner.dropColumn('users', 'avatar');
+    //  await queryRunner.dropColumn('users', 'avatar');
     await queryRunner.dropColumn('users', 'date_of_birth');
     await queryRunner.dropColumn('users', 'age');
     await queryRunner.dropColumn('users', 'gender');

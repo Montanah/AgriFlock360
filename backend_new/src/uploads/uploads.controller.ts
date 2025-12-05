@@ -21,7 +21,14 @@ import { UploadsService } from './uploads.service';
 import { UploadFileDto } from './dto/upload-file.dto';
 import { QueryUploadsDto } from './dto/query-uploads.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import * as multer from 'multer';
 
 @ApiTags('Uploads')
@@ -60,12 +67,16 @@ export class UploadsController {
     }),
   )
   async uploadSingle(
-    @UploadedFile() file:  Express.Multer.File,
+    @UploadedFile() file: Express.Multer.File,
     @Body() uploadDto: UploadFileDto,
     @Req() req: any,
   ) {
     const userId = req.user.id;
-    const upload = await this.uploadsService.uploadFile(file, userId, uploadDto);
+    const upload = await this.uploadsService.uploadFile(
+      file,
+      userId,
+      uploadDto,
+    );
 
     return {
       success: true,
@@ -110,7 +121,11 @@ export class UploadsController {
     @Req() req: any,
   ) {
     const userId = req.user.id;
-    const uploads = await this.uploadsService.uploadMultiple(files, userId, uploadDto);
+    const uploads = await this.uploadsService.uploadMultiple(
+      files,
+      userId,
+      uploadDto,
+    );
 
     return {
       success: true,
@@ -137,7 +152,10 @@ export class UploadsController {
   @ApiOperation({ summary: 'Get a specific upload by ID' })
   @ApiResponse({ status: 200, description: 'Returns upload details' })
   @ApiResponse({ status: 404, description: 'Upload not found' })
-  @ApiResponse({ status: 403, description: 'Not authorized to access this file' })
+  @ApiResponse({
+    status: 403,
+    description: 'Not authorized to access this file',
+  })
   async getUpload(@Param('id') id: string, @Req() req: any) {
     const userId = req.user.id;
     const upload = await this.uploadsService.getUpload(id, userId);
@@ -169,7 +187,10 @@ export class UploadsController {
   @ApiOperation({ summary: 'Delete an upload' })
   @ApiResponse({ status: 204, description: 'File deleted successfully' })
   @ApiResponse({ status: 404, description: 'Upload not found' })
-  @ApiResponse({ status: 403, description: 'Not authorized to delete this file' })
+  @ApiResponse({
+    status: 403,
+    description: 'Not authorized to delete this file',
+  })
   async deleteUpload(@Param('id') id: string, @Req() req: any) {
     const userId = req.user.id;
     await this.uploadsService.deleteUpload(id, userId);

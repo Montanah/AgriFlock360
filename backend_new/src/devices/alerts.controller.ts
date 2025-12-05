@@ -12,7 +12,12 @@ import { Repository } from 'typeorm';
 import { Alert } from '../database/entities/Alert.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('Alerts')
 @Controller('alerts')
@@ -34,7 +39,7 @@ export class AlertsController {
     @Query('limit') limit: number = 50,
   ) {
     const query: any = { user_id: user.userId };
-    
+
     if (status) query.alert_status = status;
     if (severity) query.severity = severity;
 

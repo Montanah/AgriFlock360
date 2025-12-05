@@ -6,7 +6,12 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Req, Delete, Param, Put, UploadedFile, UseInterceptors,
+  Req,
+  Delete,
+  Param,
+  Put,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from '../auth/auth.service';
 import { TwoFAService } from '../services/twofa.service';
@@ -22,7 +27,14 @@ import {
 import { Public } from '../auth/decorators/public.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import type { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UsersService } from '../users/users.service';
@@ -42,8 +54,8 @@ export class AdminManagementController {
   constructor(
     private readonly authService: AuthService,
     private readonly sessionService: SessionService,
-    private readonly usersService: UsersService
-  ) { }
+    private readonly usersService: UsersService,
+  ) {}
 
   private getClientInfo(req: Request) {
     return {
@@ -78,7 +90,12 @@ export class AdminManagementController {
     @Req() req: Request,
   ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
-    return this.authService.verify2FA(body.tempToken, body.code, ipAddress, userAgent);
+    return this.authService.verify2FA(
+      body.tempToken,
+      body.code,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @Public()
@@ -99,7 +116,6 @@ export class AdminManagementController {
     );
   }
 
-
   @Public()
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
@@ -117,14 +133,21 @@ export class AdminManagementController {
     @Req() req: Request,
   ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
-    return this.authService.resetPassword(resetPasswordDto, ipAddress, userAgent);
+    return this.authService.resetPassword(
+      resetPasswordDto,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @Public()
   @Post('verify-email')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify email address' })
-  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto, @Req() req: Request) {
+  async verifyEmail(
+    @Body() verifyEmailDto: VerifyEmailDto,
+    @Req() req: Request,
+  ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
     return this.authService.verifyEmail(verifyEmailDto, ipAddress, userAgent);
   }
@@ -137,7 +160,12 @@ export class AdminManagementController {
   async logout(@CurrentUser() user: any, @Req() req: Request) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
     const sessionId = req.headers['x-session-id'] as string;
-    return this.authService.logout(user.userId, sessionId, ipAddress, userAgent);
+    return this.authService.logout(
+      user.userId,
+      sessionId,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @UseGuards(JwtAuthGuard)
@@ -181,7 +209,10 @@ export class AdminManagementController {
   @ApiBearerAuth()
   @Get('profile')
   @ApiOperation({ summary: 'Get current user profile' })
-  @ApiResponse({ status: 200, description: 'Returns user profile with preferences' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns user profile with preferences',
+  })
   async getProfile(@Req() req: any) {
     const userId = req.user.id;
     const profile = await this.usersService.getProfile(userId);
@@ -237,7 +268,10 @@ export class AdminManagementController {
       },
     }),
   )
-  async updateAvatar(@Req() req: any, @UploadedFile() file: Express.Multer.File) {
+  async updateAvatar(
+    @Req() req: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
     const userId = req.user.id;
     const result = await this.usersService.updateAvatar(userId, file);
 

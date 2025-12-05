@@ -6,7 +6,9 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Req, Delete, Param
+  Req,
+  Delete,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { TwoFAService } from '../services/twofa.service';
@@ -69,7 +71,12 @@ export class AuthController {
     @Req() req: Request,
   ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
-    return this.authService.verify2FA(body.tempToken, body.code, ipAddress, userAgent);
+    return this.authService.verify2FA(
+      body.tempToken,
+      body.code,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @Public()
@@ -108,7 +115,6 @@ export class AuthController {
     );
   }
 
-
   @Public()
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
@@ -126,14 +132,21 @@ export class AuthController {
     @Req() req: Request,
   ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
-    return this.authService.resetPassword(resetPasswordDto, ipAddress, userAgent);
+    return this.authService.resetPassword(
+      resetPasswordDto,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @Public()
   @Post('verify-email')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Verify email address' })
-  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto, @Req() req: Request) {
+  async verifyEmail(
+    @Body() verifyEmailDto: VerifyEmailDto,
+    @Req() req: Request,
+  ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
     return this.authService.verifyEmail(verifyEmailDto, ipAddress, userAgent);
   }
@@ -146,7 +159,12 @@ export class AuthController {
   async logout(@CurrentUser() user: any, @Req() req: Request) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
     const sessionId = req.headers['x-session-id'] as string;
-    return this.authService.logout(user.userId, sessionId, ipAddress, userAgent);
+    return this.authService.logout(
+      user.userId,
+      sessionId,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @UseGuards(JwtAuthGuard)

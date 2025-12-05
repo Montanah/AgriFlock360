@@ -13,11 +13,20 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { PermissionsService } from './permissions.service';
-import { CreatePermissionDto, UpdatePermissionDto, QueryPermissionsDto } from './dto/permissions.dto';
+import {
+  CreatePermissionDto,
+  UpdatePermissionDto,
+  QueryPermissionsDto,
+} from './dto/permissions.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Permissions')
 @Controller('permissions')
@@ -31,7 +40,8 @@ export class PermissionsController {
   @ApiOperation({ summary: 'Create a new permission' })
   @ApiResponse({ status: 201, description: 'Permission created successfully' })
   async createPermission(@Body() createDto: CreatePermissionDto) {
-    const permission = await this.permissionsService.createPermission(createDto);
+    const permission =
+      await this.permissionsService.createPermission(createDto);
 
     return {
       success: true,
@@ -45,7 +55,8 @@ export class PermissionsController {
   @ApiOperation({ summary: 'Create multiple permissions at once' })
   @ApiResponse({ status: 201, description: 'Permissions created successfully' })
   async createBulkPermissions(@Body() permissions: CreatePermissionDto[]) {
-    const createdPermissions = await this.permissionsService.createBulkPermissions(permissions);
+    const createdPermissions =
+      await this.permissionsService.createBulkPermissions(permissions);
 
     return {
       success: true,
@@ -84,9 +95,13 @@ export class PermissionsController {
   @Get('by-module/:module')
   @RequirePermissions('permissions.read')
   @ApiOperation({ summary: 'Get permissions by module' })
-  @ApiResponse({ status: 200, description: 'Returns permissions for the module' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns permissions for the module',
+  })
   async getPermissionsByModule(@Param('module') module: string) {
-    const permissions = await this.permissionsService.getPermissionsByModule(module);
+    const permissions =
+      await this.permissionsService.getPermissionsByModule(module);
 
     return {
       success: true,
@@ -111,8 +126,14 @@ export class PermissionsController {
   @RequirePermissions('permissions.update')
   @ApiOperation({ summary: 'Update a permission' })
   @ApiResponse({ status: 200, description: 'Permission updated successfully' })
-  async updatePermission(@Param('id') id: string, @Body() updateDto: UpdatePermissionDto) {
-    const permission = await this.permissionsService.updatePermission(id, updateDto);
+  async updatePermission(
+    @Param('id') id: string,
+    @Body() updateDto: UpdatePermissionDto,
+  ) {
+    const permission = await this.permissionsService.updatePermission(
+      id,
+      updateDto,
+    );
 
     return {
       success: true,
@@ -143,4 +164,3 @@ export class PermissionsController {
     };
   }
 }
-

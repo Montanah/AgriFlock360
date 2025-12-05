@@ -1,4 +1,4 @@
-import { Module, MiddlewareConsumer, RequestMethod  } from '@nestjs/common';
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -37,6 +37,7 @@ import { ExtensionOfficerModule } from './extension-officer/extension-officer.mo
 
 import { SubscriptionModule } from './subscriptions/subscriptions.module';
 import { ProductsModule } from './products/products.module';
+import { SyncModule } from './sync/sync.module';
 
 @Module({
   imports: [
@@ -86,9 +87,11 @@ import { ProductsModule } from './products/products.module';
     ExtensionOfficerModule,
     SubscriptionModule,
     ProductsModule,
+    SyncModule,
   ],
   controllers: [AppController, NotificationsController, RolesController],
-  providers: [AppService,
+  providers: [
+    AppService,
     {
       provide: APP_GUARD,
       useClass: RedisRateLimitGuard,

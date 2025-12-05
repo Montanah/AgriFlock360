@@ -17,7 +17,6 @@ import { Subscription } from './Subscription.entity';
 @Index('idx_devices_owner', ['owner_id'])
 @Index('idx_devices_device_id', ['device_id'], { unique: true })
 @Index('idx_devices_firmware_version', ['firmware_version_id'])
-
 export class Device {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -50,7 +49,7 @@ export class Device {
 
   @ManyToOne(() => FirmwareVersion, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'firmware_version_id' })
- firmware_version?: FirmwareVersion;
+  firmware_version?: FirmwareVersion;
 
   @Column({ type: 'timestamptz', nullable: true })
   last_seen?: Date;
@@ -58,10 +57,16 @@ export class Device {
   @Column({ type: 'boolean', default: false })
   is_payg_locked: boolean;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, default: 0, transformer: {
-    to: (value: number) => value,
-    from: (value: string) => parseFloat(value),
-  },})
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    default: 0,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string) => parseFloat(value),
+    },
+  })
   payg_balance: number;
 
   @Column({ type: 'date', nullable: true })
@@ -82,13 +87,12 @@ export class Device {
   @Column({ type: 'uuid', nullable: true })
   subscription_id: string;
 
-  @ManyToOne(() => Subscription, subscription => subscription.devices, {
+  @ManyToOne(() => Subscription, (subscription) => subscription.devices, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'subscription_id' })
   subscription: Subscription;
-
 
   @Column({ type: 'text', nullable: true })
   notes?: string;

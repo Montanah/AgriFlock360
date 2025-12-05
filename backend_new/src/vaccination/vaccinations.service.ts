@@ -1,11 +1,19 @@
 // vaccinations/vaccinations.service.ts (UPDATED)
-import { Injectable, NotFoundException, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Vaccination } from '../database/entities/Vaccination.entity';
 import { Batch } from '../database/entities/Batch.entity';
 import { VaccineCatalog } from '../database/entities/VaccineCatalog.entity';
-import { CreateVaccinationDto, CompleteVaccinationDto } from './dto/vaccination.dto';
+import {
+  CreateVaccinationDto,
+  CompleteVaccinationDto,
+} from './dto/vaccination.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { VaccineCatalogService } from '../vaccine-catalog/vaccine-catalog.service';
@@ -30,13 +38,12 @@ export class VaccinationsService {
     userId: string,
   ) {
     const batch = await this.batchRepository.findOne({
-      where: { id: batchId }
+      where: { id: batchId },
     });
 
     if (!batch) {
       throw new NotFoundException('Batch not found');
     }
-
 
     if (batch.user_id !== userId) {
       throw new ForbiddenException('Not authorized');
@@ -93,8 +100,10 @@ export class VaccinationsService {
     const vaccination = this.vaccinationRepository.create(vaccinationData);
     await this.vaccinationRepository.save(vaccination);
 
-    this.logger.log(`Vaccination scheduled: ${vaccination.vaccine_name} for batch ${batchId}`);
-    
+    this.logger.log(
+      `Vaccination scheduled: ${vaccination.vaccine_name} for batch ${batchId}`,
+    );
+
     // Schedule reminder notification (3 days before)
     const scheduledDate = new Date(createVaccinationDto.scheduled_date);
     const reminderDate = new Date(scheduledDate);
@@ -113,7 +122,9 @@ export class VaccinationsService {
   }
 
   async findAll(batchId: string, userId: string) {
-    const batch = await this.batchRepository.findOne({ where: { id: batchId } });
+    const batch = await this.batchRepository.findOne({
+      where: { id: batchId },
+    });
 
     if (!batch || batch.user_id !== userId) {
       throw new ForbiddenException('Not authorized');
@@ -125,13 +136,18 @@ export class VaccinationsService {
       order: { scheduled_date: 'ASC' },
     });
 
-    return { 
+    return {
       vaccinations,
       summary: {
         total: vaccinations.length,
-        completed: vaccinations.filter(v => v.vaccination_status === 'completed').length,
-        scheduled: vaccinations.filter(v => v.vaccination_status === 'scheduled').length,
-        missed: vaccinations.filter(v => v.vaccination_status === 'missed').length,
+        completed: vaccinations.filter(
+          (v) => v.vaccination_status === 'completed',
+        ).length,
+        scheduled: vaccinations.filter(
+          (v) => v.vaccination_status === 'scheduled',
+        ).length,
+        missed: vaccinations.filter((v) => v.vaccination_status === 'missed')
+          .length,
       },
     };
   }
@@ -154,8 +170,8 @@ export class VaccinationsService {
   }
 
   async complete(
-    vaccinationId: string, 
-    userId: string, 
+    vaccinationId: string,
+    userId: string,
     completeDto: CompleteVaccinationDto,
   ) {
     const vaccination = await this.vaccinationRepository.findOne({
@@ -179,13 +195,13 @@ export class VaccinationsService {
     vaccination.completed_date = new Date() as any;
     vaccination.administered_by = completeDto.administered_by;
     vaccination.birds_vaccinated = completeDto.birds_vaccinated;
-    
+
     if (completeDto.cost !== undefined) {
       vaccination.cost = completeDto.cost;
     }
-    
+
     if (completeDto.notes) {
-      vaccination.notes = vaccination.notes 
+      vaccination.notes = vaccination.notes
         ? `${vaccination.notes}\n\nCompletion Notes: ${completeDto.notes}`
         : completeDto.notes;
     }
@@ -253,25 +269,29 @@ export class VaccinationsService {
 
     // Calculate batch age in days
     const batchAge = Math.floor(
-      (new Date().getTime() - new Date(batch.hatch_date).getTime()) / (1000 * 60 * 60 * 24)
+      (new Date().getTime() - new Date(batch.hatch_date).getTime()) /
+        (1000 * 60 * 60 * 24),
     );
 
     // Get vaccines appropriate for this age
-    const recommendedVaccines = await this.vaccineCatalogService.getVaccinesByAge(
-      batchAge,
-      batch.bird_type?.name,
-    );
+    const recommendedVaccines =
+      await this.vaccineCatalogService.getVaccinesByAge(
+        batchAge,
+        batch.bird_type?.name,
+      );
 
     // Get already scheduled vaccinations for this batch
     const scheduledVaccinations = await this.vaccinationRepository.find({
       where: { batch_id: batchId },
     });
 
-    const scheduledVaccineIds = scheduledVaccinations.map(v => v.vaccine_catalog_id).filter(Boolean);
+    const scheduledVaccineIds = scheduledVaccinations
+      .map((v) => v.vaccine_catalog_id)
+      .filter(Boolean);
 
     // Filter out already scheduled vaccines
     const unscheduledVaccines = recommendedVaccines.filter(
-      vaccine => !scheduledVaccineIds.includes(vaccine.id)
+      (vaccine) => !scheduledVaccineIds.includes(vaccine.id),
     );
 
     return {
@@ -288,19 +308,25 @@ export class VaccinationsService {
 
     const missedVaccinations = await this.vaccinationRepository
       .createQueryBuilder('vaccination')
-      .where('vaccination.vaccination_status = :status', { status: 'scheduled' })
+      .where('vaccination.vaccination_status = :status', {
+        status: 'scheduled',
+      })
       .andWhere('vaccination.scheduled_date < :today', { today })
       .getMany();
 
     for (const vaccination of missedVaccinations) {
       vaccination.vaccination_status = 'missed';
       await this.vaccinationRepository.save(vaccination);
-      
-      this.logger.warn(`Vaccination marked as missed: ${vaccination.vaccine_name}`);
+
+      this.logger.warn(
+        `Vaccination marked as missed: ${vaccination.vaccine_name}`,
+      );
     }
 
     if (missedVaccinations.length > 0) {
-      this.logger.log(`Updated ${missedVaccinations.length} missed vaccinations`);
+      this.logger.log(
+        `Updated ${missedVaccinations.length} missed vaccinations`,
+      );
     }
   }
 }

@@ -9,10 +9,7 @@ import { Batch } from '../database/entities/Batch.entity';
 import { AuditLog } from '../database/entities/AuditLog.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Farm, AuditLog, Batch]),
-    UploadsModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Farm, AuditLog, Batch]), UploadsModule],
   controllers: [FarmsController],
   providers: [FarmsService, CustomLogger],
   exports: [FarmsService],

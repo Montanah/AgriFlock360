@@ -1,5 +1,9 @@
 // feeding/services/feeding.service.ts (UPDATED)
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { FeedingRecord } from '../database/entities/FeedingRecord.entity';
@@ -169,7 +173,11 @@ export class FeedingService {
     };
   }
 
-  async getFeedingAnalytics(batchId: string, userId: string, period: string = '7days') {
+  async getFeedingAnalytics(
+    batchId: string,
+    userId: string,
+    period: string = '7days',
+  ) {
     const batch = await this.batchRepository.findOne({
       where: { id: batchId },
     });
@@ -205,33 +213,46 @@ export class FeedingService {
     });
 
     // Calculate totals
-    const totalQuantity = records.reduce((sum, r) => sum + parseFloat(r.quantity.toString()), 0);
-    const totalCost = records.reduce((sum, r) => sum + parseFloat((r.cost || 0).toString()), 0);
-    const averagePerDay = records.length > 0 ? totalQuantity / records.length : 0;
+    const totalQuantity = records.reduce(
+      (sum, r) => sum + parseFloat(r.quantity.toString()),
+      0,
+    );
+    const totalCost = records.reduce(
+      (sum, r) => sum + parseFloat((r.cost || 0).toString()),
+      0,
+    );
+    const averagePerDay =
+      records.length > 0 ? totalQuantity / records.length : 0;
 
     // Feed type breakdown
-    const byFeedType = records.reduce((acc, record) => {
-      const type = record.feed_type;
-      if (!acc[type]) {
-        acc[type] = { quantity: 0, cost: 0, count: 0 };
-      }
-      acc[type].quantity += parseFloat(record.quantity.toString());
-      acc[type].cost += parseFloat((record.cost || 0).toString());
-      acc[type].count += 1;
-      return acc;
-    }, {} as Record<string, { quantity: number; cost: number; count: number }>);
+    const byFeedType = records.reduce(
+      (acc, record) => {
+        const type = record.feed_type;
+        if (!acc[type]) {
+          acc[type] = { quantity: 0, cost: 0, count: 0 };
+        }
+        acc[type].quantity += parseFloat(record.quantity.toString());
+        acc[type].cost += parseFloat((record.cost || 0).toString());
+        acc[type].count += 1;
+        return acc;
+      },
+      {} as Record<string, { quantity: number; cost: number; count: number }>,
+    );
 
     // Daily breakdown
-    const dailyBreakdown = records.reduce((acc, record) => {
-      const date = new Date(record.fed_at).toISOString().split('T')[0];
-      if (!acc[date]) {
-        acc[date] = { quantity: 0, cost: 0, records: 0 };
-      }
-      acc[date].quantity += parseFloat(record.quantity.toString());
-      acc[date].cost += parseFloat((record.cost || 0).toString());
-      acc[date].records += 1;
-      return acc;
-    }, {} as Record<string, { quantity: number; cost: number; records: number }>);
+    const dailyBreakdown = records.reduce(
+      (acc, record) => {
+        const date = new Date(record.fed_at).toISOString().split('T')[0];
+        if (!acc[date]) {
+          acc[date] = { quantity: 0, cost: 0, records: 0 };
+        }
+        acc[date].quantity += parseFloat(record.quantity.toString());
+        acc[date].cost += parseFloat((record.cost || 0).toString());
+        acc[date].records += 1;
+        return acc;
+      },
+      {} as Record<string, { quantity: number; cost: number; records: number }>,
+    );
 
     return {
       period,
@@ -244,9 +265,14 @@ export class FeedingService {
         total_cost: parseFloat(totalCost.toFixed(2)),
         total_records: records.length,
         average_per_day_kg: parseFloat(averagePerDay.toFixed(2)),
-        average_per_bird_per_day_kg: batch.current_count > 0 
-          ? parseFloat((totalQuantity / records.length / batch.current_count).toFixed(3))
-          : 0,
+        average_per_bird_per_day_kg:
+          batch.current_count > 0
+            ? parseFloat(
+                (totalQuantity / records.length / batch.current_count).toFixed(
+                  3,
+                ),
+              )
+            : 0,
       },
       by_feed_type: byFeedType,
       daily_breakdown: dailyBreakdown,

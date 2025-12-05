@@ -51,9 +51,21 @@ import { UsersModule } from '../users/users.module';
       },
     }),
   ],
-  controllers: [DevicesController, TelemetryController, AlertsController, FirmwareController, OtaController,],
-  providers: [DevicesService, CustomLogger, AuditService,  FirmwareService, PermissionsGuard, OtaService,],
+  controllers: [
+    DevicesController,
+    TelemetryController,
+    AlertsController,
+    FirmwareController,
+    OtaController,
+  ],
+  providers: [
+    DevicesService,
+    CustomLogger,
+    AuditService,
+    FirmwareService,
+    PermissionsGuard,
+    OtaService,
+  ],
   exports: [DevicesService, FirmwareService, OtaService],
-  
 })
 export class DevicesModule {}

@@ -1,4 +1,10 @@
-import { IsString, IsUUID, IsOptional, MaxLength, IsEnum } from 'class-validator';
+import {
+  IsString,
+  IsUUID,
+  IsOptional,
+  MaxLength,
+  IsEnum,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum DeviceType {

@@ -1,5 +1,11 @@
 // uploads/dto/upload-file.dto.ts
-import { IsString, IsOptional, IsBoolean, IsEnum, IsUUID } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsEnum,
+  IsUUID,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export enum FileCategory {

@@ -1,6 +1,11 @@
-
 // migrations/XXXXXX-update-feeding-schedule.ts
-import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey, TableIndex } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  TableColumn,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
 export class UpdateFeedingSchedule1736480009012 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -51,7 +56,7 @@ export class UpdateFeedingSchedule1736480009012 implements MigrationInterface {
     const table = await queryRunner.getTable('feeding_schedules');
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('recommendation_id') !== -1,
+        (fk) => fk.columnNames.indexOf('recommendation_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('feeding_schedules', foreignKey);

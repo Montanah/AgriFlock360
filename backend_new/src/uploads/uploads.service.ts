@@ -1,4 +1,3 @@
-
 // uploads/uploads.service.ts
 import {
   Injectable,
@@ -24,7 +23,12 @@ import * as multer from 'multer';
 @Injectable()
 export class UploadsService {
   private s3: AWS.S3;
-  private readonly allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  private readonly allowedImageTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+  ];
   private readonly allowedDocTypes = [
     'application/pdf',
     'application/msword',
@@ -78,7 +82,10 @@ export class UploadsService {
     let variants: any = {};
 
     // Process images (resize, create variants)
-    if (fileType === 'image' && this.allowedImageTypes.includes(file.mimetype)) {
+    if (
+      fileType === 'image' &&
+      this.allowedImageTypes.includes(file.mimetype)
+    ) {
       const imageProcessing = await this.processImage(file.buffer, s3Key);
       metadata = imageProcessing.metadata;
       variants = imageProcessing.variants;
@@ -146,7 +153,9 @@ export class UploadsService {
         const upload = await this.uploadFile(file, userId, uploadDto);
         uploads.push(upload);
       } catch (error) {
-        this.logger.error(`Failed to upload ${file.originalname}: ${error.message}`);
+        this.logger.error(
+          `Failed to upload ${file.originalname}: ${error.message}`,
+        );
       }
     }
 
@@ -154,7 +163,7 @@ export class UploadsService {
   }
 
   async getUploads(userId: string, query: QueryUploadsDto) {
-    const { category, entity_type, file_type, page = 1, limit = 5} = query;
+    const { category, entity_type, file_type, page = 1, limit = 5 } = query;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.uploadRepository
@@ -169,7 +178,9 @@ export class UploadsService {
     }
 
     if (entity_type) {
-      queryBuilder.andWhere('upload.entity_type = :entity_type', { entity_type });
+      queryBuilder.andWhere('upload.entity_type = :entity_type', {
+        entity_type,
+      });
     }
 
     if (file_type) {
@@ -232,7 +243,7 @@ export class UploadsService {
     // Delete variants if exist
     if (upload.metadata?.variants) {
       for (const variantUrl of Object.values(upload.metadata.variants)) {
-        const variantKey = this.extractS3Key(variantUrl as string);
+        const variantKey = this.extractS3Key(variantUrl);
         await this.s3
           .deleteObject({
             Bucket: this.configService.get('AWS_S3_BUCKET')!,
@@ -269,7 +280,8 @@ export class UploadsService {
 
   private validateFile(file: Express.Multer.File, category?: string): void {
     // Check file size
-    const maxSize = category === 'firmware' ? 50 * 1024 * 1024 : this.maxFileSize;
+    const maxSize =
+      category === 'firmware' ? 50 * 1024 * 1024 : this.maxFileSize;
     if (file.size > maxSize) {
       throw new BadRequestException(
         `File size exceeds maximum allowed size of ${maxSize / 1024 / 1024}MB`,
@@ -279,7 +291,9 @@ export class UploadsService {
     // Validate mime type based on category
     if (category === 'avatar' || category === 'image') {
       if (!this.allowedImageTypes.includes(file.mimetype)) {
-        throw new BadRequestException('Invalid image format. Allowed: JPEG, PNG, GIF, WebP');
+        throw new BadRequestException(
+          'Invalid image format. Allowed: JPEG, PNG, GIF, WebP',
+        );
       }
     }
 
@@ -291,7 +305,9 @@ export class UploadsService {
 
     if (category === 'video') {
       if (!this.allowedVideoTypes.includes(file.mimetype)) {
-        throw new BadRequestException('Invalid video format. Allowed: MP4, WebM, OGG');
+        throw new BadRequestException(
+          'Invalid video format. Allowed: MP4, WebM, OGG',
+        );
       }
     }
   }
@@ -300,12 +316,17 @@ export class UploadsService {
     if (mimeType.startsWith('image/')) return 'image';
     if (mimeType.startsWith('video/')) return 'video';
     if (mimeType.startsWith('audio/')) return 'audio';
-    if (mimeType.includes('pdf') || mimeType.includes('document')) return 'document';
+    if (mimeType.includes('pdf') || mimeType.includes('document'))
+      return 'document';
     if (mimeType === 'application/octet-stream') return 'firmware';
     return 'other';
   }
 
-  private getS3Key(category: string | undefined, fileType: string, filename: string): string {
+  private getS3Key(
+    category: string | undefined,
+    fileType: string,
+    filename: string,
+  ): string {
     const date = new Date();
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -324,19 +345,25 @@ export class UploadsService {
 
     // Create small variant (150x150)
     const smallKey = originalKey.replace(/(\.[^.]+)$/, '-small$1');
-    const smallBuffer = await image.resize(150, 150, { fit: 'cover' }).toBuffer();
+    const smallBuffer = await image
+      .resize(150, 150, { fit: 'cover' })
+      .toBuffer();
     await this.uploadToS3(smallKey, smallBuffer, 'image/jpeg');
     variants.small = this.getS3Url(smallKey);
 
     // Create medium variant (400x400)
     const mediumKey = originalKey.replace(/(\.[^.]+)$/, '-medium$1');
-    const mediumBuffer = await image.resize(400, 400, { fit: 'cover' }).toBuffer();
+    const mediumBuffer = await image
+      .resize(400, 400, { fit: 'cover' })
+      .toBuffer();
     await this.uploadToS3(mediumKey, mediumBuffer, 'image/jpeg');
     variants.medium = this.getS3Url(mediumKey);
 
     // Create large variant (800x800)
     const largeKey = originalKey.replace(/(\.[^.]+)$/, '-large$1');
-    const largeBuffer = await image.resize(800, 800, { fit: 'inside' }).toBuffer();
+    const largeBuffer = await image
+      .resize(800, 800, { fit: 'inside' })
+      .toBuffer();
     await this.uploadToS3(largeKey, largeBuffer, 'image/jpeg');
     variants.large = this.getS3Url(largeKey);
 
@@ -350,7 +377,11 @@ export class UploadsService {
     };
   }
 
-  private async uploadToS3(key: string, buffer: Buffer, contentType: string): Promise<void> {
+  private async uploadToS3(
+    key: string,
+    buffer: Buffer,
+    contentType: string,
+  ): Promise<void> {
     await this.s3
       .upload({
         Bucket: this.configService.get('AWS_S3_BUCKET')!,

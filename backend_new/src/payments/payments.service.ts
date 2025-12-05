@@ -175,7 +175,7 @@ export class PaymentsService {
   }
 
   async findAll(userId: string, query: QueryPaymentsDto) {
-    const { status, device_id, page=1, limit = 20 } = query;
+    const { status, device_id, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.paymentRepository

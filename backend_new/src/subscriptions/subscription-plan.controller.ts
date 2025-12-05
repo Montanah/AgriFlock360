@@ -12,68 +12,112 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { SubscriptionPlanService } from './subscription-plan.service';
-import { CreateSubscriptionPlanDto, UpdateSubscriptionPlanDto } from './dto/subscriptions.dto';
+import {
+  CreateSubscriptionPlanDto,
+  UpdateSubscriptionPlanDto,
+} from './dto/subscriptions.dto';
 import { SubscriptionPlan } from '../database/entities/SubscriptionPlan.entity';
 
 @ApiTags('Subscription Plans')
 @Controller('subscription-plans')
 export class SubscriptionPlanController {
-  constructor(private readonly subscriptionPlanService: SubscriptionPlanService) {}
+  constructor(
+    private readonly subscriptionPlanService: SubscriptionPlanService,
+  ) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new subscription plan' })
-  @ApiResponse({ status: 201, description: 'Plan created successfully', type: SubscriptionPlan })
-  async create(@Body() createDto: CreateSubscriptionPlanDto): Promise<SubscriptionPlan> {
+  @ApiResponse({
+    status: 201,
+    description: 'Plan created successfully',
+    type: SubscriptionPlan,
+  })
+  async create(
+    @Body() createDto: CreateSubscriptionPlanDto,
+  ): Promise<SubscriptionPlan> {
     return await this.subscriptionPlanService.create(createDto);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get all subscription plans' })
   @ApiQuery({ name: 'includeInactive', required: false, type: Boolean })
-  @ApiResponse({ status: 200, description: 'Plans retrieved successfully', type: [SubscriptionPlan] })
-  async findAll(@Query('includeInactive') includeInactive: boolean = false): Promise<SubscriptionPlan[]> {
+  @ApiResponse({
+    status: 200,
+    description: 'Plans retrieved successfully',
+    type: [SubscriptionPlan],
+  })
+  async findAll(
+    @Query('includeInactive') includeInactive: boolean = false,
+  ): Promise<SubscriptionPlan[]> {
     return await this.subscriptionPlanService.findAll(includeInactive);
   }
 
   @Get('public')
   @ApiOperation({ summary: 'Get public subscription plans' })
-  @ApiResponse({ status: 200, description: 'Public plans retrieved successfully', type: [SubscriptionPlan] })
+  @ApiResponse({
+    status: 200,
+    description: 'Public plans retrieved successfully',
+    type: [SubscriptionPlan],
+  })
   async findPublic(): Promise<SubscriptionPlan[]> {
     return await this.subscriptionPlanService.findPublic();
   }
 
   @Get('recommended')
   @ApiOperation({ summary: 'Get recommended subscription plans' })
-  @ApiResponse({ status: 200, description: 'Recommended plans retrieved successfully', type: [SubscriptionPlan] })
+  @ApiResponse({
+    status: 200,
+    description: 'Recommended plans retrieved successfully',
+    type: [SubscriptionPlan],
+  })
   async getRecommended(): Promise<SubscriptionPlan[]> {
     return await this.subscriptionPlanService.getRecommendedPlans();
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get a subscription plan by ID' })
-  @ApiResponse({ status: 200, description: 'Plan retrieved successfully', type: SubscriptionPlan })
+  @ApiResponse({
+    status: 200,
+    description: 'Plan retrieved successfully',
+    type: SubscriptionPlan,
+  })
   async findOne(@Param('id') id: string): Promise<SubscriptionPlan> {
     return await this.subscriptionPlanService.findOne(id);
   }
 
   @Get('type/:type')
   @ApiOperation({ summary: 'Get subscription plans by type' })
-  @ApiResponse({ status: 200, description: 'Plans retrieved successfully', type: [SubscriptionPlan] })
+  @ApiResponse({
+    status: 200,
+    description: 'Plans retrieved successfully',
+    type: [SubscriptionPlan],
+  })
   async findByType(@Param('type') type: string): Promise<SubscriptionPlan[]> {
     return await this.subscriptionPlanService.findByType(type);
   }
 
   @Put(':id')
   @ApiOperation({ summary: 'Update a subscription plan' })
-  @ApiResponse({ status: 200, description: 'Plan updated successfully', type: SubscriptionPlan })
-  async update(@Param('id') id: string, @Body() updateDto: UpdateSubscriptionPlanDto): Promise<SubscriptionPlan> {
+  @ApiResponse({
+    status: 200,
+    description: 'Plan updated successfully',
+    type: SubscriptionPlan,
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateSubscriptionPlanDto,
+  ): Promise<SubscriptionPlan> {
     return await this.subscriptionPlanService.update(id, updateDto);
   }
 
   @Put(':id/activate')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Activate a subscription plan' })
-  @ApiResponse({ status: 200, description: 'Plan activated successfully', type: SubscriptionPlan })
+  @ApiResponse({
+    status: 200,
+    description: 'Plan activated successfully',
+    type: SubscriptionPlan,
+  })
   async activate(@Param('id') id: string): Promise<SubscriptionPlan> {
     return await this.subscriptionPlanService.activate(id);
   }
@@ -81,7 +125,11 @@ export class SubscriptionPlanController {
   @Put(':id/deactivate')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Deactivate a subscription plan' })
-  @ApiResponse({ status: 200, description: 'Plan deactivated successfully', type: SubscriptionPlan })
+  @ApiResponse({
+    status: 200,
+    description: 'Plan deactivated successfully',
+    type: SubscriptionPlan,
+  })
   async deactivate(@Param('id') id: string): Promise<SubscriptionPlan> {
     return await this.subscriptionPlanService.deactivate(id);
   }

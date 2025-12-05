@@ -30,7 +30,9 @@ export class CreateFirmwareDto {
   @IsString()
   description: string;
 
-  @ApiProperty({ example: '- Fixed temperature sensor bug\n- Improved WiFi stability' })
+  @ApiProperty({
+    example: '- Fixed temperature sensor bug\n- Improved WiFi stability',
+  })
   @IsString()
   changelog: string;
 

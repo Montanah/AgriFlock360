@@ -8,7 +8,10 @@ import { Alert, AlertSeverity } from '../database/entities/Alert.entity';
 import { CustomLogger } from '../common/custom-logger.service';
 import { MqttTelemetryData } from '../mqtt/mqtt.service';
 import { NotificationsService } from '../notifications/notifications.service';
-import { RedisCacheService, TelemetryCache } from '../common/redis/redis-cache.service';
+import {
+  RedisCacheService,
+  TelemetryCache,
+} from '../common/redis/redis-cache.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
 
 export interface TelemetryData {
@@ -33,12 +36,14 @@ export class TelemetryService {
     private logger: CustomLogger,
     private notificationsService: NotificationsService,
     private redisCache: RedisCacheService,
-
   ) {}
 
   async recordTelemetry(deviceId: string, data: TelemetryData) {
     // Cache in Redis
-    await this.redisCache.cacheLatestTelemetry(deviceId, { ...data, timestamp: new Date() } as TelemetryCache);
+    await this.redisCache.cacheLatestTelemetry(deviceId, {
+      ...data,
+      timestamp: new Date(),
+    } as TelemetryCache);
 
     // update device heartbeat
     await this.redisCache.setDeviceOnline(deviceId);
@@ -81,8 +86,8 @@ export class TelemetryService {
 
   async getLatestTelemetry(deviceId: string) {
     // Try Redis cache first
-    let telemetry = await this.redisCache.getLatestTelemetry(deviceId);
-    
+    const telemetry = await this.redisCache.getLatestTelemetry(deviceId);
+
     if (telemetry) {
       return telemetry;
     }
@@ -103,7 +108,7 @@ export class TelemetryService {
       return dbTelemetry;
     }
 
-    return null
+    return null;
   }
 
   async getTelemetryHistory(
@@ -158,7 +163,14 @@ export class TelemetryService {
   }
 
   private async checkAlertConditions(device: Device, data: TelemetryData) {
-    const alerts: Array<{ device_id: string; user_id?: string; severity: AlertSeverity; alert_type: string; message: string; meta?: any }> = [];
+    const alerts: Array<{
+      device_id: string;
+      user_id?: string;
+      severity: AlertSeverity;
+      alert_type: string;
+      message: string;
+      meta?: any;
+    }> = [];
 
     // High temperature alert
     if (data.temperature && data.temperature > 35) {
@@ -279,8 +291,8 @@ export class TelemetryService {
         rssi: data.rssi,
         battery: data.battery,
         status: data.status,
-        received_via: 'mqtt'
-      }
+        received_via: 'mqtt',
+      },
     });
 
     await this.telemetryRepository.save(telemetry);
@@ -297,7 +309,7 @@ export class TelemetryService {
       fan_status: data.fan_status,
       power_status: data.power_status,
       error_code: data.error_code,
-      meta: data.meta
+      meta: data.meta,
     });
 
     return telemetry;
@@ -309,7 +321,8 @@ export class TelemetryService {
     this.logger.log('Flushing telemetry buffers to database');
 
     // Get all buffer keys
-    const bufferKeys = await this.redisCache['redis'].keys('telemetry:buffer:*');
+    const bufferKeys =
+      await this.redisCache['redis'].keys('telemetry:buffer:*');
 
     for (const key of bufferKeys) {
       const deviceId = key.split(':')[2];
@@ -320,13 +333,18 @@ export class TelemetryService {
       try {
         // Batch insert to database
         await this.telemetryRepository.insert(buffer);
-        
+
         // Clear buffer
         await this.redisCache.clearTelemetryBuffer(deviceId);
-        
-        this.logger.log(`Flushed ${buffer.length} telemetry records for device ${deviceId}`);
+
+        this.logger.log(
+          `Flushed ${buffer.length} telemetry records for device ${deviceId}`,
+        );
       } catch (error) {
-        this.logger.error(`Failed to flush telemetry for device ${deviceId}`, error.stack);
+        this.logger.error(
+          `Failed to flush telemetry for device ${deviceId}`,
+          error.stack,
+        );
       }
     }
   }
@@ -340,5 +358,4 @@ export class TelemetryService {
       this.logger.error(`Failed to update device last_seen: ${error.message}`);
     }
   }
-
 }

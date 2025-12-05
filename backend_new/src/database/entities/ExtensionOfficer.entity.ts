@@ -108,7 +108,7 @@ export class ExtensionOfficer {
     employee_id?: string;
   };
 
-  @OneToMany(() => FieldAppraisal, appraisal => appraisal.officer)
+  @OneToMany(() => FieldAppraisal, (appraisal) => appraisal.officer)
   appraisals: FieldAppraisal[];
 
   @CreateDateColumn({ type: 'timestamptz' })

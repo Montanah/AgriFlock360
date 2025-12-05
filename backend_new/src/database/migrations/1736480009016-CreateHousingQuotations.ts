@@ -1,7 +1,15 @@
 // migrations/XXXXXX-create-housing-quotations.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateHousingQuotations1736480009016 implements MigrationInterface {
+export class CreateHousingQuotations1736480009016
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -116,16 +124,25 @@ export class CreateHousingQuotations1736480009016 implements MigrationInterface 
     const table = await queryRunner.getTable('housing_quotations');
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('user_id') !== -1,
+        (fk) => fk.columnNames.indexOf('user_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('housing_quotations', foreignKey);
       }
     }
 
-    await queryRunner.dropIndex('housing_quotations', 'idx_housing_quotations_date');
-    await queryRunner.dropIndex('housing_quotations', 'idx_housing_quotations_capacity');
-    await queryRunner.dropIndex('housing_quotations', 'idx_housing_quotations_user');
+    await queryRunner.dropIndex(
+      'housing_quotations',
+      'idx_housing_quotations_date',
+    );
+    await queryRunner.dropIndex(
+      'housing_quotations',
+      'idx_housing_quotations_capacity',
+    );
+    await queryRunner.dropIndex(
+      'housing_quotations',
+      'idx_housing_quotations_user',
+    );
     await queryRunner.dropTable('housing_quotations');
   }
 }

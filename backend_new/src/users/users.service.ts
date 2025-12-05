@@ -11,8 +11,19 @@ import { Repository } from 'typeorm';
 import { User } from '../database/entities/User.entity';
 import { UserPreferences } from '../database/entities/UserPreferences.entity';
 import { DeviceToken } from '../database/entities/DeviceToken.entity';
-import { UpdateProfileDto, UpdateEmailDto, ChangePasswordDto, Enable2FADto, Verify2FADto, Disable2FADto,
-    NotificationPreferencesDto, PrivacySettingsDto, RegisterDeviceTokenDto, DeactivateAccountDto, DeleteAccountDto  } from './dto/users.dto';
+import {
+  UpdateProfileDto,
+  UpdateEmailDto,
+  ChangePasswordDto,
+  Enable2FADto,
+  Verify2FADto,
+  Disable2FADto,
+  NotificationPreferencesDto,
+  PrivacySettingsDto,
+  RegisterDeviceTokenDto,
+  DeactivateAccountDto,
+  DeleteAccountDto,
+} from './dto/users.dto';
 import { UploadsService } from '../uploads/uploads.service';
 import { FileCategory } from '../uploads/dto/upload-file.dto';
 import { CustomLogger } from '../common/custom-logger.service';
@@ -23,7 +34,6 @@ import * as crypto from 'crypto';
 import { EmailService } from '../services/email.service';
 import { AuditService } from '../services/audit.service';
 import { Profile } from '../database/entities/Profile.entity';
-
 
 @Injectable()
 export class UsersService {
@@ -39,7 +49,7 @@ export class UsersService {
     private uploadsService: UploadsService,
     private logger: CustomLogger,
     private emailService: EmailService,
-    private auditService: AuditService
+    private auditService: AuditService,
   ) {}
 
   // ============= PROFILE MANAGEMENT =============
@@ -77,7 +87,7 @@ export class UsersService {
 
   // async updateProfile(userId: string, updateDto: UpdateProfileDto): Promise<User> {
   //   const user = await this.userRepository.findOne({ where: { id: userId } });
-    
+
   //   if (!user) {
   //     throw new NotFoundException('User not found');
   //   }
@@ -92,7 +102,7 @@ export class UsersService {
   //       throw new ConflictException('Phone number already in use');
   //     }
   //   }
-    
+
   //   // Calculate age from date of birth
   //   if (updateDto.date_of_birth) {
   //     const age = this.calculateAge(new Date(updateDto.date_of_birth));
@@ -103,8 +113,8 @@ export class UsersService {
 
   //   await this.userRepository.save(user);
 
-  //   const profile = await this.profileRepository.findOne({ 
-  //     where: { user_id: userId } 
+  //   const profile = await this.profileRepository.findOne({
+  //     where: { user_id: userId }
   //   });
 
   //   if (!profile) {
@@ -133,57 +143,67 @@ export class UsersService {
   //   Object.assign(profile, updateDto);
   //   await this.profileRepository.save(profile);
 
-
   //   this.logger.log(`Profile updated for user ${userId}`);
 
   //   return user;
   // }
 
-  async updateProfile(userId: string, updateDto: UpdateProfileDto): Promise<User> {
-  const user = await this.userRepository.findOne({ where: { id: userId } });
-  if (!user) throw new NotFoundException('User not found');
+  async updateProfile(
+    userId: string,
+    updateDto: UpdateProfileDto,
+  ): Promise<User> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
 
-  const profile = await this.profileRepository.findOne({ where: { user_id: userId } });
-  if (!profile) throw new NotFoundException('Profile not found');
-
-  // --- Handle USER fields (name & phone only) ---
-  if (updateDto.phone_number && updateDto.phone_number !== user.phone_number) {
-    const existingUser = await this.userRepository.findOne({
-      where: { phone_number: updateDto.phone_number },
+    const profile = await this.profileRepository.findOne({
+      where: { user_id: userId },
     });
-    if (existingUser) throw new ConflictException('Phone number already in use');
-    user.phone_number = updateDto.phone_number;
-  }
+    if (!profile) throw new NotFoundException('Profile not found');
 
-  if (updateDto.full_name) {
-    user.name = updateDto.full_name;
-  }
+    // --- Handle USER fields (name & phone only) ---
+    if (
+      updateDto.phone_number &&
+      updateDto.phone_number !== user.phone_number
+    ) {
+      const existingUser = await this.userRepository.findOne({
+        where: { phone_number: updateDto.phone_number },
+      });
+      if (existingUser)
+        throw new ConflictException('Phone number already in use');
+      user.phone_number = updateDto.phone_number;
+    }
 
-  await this.userRepository.save(user);
+    if (updateDto.full_name) {
+      user.name = updateDto.full_name;
+    }
 
-  // --- Handle PROFILE fields ---
-  const profileUpdateData = { ...updateDto };
+    await this.userRepository.save(user);
 
-  // Prevent phone_number & name from being saved into profile
-  // delete profileUpdateData.phone_number;
-  // delete profileUpdateData.name;
+    // --- Handle PROFILE fields ---
+    const profileUpdateData = { ...updateDto };
 
-  // Calculate age if DOB updated
-  if (profileUpdateData.date_of_birth) {
-    const age = this.calculateAge(new Date(profileUpdateData.date_of_birth));
+    // Prevent phone_number & name from being saved into profile
+    // delete profileUpdateData.phone_number;
+    // delete profileUpdateData.name;
+
+    // Calculate age if DOB updated
+    if (profileUpdateData.date_of_birth) {
+      const age = this.calculateAge(new Date(profileUpdateData.date_of_birth));
       Object.assign(profile, { ...updateDto, age: age.toString() });
-    // profileUpdateData.age = this.calculateAge(new Date(profileUpdateData.date_of_birth)).toString();
+      // profileUpdateData.age = this.calculateAge(new Date(profileUpdateData.date_of_birth)).toString();
+    }
+
+    Object.assign(profile, profileUpdateData);
+    await this.profileRepository.save(profile);
+
+    this.logger.log(`Profile updated for user ${userId}`);
+    return user;
   }
 
-  Object.assign(profile, profileUpdateData);
-  await this.profileRepository.save(profile);
-
-  this.logger.log(`Profile updated for user ${userId}`);
-  return user;
-}
-
-
-  async updateAvatar(userId: string, file: any): Promise<{ avatar_url: string }> {
+  async updateAvatar(
+    userId: string,
+    file: any,
+  ): Promise<{ avatar_url: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -202,7 +222,10 @@ export class UsersService {
     user.avatar = upload.file_url;
     await this.userRepository.save(user);
 
-    await this.profileRepository.update({ user_id: userId }, { avatar: upload.file_url });
+    await this.profileRepository.update(
+      { user_id: userId },
+      { avatar: upload.file_url },
+    );
 
     this.logger.log(`Avatar updated for user ${userId}`);
 
@@ -241,7 +264,10 @@ export class UsersService {
 
   // ============= EMAIL MANAGEMENT =============
 
-  async updateEmail(userId: string, updateEmailDto: UpdateEmailDto): Promise<void> {
+  async updateEmail(
+    userId: string,
+    updateEmailDto: UpdateEmailDto,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -278,12 +304,18 @@ export class UsersService {
     await this.userRepository.save(user);
 
     // Send verification email to new email address
-    await this.emailService.sendVerificationEmail(updateEmailDto.new_email, verificationCode);
+    await this.emailService.sendVerificationEmail(
+      updateEmailDto.new_email,
+      verificationCode,
+    );
 
     this.logger.log(`Email change requested for user ${userId}`);
   }
 
-  async verifyEmailChange(userId: string, verificationCode: string): Promise<void> {
+  async verifyEmailChange(
+    userId: string,
+    verificationCode: string,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -315,7 +347,10 @@ export class UsersService {
 
   // ============= PASSWORD MANAGEMENT =============
 
-  async changePassword(userId: string, changePasswordDto: ChangePasswordDto): Promise<void> {
+  async changePassword(
+    userId: string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -324,7 +359,9 @@ export class UsersService {
 
     // OAuth users cannot change password
     if (user.oauth_provider && user.oauth_provider !== 'email') {
-      throw new BadRequestException('Cannot change password for OAuth accounts');
+      throw new BadRequestException(
+        'Cannot change password for OAuth accounts',
+      );
     }
 
     // Verify current password
@@ -349,12 +386,17 @@ export class UsersService {
     );
 
     if (isSamePassword) {
-      throw new BadRequestException('New password must be different from current password');
+      throw new BadRequestException(
+        'New password must be different from current password',
+      );
     }
 
     // Hash new password
     const salt = await bcrypt.genSalt(10);
-    user.password_hash = await bcrypt.hash(changePasswordDto.new_password, salt);
+    user.password_hash = await bcrypt.hash(
+      changePasswordDto.new_password,
+      salt,
+    );
 
     // Invalidate all refresh tokens
     user.refresh_token = undefined;
@@ -370,7 +412,10 @@ export class UsersService {
 
   // ============= TWO-FACTOR AUTHENTICATION =============
 
-  async enable2FA(userId: string, enable2FADto: Enable2FADto): Promise<{ secret: string; qrCode: string }> {
+  async enable2FA(
+    userId: string,
+    enable2FADto: Enable2FADto,
+  ): Promise<{ secret: string; qrCode: string }> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -378,7 +423,10 @@ export class UsersService {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(enable2FADto.password, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(
+      enable2FADto.password,
+      user.password_hash,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
@@ -442,7 +490,10 @@ export class UsersService {
     this.logger.log(`2FA enabled for user ${userId}`);
   }
 
-  async disable2FA(userId: string, disable2FADto: Disable2FADto): Promise<void> {
+  async disable2FA(
+    userId: string,
+    disable2FADto: Disable2FADto,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -454,7 +505,10 @@ export class UsersService {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(disable2FADto.password, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(
+      disable2FADto.password,
+      user.password_hash,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
@@ -483,7 +537,7 @@ export class UsersService {
     // Disable 2FA
     user.is_2fa_enabled = false;
     preferences.two_factor_secret = undefined;
-    
+
     await this.userRepository.save(user);
     await this.preferencesRepository.save(preferences);
 
@@ -555,7 +609,10 @@ export class UsersService {
 
   // ============= DEVICE TOKEN MANAGEMENT =============
 
-  async registerDeviceToken(userId: string, tokenDto: RegisterDeviceTokenDto): Promise<void> {
+  async registerDeviceToken(
+    userId: string,
+    tokenDto: RegisterDeviceTokenDto,
+  ): Promise<void> {
     // Check if token already exists
     const existingToken = await this.deviceTokenRepository.findOne({
       where: {
@@ -602,7 +659,10 @@ export class UsersService {
 
   // ============= ACCOUNT MANAGEMENT =============
 
-  async deactivateAccount(userId: string, deactivateDto: DeactivateAccountDto): Promise<void> {
+  async deactivateAccount(
+    userId: string,
+    deactivateDto: DeactivateAccountDto,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -610,7 +670,10 @@ export class UsersService {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(deactivateDto.password, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(
+      deactivateDto.password,
+      user.password_hash,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
@@ -625,7 +688,9 @@ export class UsersService {
     // Send deactivation email
     await this.emailService.sendAccountDeactivationEmail(user.email);
 
-    this.logger.log(`Account deactivated for user ${userId}. Reason: ${deactivateDto.reason}`);
+    this.logger.log(
+      `Account deactivated for user ${userId}. Reason: ${deactivateDto.reason}`,
+    );
   }
 
   async reactivateAccount(userId: string): Promise<void> {
@@ -643,7 +708,10 @@ export class UsersService {
     this.logger.log(`Account reactivated for user ${userId}`);
   }
 
-  async deleteAccount(userId: string, deleteDto: DeleteAccountDto): Promise<void> {
+  async deleteAccount(
+    userId: string,
+    deleteDto: DeleteAccountDto,
+  ): Promise<void> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {
@@ -651,7 +719,10 @@ export class UsersService {
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(deleteDto.password, user.password_hash);
+    const isPasswordValid = await bcrypt.compare(
+      deleteDto.password,
+      user.password_hash,
+    );
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid password');
@@ -666,26 +737,32 @@ export class UsersService {
     // TODO: Delete user data, uploads, etc.
     // TODO: Send deletion confirmation email
 
-    this.logger.log(`Account deleted for user ${userId}. Reason: ${deleteDto.reason}`);
+    this.logger.log(
+      `Account deleted for user ${userId}. Reason: ${deleteDto.reason}`,
+    );
   }
 
   async getLoginHistory(userId: string, page = 1, limit = 20): Promise<any> {
-    const { logs, total } = await this.auditService.getLoginHistory(userId, page, limit);
+    const { logs, total } = await this.auditService.getLoginHistory(
+      userId,
+      page,
+      limit,
+    );
 
     return {
-    success: true,
-    data: logs.map(log => ({
-      id: log.id,
-      success: log.meta?.success ?? true,
-      ip: log.ip_address,
-      location: log.meta?.location,
-      device: log.meta?.device || this.detectDevice(log.user_agent),
-      method: log.meta?.method || 'unknown',
-      timestamp: log.created_at,
-    })),
-    pagination: { page, limit, total, pages: Math.ceil(total / limit) },
-  };
-}
+      success: true,
+      data: logs.map((log) => ({
+        id: log.id,
+        success: log.meta?.success ?? true,
+        ip: log.ip_address,
+        location: log.meta?.location,
+        device: log.meta?.device || this.detectDevice(log.user_agent),
+        method: log.meta?.method || 'unknown',
+        timestamp: log.created_at,
+      })),
+      pagination: { page, limit, total, pages: Math.ceil(total / limit) },
+    };
+  }
 
   async getUserWithRoleAndPermissions(userId: string): Promise<User | null> {
     return this.userRepository.findOne({
@@ -696,7 +773,9 @@ export class UsersService {
 
   // ============= HELPER METHODS =============
 
-  private async getOrCreatePreferences(userId: string): Promise<UserPreferences> {
+  private async getOrCreatePreferences(
+    userId: string,
+  ): Promise<UserPreferences> {
     let preferences = await this.preferencesRepository.findOne({
       where: { user_id: userId },
     });
@@ -739,7 +818,10 @@ export class UsersService {
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
 
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
       age--;
     }
 
@@ -748,9 +830,9 @@ export class UsersService {
 
   private detectDevice(userAgent?: string): string {
     if (!userAgent) return 'unknown';
-      const ua = userAgent.toLowerCase();
+    const ua = userAgent.toLowerCase();
     if (/mobile|android|iphone|ipad/.test(ua)) return 'mobile';
     if (/tablet|ipad/.test(ua)) return 'tablet';
-      return 'desktop';
+    return 'desktop';
   }
 }

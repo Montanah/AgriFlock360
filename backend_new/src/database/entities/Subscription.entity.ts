@@ -1,4 +1,3 @@
-
 // database/entities/Subscription.entity.ts
 import {
   Entity,
@@ -36,7 +35,7 @@ export class Subscription {
   @Column({ type: 'uuid' })
   plan_id: string;
 
-  @ManyToOne(() => SubscriptionPlan, plan => plan.subscriptions)
+  @ManyToOne(() => SubscriptionPlan, (plan) => plan.subscriptions)
   @JoinColumn({ name: 'plan_id' })
   plan: SubscriptionPlan;
 
@@ -142,13 +141,13 @@ export class Subscription {
     notes?: string;
   };
 
-  @OneToMany(() => Device, device => device.subscription)
+  @OneToMany(() => Device, (device) => device.subscription)
   devices: Device[];
 
-  @OneToMany(() => UsageRecord, usage => usage.subscription)
+  @OneToMany(() => UsageRecord, (usage) => usage.subscription)
   usage_records: UsageRecord[];
 
-  @OneToMany(() => SubscriptionInvoice, invoice => invoice.subscription)
+  @OneToMany(() => SubscriptionInvoice, (invoice) => invoice.subscription)
   invoices: SubscriptionInvoice[];
 
   @CreateDateColumn({ type: 'timestamptz' })

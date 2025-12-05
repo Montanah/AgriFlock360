@@ -1,7 +1,15 @@
 // migrations/XXXXXX-update-vaccinations-table.ts
-import { MigrationInterface, QueryRunner, TableColumn, TableForeignKey, TableIndex } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  TableColumn,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
-export class UpdateVaccinationsTable1736480009006 implements MigrationInterface {
+export class UpdateVaccinationsTable1736480009006
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Add vaccine_catalog_id column
     await queryRunner.addColumn(
@@ -57,12 +65,15 @@ export class UpdateVaccinationsTable1736480009006 implements MigrationInterface 
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('vaccinations', 'idx_vaccinations_vaccine_catalog');
-    
+    await queryRunner.dropIndex(
+      'vaccinations',
+      'idx_vaccinations_vaccine_catalog',
+    );
+
     const table = await queryRunner.getTable('vaccinations');
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('vaccine_catalog_id') !== -1,
+        (fk) => fk.columnNames.indexOf('vaccine_catalog_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('vaccinations', foreignKey);

@@ -59,7 +59,8 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   // Generic set with TTL
   async set(key: string, value: any, ttl?: number): Promise<void> {
-    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    const stringValue =
+      typeof value === 'string' ? value : JSON.stringify(value);
     if (ttl) {
       await this.client.setEx(key, ttl, stringValue);
     } else {
@@ -96,7 +97,8 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   // Hash operations
   async hSet(key: string, field: string, value: any): Promise<void> {
-    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    const stringValue =
+      typeof value === 'string' ? value : JSON.stringify(value);
     await this.client.hSet(key, field, stringValue);
   }
 
@@ -128,12 +130,14 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   // List operations
   async lPush(key: string, value: any): Promise<void> {
-    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    const stringValue =
+      typeof value === 'string' ? value : JSON.stringify(value);
     await this.client.lPush(key, stringValue);
   }
 
   async rPush(key: string, value: any): Promise<void> {
-    const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+    const stringValue =
+      typeof value === 'string' ? value : JSON.stringify(value);
     await this.client.rPush(key, stringValue);
   }
 
@@ -178,11 +182,15 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   // Pub/Sub
   async publish(channel: string, message: any): Promise<void> {
-    const stringMessage = typeof message === 'string' ? message : JSON.stringify(message);
+    const stringMessage =
+      typeof message === 'string' ? message : JSON.stringify(message);
     await this.publisher.publish(channel, stringMessage);
   }
 
-  async subscribe(channel: string, callback: (message: any) => void): Promise<void> {
+  async subscribe(
+    channel: string,
+    callback: (message: any) => void,
+  ): Promise<void> {
     await this.subscriber.subscribe(channel, (message) => {
       try {
         callback(JSON.parse(message));

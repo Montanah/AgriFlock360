@@ -26,7 +26,7 @@ export class CacheInterceptor implements NestInterceptor {
 
     // Try to get from cache
     const cachedResponse = await this.redisCache['redis'].get(cacheKey);
-    
+
     if (cachedResponse) {
       return of(cachedResponse);
     }

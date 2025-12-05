@@ -33,10 +33,10 @@ export class FeedingRecord {
   schedule?: FeedingSchedule;
 
   @Column({ type: 'integer' })
-  age: number
+  age: number;
 
   @Column({ type: 'varchar', length: 100 })
-  feed_type: string;  
+  feed_type: string;
 
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   quantity: number; // kg
@@ -45,7 +45,7 @@ export class FeedingRecord {
   cost?: number;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  supplier:string
+  supplier: string;
 
   @Column({ type: 'timestamptz', default: () => 'CURRENT_TIMESTAMP' })
   fed_at: Date;

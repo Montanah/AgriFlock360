@@ -5,8 +5,10 @@ import {
   Validate,
 } from 'class-validator';
 
-export function ValidateLoginCredentials(validationOptions?: ValidationOptions) {
-  return function (object: Object, propertyName: string) {
+export function ValidateLoginCredentials(
+  validationOptions?: ValidationOptions,
+) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'validateLoginCredentials',
       target: object.constructor,

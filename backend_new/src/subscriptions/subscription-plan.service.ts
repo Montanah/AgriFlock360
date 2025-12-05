@@ -7,7 +7,10 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { SubscriptionPlan } from '../database/entities/SubscriptionPlan.entity';
-import { CreateSubscriptionPlanDto, UpdateSubscriptionPlanDto } from './dto/subscriptions.dto';
+import {
+  CreateSubscriptionPlanDto,
+  UpdateSubscriptionPlanDto,
+} from './dto/subscriptions.dto';
 
 @Injectable()
 export class SubscriptionPlanService {
@@ -32,7 +35,7 @@ export class SubscriptionPlanService {
 
   async findAll(includeInactive = false): Promise<SubscriptionPlan[]> {
     const query: any = {};
-    
+
     if (!includeInactive) {
       query.is_active = true;
     }
@@ -152,10 +155,7 @@ export class SubscriptionPlanService {
         totalReadings,
         plan.free_readings_per_month,
       );
-      const billableReadings = Math.max(
-        0,
-        totalReadings - freeReadings,
-      );
+      const billableReadings = Math.max(0, totalReadings - freeReadings);
 
       const freeAlerts = Math.min(totalAlerts, plan.free_alerts_per_month);
       const billableAlerts = Math.max(0, totalAlerts - freeAlerts);
@@ -229,10 +229,8 @@ export class SubscriptionPlanService {
       total_revenue: Number(totalRevenue.toFixed(2)),
       average_monthly_revenue: Number(avgMonthlyRevenue.toFixed(2)),
       by_status: {
-        active: plan.subscriptions.filter((s) => s.status === 'active')
-          .length,
-        trial: plan.subscriptions.filter((s) => s.status === 'trial')
-          .length,
+        active: plan.subscriptions.filter((s) => s.status === 'active').length,
+        trial: plan.subscriptions.filter((s) => s.status === 'trial').length,
         cancelled: plan.subscriptions.filter((s) => s.status === 'cancelled')
           .length,
         suspended: plan.subscriptions.filter((s) => s.status === 'suspended')
@@ -242,5 +240,4 @@ export class SubscriptionPlanService {
       },
     };
   }
-  
 }

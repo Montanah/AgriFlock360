@@ -166,7 +166,9 @@ export class FirmwareService {
 
     // Check if device meets minimum version requirement
     if (latestFirmware.min_version) {
-      if (this.compareVersions(currentVersion, latestFirmware.min_version) < 0) {
+      if (
+        this.compareVersions(currentVersion, latestFirmware.min_version) < 0
+      ) {
         this.logger.warn(
           `Device version ${currentVersion} below minimum ${latestFirmware.min_version}`,
         );
@@ -175,14 +177,19 @@ export class FirmwareService {
     }
 
     // Check rollout percentage (gradual rollout)
-    const rolloutPercentage = latestFirmware.metadata?.rollout_percentage || 100;
+    const rolloutPercentage =
+      latestFirmware.metadata?.rollout_percentage || 100;
     if (rolloutPercentage < 100) {
       // Use device-specific hash for consistent rollout
       const deviceHash = parseInt(
-        crypto.createHash('md5').update(deviceType).digest('hex').substring(0, 8),
+        crypto
+          .createHash('md5')
+          .update(deviceType)
+          .digest('hex')
+          .substring(0, 8),
         16,
       );
-      if ((deviceHash % 100) >= rolloutPercentage) {
+      if (deviceHash % 100 >= rolloutPercentage) {
         return { update_available: false };
       }
     }

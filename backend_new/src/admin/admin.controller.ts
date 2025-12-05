@@ -17,7 +17,12 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+} from '@nestjs/swagger';
 import type { Request } from 'express';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -108,7 +113,7 @@ export class AdminController {
     const [users, total] = await queryBuilder.getManyAndCount();
 
     // Remove sensitive data
-    const sanitizedUsers = users.map(user => {
+    const sanitizedUsers = users.map((user) => {
       const { password_hash, refresh_token, ...sanitized } = user as any;
       return sanitized;
     });
@@ -166,7 +171,7 @@ export class AdminController {
   @ApiOperation({ summary: 'Delete user (soft delete)' })
   @ApiResponse({ status: 200, description: 'User deleted' })
   async deleteUser(@Param('userId') userId: string) {
-    await this.userRepository.update(userId, { 
+    await this.userRepository.update(userId, {
       status: 'deleted',
       is_active: false,
       deleted_at: new Date(),
@@ -214,21 +219,17 @@ export class AdminController {
   @ApiOperation({ summary: 'Get system statistics' })
   @ApiResponse({ status: 200, description: 'System stats retrieved' })
   async getStats() {
-    const [
-      totalUsers,
-      activeUsers,
-      totalDevices,
-      activeDevices,
-    ] = await Promise.all([
-      this.userRepository.count(),
-      this.userRepository.count({ where: { is_active: true } }),
-      this.deviceRepository.count(),
-      this.deviceRepository.count({ 
-        where: { 
-          last_seen: new Date(Date.now() - 24 * 60 * 60 * 1000) as any,
-        } 
-      }),
-    ]);
+    const [totalUsers, activeUsers, totalDevices, activeDevices] =
+      await Promise.all([
+        this.userRepository.count(),
+        this.userRepository.count({ where: { is_active: true } }),
+        this.deviceRepository.count(),
+        this.deviceRepository.count({
+          where: {
+            last_seen: new Date(Date.now() - 24 * 60 * 60 * 1000) as any,
+          },
+        }),
+      ]);
 
     return {
       users: {
@@ -259,5 +260,4 @@ export class AdminController {
 
     return { device };
   }
-
 }

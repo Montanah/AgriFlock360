@@ -1,15 +1,35 @@
 // create-vaccine.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, IsEnum, Min, IsObject, IsInt, Max, IsUUID, IsDateString  } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsEnum,
+  Min,
+  IsObject,
+  IsInt,
+  Max,
+  IsUUID,
+  IsDateString,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 
 export class CreateVaccineDto {
-  @ApiProperty({ description: 'Vaccine name', example: 'Newcastle Disease Vaccine' })
+  @ApiProperty({
+    description: 'Vaccine name',
+    example: 'Newcastle Disease Vaccine',
+  })
   @IsString()
   @IsNotEmpty()
   vaccine_name: string;
 
-  @ApiProperty({ description: 'Vaccine type', example: 'viral', enum: ['viral', 'bacterial', 'protozoan', 'fungal', 'other'] })
+  @ApiProperty({
+    description: 'Vaccine type',
+    example: 'viral',
+    enum: ['viral', 'bacterial', 'protozoan', 'fungal', 'other'],
+  })
   @IsString()
   @IsNotEmpty()
   vaccine_type: string;
@@ -29,19 +49,31 @@ export class CreateVaccineDto {
   @IsString()
   brand_name?: string;
 
-  @ApiProperty({ description: 'Minimum recommended age in days', example: 1, required: false })
+  @ApiProperty({
+    description: 'Minimum recommended age in days',
+    example: 1,
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)
   recommended_age_min?: number;
 
-  @ApiProperty({ description: 'Maximum recommended age in days', example: 7, required: false })
+  @ApiProperty({
+    description: 'Maximum recommended age in days',
+    example: 7,
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)
   recommended_age_max?: number;
 
-  @ApiProperty({ description: 'Recommended age description', example: 'Day 1-7 or Week 2-3', required: false })
+  @ApiProperty({
+    description: 'Recommended age description',
+    example: 'Day 1-7 or Week 2-3',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   recommended_age_description?: string;
@@ -51,10 +83,10 @@ export class CreateVaccineDto {
   @IsNotEmpty()
   dosage: string;
 
-  @ApiProperty({ 
-    description: 'Method of administration', 
+  @ApiProperty({
+    description: 'Method of administration',
     example: 'injection',
-    enum: ['injection', 'drinking_water', 'eye_drop', 'spray', 'feed', 'other']
+    enum: ['injection', 'drinking_water', 'eye_drop', 'spray', 'feed', 'other'],
   })
   @IsString()
   @IsNotEmpty()
@@ -75,44 +107,68 @@ export class CreateVaccineDto {
   @IsString()
   side_effects?: string;
 
-  @ApiProperty({ description: 'Withdrawal period in days', example: 0, required: false })
+  @ApiProperty({
+    description: 'Withdrawal period in days',
+    example: 0,
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)
   withdrawal_period_days?: number;
 
-  @ApiProperty({ description: 'Storage conditions', example: '2-8°C', required: false })
+  @ApiProperty({
+    description: 'Storage conditions',
+    example: '2-8°C',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   storage_conditions?: string;
 
-  @ApiProperty({ description: 'Estimated cost per dose', example: 0.50, required: false })
+  @ApiProperty({
+    description: 'Estimated cost per dose',
+    example: 0.5,
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)
   estimated_cost_per_dose?: number;
 
-  @ApiProperty({ description: 'Currency code', example: 'KES', required: false })
+  @ApiProperty({
+    description: 'Currency code',
+    example: 'KES',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   currency?: string;
 
-  @ApiProperty({ description: 'Target disease', example: 'Newcastle Disease', required: false })
+  @ApiProperty({
+    description: 'Target disease',
+    example: 'Newcastle Disease',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   target_disease?: string;
 
-  @ApiProperty({ 
-    description: 'Target bird type', 
+  @ApiProperty({
+    description: 'Target bird type',
     example: 'all',
     enum: ['layers', 'broilers', 'all'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsString()
   bird_type?: string;
 
-  @ApiProperty({ description: 'Mark as recommended vaccine', default: true, required: false })
+  @ApiProperty({
+    description: 'Mark as recommended vaccine',
+    default: true,
+    required: false,
+  })
   @IsOptional()
   @IsBoolean()
   is_recommended?: boolean;
@@ -154,13 +210,19 @@ export class UpdateVaccineDto {
   @IsString()
   brand_name?: string;
 
-  @ApiProperty({ description: 'Minimum recommended age in days', required: false })
+  @ApiProperty({
+    description: 'Minimum recommended age in days',
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)
   recommended_age_min?: number;
 
-  @ApiProperty({ description: 'Maximum recommended age in days', required: false })
+  @ApiProperty({
+    description: 'Maximum recommended age in days',
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)
@@ -250,7 +312,10 @@ export class UpdateVaccineDto {
 
 // query-vaccines.dto.ts
 export class QueryVaccinesDto {
-  @ApiProperty({ description: 'Search in name, description, or disease', required: false })
+  @ApiProperty({
+    description: 'Search in name, description, or disease',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   search?: string;
@@ -270,7 +335,10 @@ export class QueryVaccinesDto {
   @IsString()
   target_disease?: string;
 
-  @ApiProperty({ description: 'Show only recommended vaccines', required: false })
+  @ApiProperty({
+    description: 'Show only recommended vaccines',
+    required: false,
+  })
   @IsOptional()
   @Transform(({ value }) => value === 'true')
   @IsBoolean()
@@ -298,11 +366,11 @@ export class QueryVaccinesDto {
   limit?: number = 20;
 }
 
-// vaccinations/dto/create-vaccination.dto.ts 
+// vaccinations/dto/create-vaccination.dto.ts
 export class CreateVaccinationDto {
-  @ApiProperty({ 
-    description: 'Vaccine catalog ID (if using recommended vaccine)', 
-    required: false 
+  @ApiProperty({
+    description: 'Vaccine catalog ID (if using recommended vaccine)',
+    required: false,
   })
   @IsOptional()
   @IsUUID()
@@ -343,11 +411,11 @@ export class CreateVaccinationDto {
   @IsString()
   notes?: string;
 
-  @ApiProperty({ 
-    description: 'Source of vaccination', 
+  @ApiProperty({
+    description: 'Source of vaccination',
     enum: ['catalog', 'manual'],
     default: 'manual',
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsEnum(['catalog', 'manual'])
@@ -356,7 +424,10 @@ export class CreateVaccinationDto {
 
 // vaccinations/dto/complete-vaccination.dto.ts
 export class CompleteVaccinationDto {
-  @ApiProperty({ description: 'Name/title of person who administered', example: 'Dr. John Kamau' })
+  @ApiProperty({
+    description: 'Name/title of person who administered',
+    example: 'Dr. John Kamau',
+  })
   @IsString()
   @IsNotEmpty()
   administered_by: string;
@@ -373,7 +444,10 @@ export class CompleteVaccinationDto {
   @Min(0)
   cost?: number;
 
-  @ApiProperty({ description: 'Additional notes or observations', required: false })
+  @ApiProperty({
+    description: 'Additional notes or observations',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   notes?: string;

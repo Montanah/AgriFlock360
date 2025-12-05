@@ -46,11 +46,7 @@ export class IoTSubscriptionIntegrationService {
   /**
    * Called when alert is sent to farmer
    */
-  async onAlertSent(
-    deviceId: string,
-    subscriptionId: string,
-    alertData: any,
-  ) {
+  async onAlertSent(deviceId: string, subscriptionId: string, alertData: any) {
     await this.subscriptionService.recordUsage({
       subscription_id: subscriptionId,
       device_id: deviceId,

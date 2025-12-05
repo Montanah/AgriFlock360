@@ -1,5 +1,14 @@
 // notifications/dto/query-notifications.dto.ts
-import { IsOptional, IsBoolean, IsString, IsInt, Min, Max, IsEnum, IsUUID  } from 'class-validator';
+import {
+  IsOptional,
+  IsBoolean,
+  IsString,
+  IsInt,
+  Min,
+  Max,
+  IsEnum,
+  IsUUID,
+} from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiPropertyOptional, ApiProperty } from '@nestjs/swagger';
 
@@ -45,7 +54,9 @@ export class CreateNotificationDto {
   @IsString()
   title: string;
 
-  @ApiPropertyOptional({ example: 'Your payment of KES 500 has been processed' })
+  @ApiPropertyOptional({
+    example: 'Your payment of KES 500 has been processed',
+  })
   @IsOptional()
   @IsString()
   body?: string;

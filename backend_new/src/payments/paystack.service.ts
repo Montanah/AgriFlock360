@@ -44,7 +44,9 @@ export class PaystackService {
         },
       );
 
-      this.logger.log(`Paystack transaction initialized: ${response.data.data.reference}`);
+      this.logger.log(
+        `Paystack transaction initialized: ${response.data.data.reference}`,
+      );
 
       return {
         authorization_url: response.data.data.authorization_url,
@@ -52,7 +54,10 @@ export class PaystackService {
         reference: response.data.data.reference,
       };
     } catch (error) {
-      this.logger.error(`Paystack initialization failed: ${error.message}`, error.stack);
+      this.logger.error(
+        `Paystack initialization failed: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to initialize payment');
     }
   }
@@ -70,7 +75,10 @@ export class PaystackService {
 
       return response.data.data;
     } catch (error) {
-      this.logger.error(`Paystack verification failed: ${error.message}`, error.stack);
+      this.logger.error(
+        `Paystack verification failed: ${error.message}`,
+        error.stack,
+      );
       throw new BadRequestException('Failed to verify payment');
     }
   }
@@ -92,18 +100,18 @@ export class PaystackService {
   ) {
     try {
       // First, initialize transaction
-      const init = await this.initializeTransaction(
-        email,
-        amount,
-        metadata,
-        ['mobile_money'],
-      );
+      const init = await this.initializeTransaction(email, amount, metadata, [
+        'mobile_money',
+      ]);
 
       // For M-Pesa, Paystack will send STK push
       // Customer completes on their phone
       return init;
     } catch (error) {
-      this.logger.error(`Mobile money charge failed: ${error.message}`, error.stack);
+      this.logger.error(
+        `Mobile money charge failed: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }

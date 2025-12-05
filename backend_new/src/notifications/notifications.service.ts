@@ -9,7 +9,11 @@ import { Repository, In } from 'typeorm';
 import { Notification } from '../database/entities/Notification.entity';
 import { UserNotificationSetting } from '../database/entities/UserNotificationSetting.entity';
 import { SentNotification } from '../database/entities/SentNotification.entity';
-import { CreateNotificationDto, NotificationType, QueryNotificationsDto } from '../notifications/dto/notifications.dto';
+import {
+  CreateNotificationDto,
+  NotificationType,
+  QueryNotificationsDto,
+} from '../notifications/dto/notifications.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 import { EmailService } from '../services/email.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -27,10 +31,7 @@ export class NotificationsService {
     private emailService: EmailService,
   ) {}
 
-  async create(
-    userId: string,
-    createNotificationDto: CreateNotificationDto,
-  ) {
+  async create(userId: string, createNotificationDto: CreateNotificationDto) {
     const notification = this.notificationRepository.create({
       ...createNotificationDto,
       user_id: userId,
@@ -45,7 +46,7 @@ export class NotificationsService {
   }
 
   async findAll(userId: string, query: QueryNotificationsDto) {
-    const { is_read, type, page=1, limit=20 } = query;
+    const { is_read, type, page = 1, limit = 20 } = query;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.notificationRepository
@@ -195,7 +196,9 @@ export class NotificationsService {
           this.logger.log(`Push notification queued: ${notification.id}`);
           break;
         default:
-          this.logger.log(`Unsupported channel: ${notification.delivery_channel}`);
+          this.logger.log(
+            `Unsupported channel: ${notification.delivery_channel}`,
+          );
       }
 
       notification.is_sent = true;

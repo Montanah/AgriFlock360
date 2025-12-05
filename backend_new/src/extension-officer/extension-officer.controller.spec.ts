@@ -9,7 +9,9 @@ describe('ExtensionOfficerController', () => {
       controllers: [ExtensionOfficerController],
     }).compile();
 
-    controller = module.get<ExtensionOfficerController>(ExtensionOfficerController);
+    controller = module.get<ExtensionOfficerController>(
+      ExtensionOfficerController,
+    );
   });
 
   it('should be defined', () => {

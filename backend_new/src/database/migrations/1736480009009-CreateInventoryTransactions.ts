@@ -1,8 +1,15 @@
-
 // migrations/XXXXXX-create-inventory-transactions.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateInventoryTransactions1736480009009 implements MigrationInterface {
+export class CreateInventoryTransactions1736480009009
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -98,9 +105,18 @@ export class CreateInventoryTransactions1736480009009 implements MigrationInterf
 
     // Create indexes
     const indexes = [
-      { name: 'idx_inventory_transactions_item', columns: ['inventory_item_id'] },
-      { name: 'idx_inventory_transactions_type', columns: ['transaction_type'] },
-      { name: 'idx_inventory_transactions_date', columns: ['transaction_date'] },
+      {
+        name: 'idx_inventory_transactions_item',
+        columns: ['inventory_item_id'],
+      },
+      {
+        name: 'idx_inventory_transactions_type',
+        columns: ['transaction_type'],
+      },
+      {
+        name: 'idx_inventory_transactions_date',
+        columns: ['transaction_date'],
+      },
       { name: 'idx_inventory_transactions_user', columns: ['user_id'] },
     ];
 

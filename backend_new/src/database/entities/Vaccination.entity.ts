@@ -20,40 +20,50 @@ export class Vaccination {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  /** RELATION: Batch */
   @Column({ type: 'uuid' })
   batch_id: string;
 
-  @ManyToOne(() => Batch, (batch) => batch.vaccinations, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Batch, (batch) => batch.vaccinations, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'batch_id' })
   batch: Batch;
 
-  // Link to vaccine catalog (optional - for recommended vaccines)
+  /** RELATION: Vaccine Catalog (Optional) */
   @Column({ type: 'uuid', nullable: true })
   vaccine_catalog_id: string;
 
-  @ManyToOne(() => VaccineCatalog, catalog => catalog.vaccinations, { 
+  @ManyToOne(() => VaccineCatalog, (catalog) => catalog.vaccinations, {
     onDelete: 'SET NULL',
     nullable: true,
   })
   @JoinColumn({ name: 'vaccine_catalog_id' })
   vaccine_catalog: VaccineCatalog;
 
-  // Manual entry fields (used when not from catalog or custom)
+  /** Manual entry fields */
   @Column({ type: 'varchar', length: 255 })
   vaccine_name: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
   vaccine_type: string;
 
+  /** Dates */
   @Column({ type: 'date' })
   scheduled_date: Date;
 
   @Column({ type: 'date', nullable: true })
   completed_date: Date;
 
-  @Column({ type: 'varchar', length: 20, default: 'scheduled' })
-  vaccination_status: string; // scheduled, completed, missed, cancelled
+  /** Vaccination status */
+  @Column({
+    type: 'varchar',
+    length: 20,
+    default: 'scheduled',
+  })
+  vaccination_status: string; // scheduled | completed | missed | cancelled
 
+  /** Additional details */
   @Column({ type: 'varchar', length: 100, nullable: true })
   dosage: string;
 
@@ -63,7 +73,7 @@ export class Vaccination {
   @Column({ type: 'varchar', length: 255, nullable: true })
   administered_by: string;
 
-  @Column({ type: 'integer', nullable: true })
+  @Column({ type: 'int', nullable: true })
   birds_vaccinated: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: true })
@@ -72,12 +82,19 @@ export class Vaccination {
   @Column({ type: 'text', nullable: true })
   notes: string;
 
+  /** Notification system */
   @Column({ type: 'boolean', default: false })
   reminder_sent: boolean;
 
-  @Column({ type: 'varchar', length: 50, default: 'catalog' })
-  source: string; // 'catalog' (from recommendation) or 'manual' (custom entry)
+  /** Source of vaccine info */
+  @Column({
+    type: 'varchar',
+    length: 50,
+    default: 'catalog',
+  })
+  source: string; // catalog | manual
 
+  /** Audit Fields */
   @CreateDateColumn({ type: 'timestamptz' })
   created_at: Date;
 

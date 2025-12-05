@@ -125,7 +125,10 @@ describe('DevicesService', () => {
       mockDeviceRepository.findOne.mockResolvedValue(null);
       mockDeviceStatusRepository.findOne.mockResolvedValue(mockStatus);
       mockDeviceRepository.create.mockReturnValue(createDeviceDto);
-      mockDeviceRepository.save.mockResolvedValue({ id: 'device-1', ...createDeviceDto });
+      mockDeviceRepository.save.mockResolvedValue({
+        id: 'device-1',
+        ...createDeviceDto,
+      });
 
       const result = await service.create(
         createDeviceDto,

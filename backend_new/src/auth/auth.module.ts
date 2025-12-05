@@ -32,6 +32,7 @@ import { RateLimitGuard } from './guards/rate-limit.guard';
 import { LoggingInterceptor } from '../common/logging.interceptor';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { UsersModule } from '../users/users.module';
+import { CountryGuard } from './guards/country.guard';
 
 @Module({
   imports: [
@@ -89,6 +90,11 @@ import { UsersModule } from '../users/users.module';
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
     },
+    {
+      provide: APP_GUARD,
+      useClass: CountryGuard,
+    },
+
   ],
   exports: [AuthService, JwtModule, PermissionsGuard],
 })

@@ -33,9 +33,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 @UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class FieldAppraisalController {
-  constructor(
-    private readonly appraisalService: FieldAppraisalService,
-  ) {}
+  constructor(private readonly appraisalService: FieldAppraisalService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new field appraisal' })
@@ -152,10 +150,7 @@ export class FieldAppraisalController {
     description: 'Appraisal updated successfully',
   })
   @ApiResponse({ status: 404, description: 'Appraisal not found' })
-  async update(
-    @Param('id') id: string,
-    @Body() dto: UpdateFieldAppraisalDto,
-  ) {
+  async update(@Param('id') id: string, @Body() dto: UpdateFieldAppraisalDto) {
     return await this.appraisalService.update(id, dto);
   }
 

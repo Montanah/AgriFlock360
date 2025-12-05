@@ -65,14 +65,20 @@ export class AuthService {
     );
   }
 
-  async register(registerDto: RegisterDto, ipAddress: string, userAgent: string) {
+  async register(
+    registerDto: RegisterDto,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     try {
       const existingUser = await this.userRepository.findOne({
         where: { email: registerDto.email },
       });
 
       if (existingUser) {
-        this.logger.warn(`Registration attempt with existing email: ${registerDto.email}`);
+        this.logger.warn(
+          `Registration attempt with existing email: ${registerDto.email}`,
+        );
         throw new ConflictException('User already exists');
       }
 
@@ -97,16 +103,21 @@ export class AuthService {
 
       const hashedPassword = await bcrypt.hash(registerDto.password, 10);
       // const verificationCode = crypto.randomBytes(32).toString('hex');
-      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const verificationCode = Math.floor(
+        100000 + Math.random() * 900000,
+      ).toString();
 
-      const { role, agreed_to_terms, farm_name, password, ...rest } = registerDto;
+      const { role, agreed_to_terms, farm_name, password, ...rest } =
+        registerDto;
       const user = this.userRepository.create({
         ...rest,
         password_hash: hashedPassword,
         role_id: defaultRole.id,
         oauth_provider: 'email',
         email_verification_code: verificationCode,
-        email_verification_expires_at: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        email_verification_expires_at: new Date(
+          Date.now() + 24 * 60 * 60 * 1000,
+        ),
         status: 'pending',
         agreed_to_terms: agreed_to_terms === true,
         agreed_to_terms_at: agreed_to_terms === true ? new Date() : undefined,
@@ -120,13 +131,17 @@ export class AuthService {
 
       // Create farm if farm_name is provided
       if (farm_name?.trim()) {
-        farm =this.farmRepository.create({farm_name: registerDto.farm_name, location: registerDto.location, user_id: user.id });
+        farm = this.farmRepository.create({
+          farm_name: registerDto.farm_name,
+          location: registerDto.location,
+          user_id: user.id,
+        });
         await this.farmRepository.save(farm);
 
         //Set farm_id on user
         // user.farm_id = farm.id;
         // user.farm = farm;
-        // await this.userRepository.save(user); 
+        // await this.userRepository.save(user);
       }
 
       console.log('user created and farm ', user, farm);
@@ -138,7 +153,9 @@ export class AuthService {
         national_id: registerDto.national_id,
         phone_number: registerDto.phone_number,
         calling_code: '+254', // Default calling code
-        date_of_birth: registerDto.date_of_birth ? new Date(registerDto.date_of_birth) : undefined,
+        date_of_birth: registerDto.date_of_birth
+          ? new Date(registerDto.date_of_birth)
+          : undefined,
         gender: registerDto.gender as any,
         location: registerDto.location,
         farm_id: farm?.id,
@@ -157,7 +174,10 @@ export class AuthService {
       console.log('User, profile, and farm created:', { user, profile, farm });
 
       // Send verification email
-      await this.emailService.sendVerificationEmail(user.email, verificationCode);
+      await this.emailService.sendVerificationEmail(
+        user.email,
+        verificationCode,
+      );
 
       // Generate tokens
       const tokens = await this.generateTokens(user, ipAddress, userAgent);
@@ -195,7 +215,8 @@ export class AuthService {
       const isLocked = await this.lockoutService.isAccountLocked(identifier);
 
       if (isLocked) {
-        const remainingTime = await this.lockoutService.getRemainingLockoutTime(identifier);
+        const remainingTime =
+          await this.lockoutService.getRemainingLockoutTime(identifier);
         throw new UnauthorizedException(
           `Account locked. Try again in ${remainingTime} minutes.`,
         );
@@ -205,7 +226,9 @@ export class AuthService {
         where: [
           { email: loginDto.email },
           { phone_number: loginDto.phone_number },
-        ].filter(condition => Object.values(condition).some(value => value !== undefined)),
+        ].filter((condition) =>
+          Object.values(condition).some((value) => value !== undefined),
+        ),
         relations: ['role'],
       });
 
@@ -217,7 +240,9 @@ export class AuthService {
 
       if (!user.password_hash) {
         this.metricsService.recordAuthFailure('login', 'oauth_only');
-        throw new UnauthorizedException('Please use OAuth login (Google/Apple)');
+        throw new UnauthorizedException(
+          'Please use OAuth login (Google/Apple)',
+        );
       }
 
       const isPasswordValid = await bcrypt.compare(
@@ -230,15 +255,15 @@ export class AuthService {
           identifier,
           ipAddress,
         );
-        
+
         this.metricsService.recordAuthFailure('login', 'invalid_password');
-        
+
         if (lockoutInfo.locked) {
           this.logger.logSecurityEvent('ACCOUNT_LOCKED', user.id, {
             reason: 'too_many_failed_attempts',
             ipAddress,
           });
-          
+
           await this.auditService.log(
             user.id,
             AuditAction.ACCOUNT_LOCKED,
@@ -249,7 +274,7 @@ export class AuthService {
             { reason: 'too_many_failed_attempts' },
           );
         }
-        
+
         throw new UnauthorizedException(
           lockoutInfo.locked
             ? 'Too many failed attempts. Account locked.'
@@ -306,10 +331,15 @@ export class AuthService {
     }
   }
 
-  async verify2FA(tempToken: string, code: string, ipAddress: string, userAgent: string) {
+  async verify2FA(
+    tempToken: string,
+    code: string,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     try {
       const payload = this.jwtService.verify(tempToken);
-      
+
       if (payload.purpose !== '2fa') {
         throw new UnauthorizedException('Invalid token');
       }
@@ -350,12 +380,19 @@ export class AuthService {
         user: this.sanitizeUser(user),
       };
     } catch (error) {
-      this.logger.error(`2FA verification failed: ${error.message}`, error.stack);
+      this.logger.error(
+        `2FA verification failed: ${error.message}`,
+        error.stack,
+      );
       throw error;
     }
   }
 
-  async googleAuth(googleAuthDto: GoogleAuthDto, ipAddress: string, userAgent: string) {
+  async googleAuth(
+    googleAuthDto: GoogleAuthDto,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     try {
       const ticket = await this.googleClient.verifyIdToken({
         idToken: googleAuthDto.idToken,
@@ -445,7 +482,11 @@ export class AuthService {
     }
   }
 
-  async appleAuth(appleAuthDto: AppleAuthDto, ipAddress: string, userAgent: string) {
+  async appleAuth(
+    appleAuthDto: AppleAuthDto,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     try {
       const appleData = await this.appleAuthService.verifyToken(
         appleAuthDto.idToken,
@@ -642,7 +683,11 @@ export class AuthService {
     return { message: 'Password reset successful' };
   }
 
-  async verifyEmail(verifyEmailDto: VerifyEmailDto, ipAddress: string, userAgent: string) {
+  async verifyEmail(
+    verifyEmailDto: VerifyEmailDto,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     const user = await this.userRepository.findOne({
       where: { email_verification_code: verifyEmailDto.code },
     });
@@ -651,7 +696,10 @@ export class AuthService {
       throw new BadRequestException('Invalid verification code');
     }
 
-    if (!user.email_verification_expires_at || user.email_verification_expires_at < new Date()) {
+    if (
+      !user.email_verification_expires_at ||
+      user.email_verification_expires_at < new Date()
+    ) {
       throw new BadRequestException('Verification code expired');
     }
 
@@ -674,7 +722,12 @@ export class AuthService {
     return { message: 'Email verified successfully' };
   }
 
-  async logout(userId: string, sessionId: string, ipAddress: string, userAgent: string) {
+  async logout(
+    userId: string,
+    sessionId: string,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     await this.sessionService.invalidateSession(sessionId);
 
     await this.auditService.log(
@@ -689,11 +742,16 @@ export class AuthService {
     return { message: 'Logout successful' };
   }
 
-  private async generateTokens(user: User, ipAddress: string, userAgent: string) {
+  private async generateTokens(
+    user: User,
+    ipAddress: string,
+    userAgent: string,
+  ) {
     const payload = {
       sub: user.id,
       email: user.email,
       role: user.role?.name || 'user',
+      location: user.profile?.location,
     };
 
     const accessToken = this.jwtService.sign(payload, {
@@ -724,7 +782,13 @@ export class AuthService {
   }
 
   private sanitizeUser(user: User) {
-    const { password_hash, refresh_token, email_verification_code, password_reset_token, ...sanitized } = user;
+    const {
+      password_hash,
+      refresh_token,
+      email_verification_code,
+      password_reset_token,
+      ...sanitized
+    } = user;
     return sanitized;
   }
 }

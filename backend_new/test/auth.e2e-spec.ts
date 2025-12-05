@@ -95,7 +95,9 @@ describe('AuthController (e2e)', () => {
         })
         .expect(400)
         .expect((res) => {
-          expect(res.body.message).toContain('Either email or phone_number must be provided');
+          expect(res.body.message).toContain(
+            'Either email or phone_number must be provided',
+          );
         });
     });
 
@@ -125,9 +127,7 @@ describe('AuthController (e2e)', () => {
     });
 
     it('should fail without token', () => {
-      return request(app.getHttpServer())
-        .get('/auth/me')
-        .expect(401);
+      return request(app.getHttpServer()).get('/auth/me').expect(401);
     });
   });
 
@@ -141,7 +141,7 @@ describe('AuthController (e2e)', () => {
           email: 'e2e@test.com',
           password: 'Password123!',
         });
-      
+
       refreshToken = response.body.refresh_token;
     });
 

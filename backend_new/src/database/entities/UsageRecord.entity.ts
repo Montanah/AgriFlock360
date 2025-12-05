@@ -23,7 +23,7 @@ export class UsageRecord {
   @Column({ type: 'uuid' })
   subscription_id: string;
 
-  @ManyToOne(() => Subscription, sub => sub.usage_records, {
+  @ManyToOne(() => Subscription, (sub) => sub.usage_records, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'subscription_id' })

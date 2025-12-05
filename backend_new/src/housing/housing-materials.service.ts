@@ -9,7 +9,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { HousingMaterial } from '../database/entities/HousingMaterial.entity';
 import { HousingQuantity } from '../database/entities/HousingQuantity.entity';
-import { CreateMaterialDto, UpdateMaterialDto, CreateQuantityDto, UpdateQuantityDto, QueryMaterialsDto } from './dto/housing.dto';
+import {
+  CreateMaterialDto,
+  UpdateMaterialDto,
+  CreateQuantityDto,
+  UpdateQuantityDto,
+  QueryMaterialsDto,
+} from './dto/housing.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 
 @Injectable()
@@ -86,7 +92,10 @@ export class HousingMaterialsService {
     return material;
   }
 
-  async updateMaterial(id: string, updateDto: UpdateMaterialDto): Promise<HousingMaterial> {
+  async updateMaterial(
+    id: string,
+    updateDto: UpdateMaterialDto,
+  ): Promise<HousingMaterial> {
     const material = await this.materialRepository.findOne({ where: { id } });
 
     if (!material) {
@@ -94,7 +103,9 @@ export class HousingMaterialsService {
     }
 
     if (material.is_system_default && updateDto.is_active === false) {
-      throw new BadRequestException('Cannot deactivate system default materials');
+      throw new BadRequestException(
+        'Cannot deactivate system default materials',
+      );
     }
 
     Object.assign(material, updateDto);
@@ -132,7 +143,7 @@ export class HousingMaterialsService {
       .orderBy('material.category', 'ASC')
       .getRawMany();
 
-    return result.map(r => r.category).filter(Boolean);
+    return result.map((r) => r.category).filter(Boolean);
   }
 
   // Quantities Management
@@ -165,14 +176,18 @@ export class HousingMaterialsService {
     return quantity;
   }
 
-  async getQuantitiesByMaterial(materialId: string): Promise<HousingQuantity[]> {
+  async getQuantitiesByMaterial(
+    materialId: string,
+  ): Promise<HousingQuantity[]> {
     return this.quantityRepository.find({
       where: { material_id: materialId },
       order: { bird_capacity: 'ASC' },
     });
   }
 
-  async getQuantitiesByCapacity(birdCapacity: number): Promise<HousingQuantity[]> {
+  async getQuantitiesByCapacity(
+    birdCapacity: number,
+  ): Promise<HousingQuantity[]> {
     return this.quantityRepository.find({
       where: { bird_capacity: birdCapacity, is_active: true },
       relations: ['material'],
@@ -180,7 +195,10 @@ export class HousingMaterialsService {
     });
   }
 
-  async updateQuantity(id: string, updateDto: UpdateQuantityDto): Promise<HousingQuantity> {
+  async updateQuantity(
+    id: string,
+    updateDto: UpdateQuantityDto,
+  ): Promise<HousingQuantity> {
     const quantity = await this.quantityRepository.findOne({ where: { id } });
 
     if (!quantity) {
@@ -214,7 +232,7 @@ export class HousingMaterialsService {
       .orderBy('quantity.bird_capacity', 'ASC')
       .getRawMany();
 
-    return result.map(r => r.capacity);
+    return result.map((r) => r.capacity);
   }
 
   // Seed default data
@@ -283,9 +301,7 @@ export class HousingMaterialsService {
           specifications: '32 gauge 8ft',
           display_order: 2,
         },
-        quantities: [
-          { bird_capacity: 1000, quantity_needed: 12 },
-        ],
+        quantities: [{ bird_capacity: 1000, quantity_needed: 12 }],
       },
       {
         name: 'Wall sheets 32 gauge 10 ft',
@@ -353,7 +369,7 @@ export class HousingMaterialsService {
           { bird_capacity: 1000, quantity_needed: 180 },
         ],
       },
-      
+
       {
         name: 'Cedar Posts',
         material: {
@@ -373,68 +389,68 @@ export class HousingMaterialsService {
       {
         name: 'Round poles for roof',
         material: {
-        name: 'Round poles for roof',
-        category: 'construction',
-        unit: 'pcs',
-        unit_price: 250,
-        display_order: 8,
+          name: 'Round poles for roof',
+          category: 'construction',
+          unit: 'pcs',
+          unit_price: 250,
+          display_order: 8,
         },
         quantities: [
-            { bird_capacity: 100, quantity_needed: 11 },
-            { bird_capacity: 300, quantity_needed: 14 },
-            { bird_capacity: 500, quantity_needed: 30 },
-            { bird_capacity: 1000, quantity_needed: 45 },
+          { bird_capacity: 100, quantity_needed: 11 },
+          { bird_capacity: 300, quantity_needed: 14 },
+          { bird_capacity: 500, quantity_needed: 30 },
+          { bird_capacity: 1000, quantity_needed: 45 },
         ],
       },
       {
         name: 'King posts',
         material: {
-        name: 'King posts',
-        category: 'construction',
-        unit: 'pcs',
-        unit_price: 350,
-        display_order: 9,
+          name: 'King posts',
+          category: 'construction',
+          unit: 'pcs',
+          unit_price: 350,
+          display_order: 9,
         },
         quantities: [
-            { bird_capacity: 100, quantity_needed: 2 },
-            { bird_capacity: 300, quantity_needed: 4 },
-            { bird_capacity: 500, quantity_needed: 6 },
-            { bird_capacity: 1000, quantity_needed: 10 },
+          { bird_capacity: 100, quantity_needed: 2 },
+          { bird_capacity: 300, quantity_needed: 4 },
+          { bird_capacity: 500, quantity_needed: 6 },
+          { bird_capacity: 1000, quantity_needed: 10 },
         ],
       },
       {
         name: 'Assorted nails',
         material: {
-        name: 'Assorted nails',
-        category: 'construction',
-        unit: 'pcs',
-        unit_price: 140,
-        display_order: 10,
+          name: 'Assorted nails',
+          category: 'construction',
+          unit: 'pcs',
+          unit_price: 140,
+          display_order: 10,
         },
         quantities: [
-            { bird_capacity: 100, quantity_needed: 6 },
-            { bird_capacity: 300, quantity_needed: 9 },
-            { bird_capacity: 500, quantity_needed: 15 },
-            { bird_capacity: 1000, quantity_needed: 18 },
+          { bird_capacity: 100, quantity_needed: 6 },
+          { bird_capacity: 300, quantity_needed: 9 },
+          { bird_capacity: 500, quantity_needed: 15 },
+          { bird_capacity: 1000, quantity_needed: 18 },
         ],
       },
       {
         name: 'Roofing nails',
         material: {
-        name: 'Roofing nails',
-        category: 'construction',
-        unit: 'pcs',
-        unit_price: 200,
-        display_order: 11,
+          name: 'Roofing nails',
+          category: 'construction',
+          unit: 'pcs',
+          unit_price: 200,
+          display_order: 11,
         },
         quantities: [
-            { bird_capacity: 100, quantity_needed: 4 },
-            { bird_capacity: 300, quantity_needed: 5 },
-            { bird_capacity: 500, quantity_needed: 12 },
-            { bird_capacity: 1000, quantity_needed: 16 },
+          { bird_capacity: 100, quantity_needed: 4 },
+          { bird_capacity: 300, quantity_needed: 5 },
+          { bird_capacity: 500, quantity_needed: 12 },
+          { bird_capacity: 1000, quantity_needed: 16 },
         ],
       },
-      
+
       {
         name: 'Cement',
         material: {
@@ -467,7 +483,6 @@ export class HousingMaterialsService {
           { bird_capacity: 1000, quantity_needed: 1 },
         ],
       },
-      
     ];
   }
 }

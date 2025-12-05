@@ -1,7 +1,15 @@
 // migrations/XXXXXX-create-role-permissions-junction.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateRolePermissionsJunction1736480009001 implements MigrationInterface {
+export class CreateRolePermissionsJunction1736480009001
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Create junction table (if not using TypeORM auto-generation)
     await queryRunner.createTable(
@@ -84,7 +92,7 @@ export class CreateRolePermissionsJunction1736480009001 implements MigrationInte
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     const table = await queryRunner.getTable('role_permissions');
-    
+
     if (table) {
       const foreignKeys = table.foreignKeys;
       for (const fk of foreignKeys) {
@@ -92,9 +100,18 @@ export class CreateRolePermissionsJunction1736480009001 implements MigrationInte
       }
     }
 
-    await queryRunner.dropIndex('role_permissions', 'idx_role_permissions_unique');
-    await queryRunner.dropIndex('role_permissions', 'idx_role_permissions_permission');
-    await queryRunner.dropIndex('role_permissions', 'idx_role_permissions_role');
+    await queryRunner.dropIndex(
+      'role_permissions',
+      'idx_role_permissions_unique',
+    );
+    await queryRunner.dropIndex(
+      'role_permissions',
+      'idx_role_permissions_permission',
+    );
+    await queryRunner.dropIndex(
+      'role_permissions',
+      'idx_role_permissions_role',
+    );
     await queryRunner.dropTable('role_permissions');
   }
 }

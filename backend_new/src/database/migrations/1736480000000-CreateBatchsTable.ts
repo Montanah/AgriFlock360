@@ -1,4 +1,11 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey, TableColumn } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+  TableColumn,
+} from 'typeorm';
 
 export class CreateBatchsTable1736480000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -179,9 +186,11 @@ export class CreateBatchsTable1736480000000 implements MigrationInterface {
       // Drop foreign keys
       const foreignKeys = table.foreignKeys;
       for (const foreignKey of foreignKeys) {
-        if (foreignKey.columnNames.includes('user_id') ||
-            foreignKey.columnNames.includes('farm_id') ||
-            foreignKey.columnNames.includes('device_id')) {
+        if (
+          foreignKey.columnNames.includes('user_id') ||
+          foreignKey.columnNames.includes('farm_id') ||
+          foreignKey.columnNames.includes('device_id')
+        ) {
           await queryRunner.dropForeignKey('batchs', foreignKey);
         }
       }

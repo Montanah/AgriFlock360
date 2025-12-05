@@ -36,7 +36,12 @@ export class OtaController {
   @Public()
   @ApiOperation({ summary: 'Update OTA progress (Device endpoint)' })
   async updateProgress(
-    @Body() body: { device_id: string; ota_id: string; progress: OtaProgressDto },
+    @Body()
+    body: {
+      device_id: string;
+      ota_id: string;
+      progress: OtaProgressDto;
+    },
   ) {
     return this.otaService.updateProgress(
       body.device_id,

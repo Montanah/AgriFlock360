@@ -1,5 +1,11 @@
 // migrations/XXXXXX-create-user-activities.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateUserActivities1736480008000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -104,13 +110,16 @@ export class CreateUserActivities1736480008000 implements MigrationInterface {
     const table = await queryRunner.getTable('user_activities');
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('user_id') !== -1,
+        (fk) => fk.columnNames.indexOf('user_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('user_activities', foreignKey);
       }
     }
-    await queryRunner.dropIndex('user_activities', 'idx_user_activities_created');
+    await queryRunner.dropIndex(
+      'user_activities',
+      'idx_user_activities_created',
+    );
     await queryRunner.dropIndex('user_activities', 'idx_user_activities_type');
     await queryRunner.dropIndex('user_activities', 'idx_user_activities_user');
     await queryRunner.dropTable('user_activities');

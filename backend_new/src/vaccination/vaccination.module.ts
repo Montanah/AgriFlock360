@@ -12,8 +12,8 @@ import { VaccineCatalogModule } from '../vaccine-catalog/vaccine-catalog.module'
 @Module({
   imports: [
     TypeOrmModule.forFeature([Vaccination, Batch, VaccineCatalog]),
-    NotificationsModule, 
-    VaccineCatalogModule, 
+    NotificationsModule,
+    VaccineCatalogModule,
   ],
   controllers: [VaccinationsController],
   providers: [VaccinationsService, CustomLogger],

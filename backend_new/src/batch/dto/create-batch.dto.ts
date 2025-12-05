@@ -41,7 +41,7 @@ export class CreateBatchDto {
   @IsOptional()
   @IsDateString()
   hatch_date?: string;
-  
+
   @ApiPropertyOptional({ example: 2 })
   @IsOptional()
   @IsInt()
@@ -53,23 +53,26 @@ export class CreateBatchDto {
   @IsInt()
   @Min(1)
   birds_alive: number;
-  
+
   @ApiPropertyOptional({ description: 'Current weight in grams', example: 2 })
   @IsOptional()
   @IsInt()
   current_weight: number;
-  
+
   @ApiPropertyOptional({ description: 'Expected weight in grams', example: 2 })
   @IsOptional()
   @IsInt()
   expected_weight: number;
-  
+
   @ApiPropertyOptional({ description: 'Feeding time', example: 'Day' })
   @IsOptional()
   @IsString()
   feeding_time: string;
-  
-  @ApiPropertyOptional({ description: 'Feeding schedule', example: ['08:00', '12:00', '16:00'] })
+
+  @ApiPropertyOptional({
+    description: 'Feeding schedule',
+    example: ['08:00', '12:00', '16:00'],
+  })
   @IsOptional()
   @IsString({ each: true })
   feeding_schedule: string[];

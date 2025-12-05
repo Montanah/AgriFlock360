@@ -1,4 +1,3 @@
-
 // payments/services/payg.service.ts
 import {
   Injectable,
@@ -138,12 +137,12 @@ export class PaygService {
     }
 
     await this.deviceRepository.save(device);
-     
+
     this.logger.log(
       `PAYG debited: Device ${device.device_id} -${amount} = ${balanceAfter}`,
     );
-    
-     // Check if balance is low and send notification
+
+    // Check if balance is low and send notification
     if (balanceAfter < this.DAILY_RATE * 3 && balanceAfter > 0) {
       if (device.owner_id) {
         await this.notificationsService.createPaygLowBalanceNotification(
@@ -154,7 +153,7 @@ export class PaygService {
         );
       }
     }
-    
+
     return {
       device_id: deviceId,
       previous_balance: balanceBefore,
@@ -165,17 +164,17 @@ export class PaygService {
 
   async getBalance(deviceId: string, userId: string) {
     // Try Redis cache first
-  let balance = await this.redisCache.getPaygBalance(deviceId);
-  
-  if (balance) {
-    return {
-      balance: balance.balance,
-      daily_rate: balance.daily_rate,
-      days_remaining: Math.floor(balance.balance / balance.daily_rate),
-      is_locked: balance.is_locked,
-      cached: true,
-    };
-  }
+    const balance = await this.redisCache.getPaygBalance(deviceId);
+
+    if (balance) {
+      return {
+        balance: balance.balance,
+        daily_rate: balance.daily_rate,
+        days_remaining: Math.floor(balance.balance / balance.daily_rate),
+        is_locked: balance.is_locked,
+        cached: true,
+      };
+    }
     const device = await this.deviceRepository.findOne({
       where: { id: deviceId },
     });
@@ -200,7 +199,6 @@ export class PaygService {
     // Cache it
     await this.redisCache.cachePaygBalance(deviceId, balanceData);
 
-
     return {
       //balance,
       balance: balanceData.balance,
@@ -212,7 +210,12 @@ export class PaygService {
     };
   }
 
-  async getTransactions(deviceId: string, userId: string, page = 1, limit = 20) {
+  async getTransactions(
+    deviceId: string,
+    userId: string,
+    page = 1,
+    limit = 20,
+  ) {
     const device = await this.deviceRepository.findOne({
       where: { id: deviceId },
     });
@@ -227,13 +230,14 @@ export class PaygService {
 
     const skip = (page - 1) * limit;
 
-    const [transactions, total] = await this.paygTransactionRepository.findAndCount({
-      where: { device_id: deviceId },
-      order: { created_at: 'DESC' },
-      skip,
-      take: limit,
-      relations: ['payment'],
-    });
+    const [transactions, total] =
+      await this.paygTransactionRepository.findAndCount({
+        where: { device_id: deviceId },
+        order: { created_at: 'DESC' },
+        skip,
+        take: limit,
+        relations: ['payment'],
+      });
 
     return {
       transactions,
@@ -314,6 +318,8 @@ export class PaygService {
       }
     }
 
-    this.logger.log(`Daily PAYG debit completed for ${activeDevices.length} devices`);
+    this.logger.log(
+      `Daily PAYG debit completed for ${activeDevices.length} devices`,
+    );
   }
 }

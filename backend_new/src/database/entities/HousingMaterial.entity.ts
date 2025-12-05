@@ -57,7 +57,7 @@ export class HousingMaterial {
     image_url?: string;
   };
 
-  @OneToMany(() => HousingQuantity, quantity => quantity.material)
+  @OneToMany(() => HousingQuantity, (quantity) => quantity.material)
   quantities: HousingQuantity[];
 
   @CreateDateColumn({ type: 'timestamptz' })

@@ -14,10 +14,21 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { InventoryItemsService } from './inventory-items.service';
-import { CreateInventoryItemDto, UpdateInventoryItemDto, CreateTransactionDto, QueryInventoryDto, QueryTransactionsDto } from './dto/inventory.dto';
+import {
+  CreateInventoryItemDto,
+  UpdateInventoryItemDto,
+  CreateTransactionDto,
+  QueryInventoryDto,
+  QueryTransactionsDto,
+} from './dto/inventory.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Inventory Items')
 @Controller('inventory/items')
@@ -57,7 +68,10 @@ export class InventoryItemsController {
 
   @Get('low-stock')
   @ApiOperation({ summary: 'Get low stock items' })
-  @ApiResponse({ status: 200, description: 'Returns items at or below minimum stock' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns items at or below minimum stock',
+  })
   async getLowStockItems(@CurrentUser() user: any) {
     const items = await this.inventoryService.getLowStockItems(user.userId);
 
@@ -70,12 +84,18 @@ export class InventoryItemsController {
 
   @Get('expiring')
   @ApiOperation({ summary: 'Get items expiring soon' })
-  @ApiResponse({ status: 200, description: 'Returns items expiring in next 30 days' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns items expiring in next 30 days',
+  })
   async getExpiringItems(
     @Query('days') days: number = 30,
     @CurrentUser() user: any,
   ) {
-    const items = await this.inventoryService.getExpiringItems(user.userId, days);
+    const items = await this.inventoryService.getExpiringItems(
+      user.userId,
+      days,
+    );
 
     return {
       success: true,
@@ -88,7 +108,9 @@ export class InventoryItemsController {
   @ApiOperation({ summary: 'Get inventory summary and analytics' })
   @ApiResponse({ status: 200, description: 'Returns inventory statistics' })
   async getInventorySummary(@CurrentUser() user: any) {
-    const summary = await this.inventoryService.getInventorySummary(user.userId);
+    const summary = await this.inventoryService.getInventorySummary(
+      user.userId,
+    );
 
     return {
       success: true,
@@ -116,7 +138,11 @@ export class InventoryItemsController {
     @Body() updateDto: UpdateInventoryItemDto,
     @CurrentUser() user: any,
   ) {
-    const item = await this.inventoryService.updateItem(id, user.userId, updateDto);
+    const item = await this.inventoryService.updateItem(
+      id,
+      user.userId,
+      updateDto,
+    );
 
     return {
       success: true,
@@ -136,8 +162,13 @@ export class InventoryItemsController {
   // Transactions
 
   @Post(':id/transactions')
-  @ApiOperation({ summary: 'Create inventory transaction (purchase, usage, etc.)' })
-  @ApiResponse({ status: 201, description: 'Transaction recorded successfully' })
+  @ApiOperation({
+    summary: 'Create inventory transaction (purchase, usage, etc.)',
+  })
+  @ApiResponse({
+    status: 201,
+    description: 'Transaction recorded successfully',
+  })
   async createTransaction(
     @Param('id') id: string,
     @Body() createDto: CreateTransactionDto,

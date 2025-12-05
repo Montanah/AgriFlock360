@@ -1,4 +1,3 @@
-
 import {
   Injectable,
   CanActivate,
@@ -28,7 +27,6 @@ export class PermissionsGuard implements CanActivate {
       return true;
     }
 
-
     const request = context.switchToHttp().getRequest();
     const userId = request.user?.userId;
     console.log('User ID:', request.user);
@@ -54,7 +52,7 @@ export class PermissionsGuard implements CanActivate {
     }
 
     // Get user's permissions
-    const userPermissions = user.role.permissions.map(p => p.name);
+    const userPermissions = user.role.permissions.map((p) => p.name);
     console.log('User permissions:', userPermissions);
     // Super admin bypass (has system.admin permission)
     if (userPermissions.includes('system.admin')) {
@@ -62,7 +60,7 @@ export class PermissionsGuard implements CanActivate {
     }
 
     // Check if user has all required permissions
-    const hasAllPermissions = requiredPermissions.every(permission =>
+    const hasAllPermissions = requiredPermissions.every((permission) =>
       userPermissions.includes(permission),
     );
 
@@ -111,7 +109,7 @@ export class AnyPermissionsGuard implements CanActivate {
       throw new ForbiddenException('User account is not active');
     }
 
-    const userPermissions = user.role.permissions.map(p => p.name);
+    const userPermissions = user.role.permissions.map((p) => p.name);
 
     // Super admin bypass
     if (userPermissions.includes('system.admin')) {
@@ -119,7 +117,7 @@ export class AnyPermissionsGuard implements CanActivate {
     }
 
     // Check if user has ANY of the required permissions (OR logic)
-    const hasAnyPermission = requiredPermissions.some(permission =>
+    const hasAnyPermission = requiredPermissions.some((permission) =>
       userPermissions.includes(permission),
     );
 

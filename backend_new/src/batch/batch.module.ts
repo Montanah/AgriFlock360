@@ -15,7 +15,6 @@ import { AuditLog } from '../database/entities/AuditLog.entity';
 import { BirdType } from 'src/database/entities/BirdType.entity';
 import { UploadsModule } from '../uploads/uploads.module';
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -27,16 +26,11 @@ import { UploadsModule } from '../uploads/uploads.module';
       WeightSample,
       AuditLog,
       BirdType,
-    ]), UploadsModule,
+    ]),
+    UploadsModule,
   ],
-  controllers: [
-    BatchController,
-  ],
-  providers: [
-    BatchService,
-    CustomLogger,
-    AuditService,
-  ],
+  controllers: [BatchController],
+  providers: [BatchService, CustomLogger, AuditService],
   exports: [BatchService],
 })
 export class BatchModule {}

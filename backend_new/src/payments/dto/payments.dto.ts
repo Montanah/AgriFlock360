@@ -7,7 +7,9 @@ import {
   IsEnum,
   Min,
   Matches,
-  IsObject, IsInt, Max
+  IsObject,
+  IsInt,
+  Max,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';

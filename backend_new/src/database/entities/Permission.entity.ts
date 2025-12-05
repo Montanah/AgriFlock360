@@ -27,7 +27,7 @@ export class Permission {
   @Column({ type: 'varchar', length: 50, nullable: true })
   action: string; // e.g., 'create', 'read', 'update', 'delete', 'manage'
 
-  @ManyToMany(() => Role, role => role.permissions)
+  @ManyToMany(() => Role, (role) => role.permissions)
   roles: Role[];
 
   @CreateDateColumn({ type: 'timestamptz' })

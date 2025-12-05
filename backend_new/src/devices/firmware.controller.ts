@@ -18,7 +18,13 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { Public } from '../auth/decorators/public.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
 import { RequirePermissions } from 'src/auth/decorators/permissions.decorator';
 
@@ -31,7 +37,12 @@ export class FirmwareController {
   @Roles('admin')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @UseGuards(PermissionsGuard)
-  @RequirePermissions('firmware.create', 'firmware.update', 'firmware.manage', 'system.admin')
+  @RequirePermissions(
+    'firmware.create',
+    'firmware.update',
+    'firmware.manage',
+    'system.admin',
+  )
   @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Upload new firmware (Admin only)' })

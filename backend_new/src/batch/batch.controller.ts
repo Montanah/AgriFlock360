@@ -22,7 +22,14 @@ import { UpdateBatchCountDto } from './dto/update-batch-count.dto';
 import { QueryBatchDto } from './dto/query-batch.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse, ApiConsumes, ApiBody } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+  ApiConsumes,
+  ApiBody,
+} from '@nestjs/swagger';
 import type { Request } from 'express';
 import { FileInterceptor } from '@nestjs/platform-express';
 import multer from 'multer';
@@ -129,7 +136,12 @@ export class BatchController {
     @Req() req: Request,
   ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
-    return this.batchService.archive(batchId, user.userId, ipAddress, userAgent);
+    return this.batchService.archive(
+      batchId,
+      user.userId,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @Post(':batchId/complete')
@@ -141,7 +153,12 @@ export class BatchController {
     @Req() req: Request,
   ) {
     const { ipAddress, userAgent } = this.getClientInfo(req);
-    return this.batchService.complete(batchId, user.userId, ipAddress, userAgent);
+    return this.batchService.complete(
+      batchId,
+      user.userId,
+      ipAddress,
+      userAgent,
+    );
   }
 
   @Get(':batchId/stats')
@@ -154,54 +171,73 @@ export class BatchController {
   @Get(':batchId/history')
   @ApiOperation({ summary: 'Get batch count history' })
   @ApiResponse({ status: 200, description: 'Batch history retrieved' })
-  async getHistory(@Param('batchId') batchId: string, @CurrentUser() user: any) {
+  async getHistory(
+    @Param('batchId') batchId: string,
+    @CurrentUser() user: any,
+  ) {
     const result = await this.batchService.findOne(batchId, user.userId);
     return { history: result.history };
   }
 
   @Post(':batchId/photo')
-    @ApiOperation({ summary: 'Upload batch avatar' })
-    @ApiConsumes('multipart/form-data')
-    @ApiBody({
-      schema: {
-        type: 'object',
-        properties: {
-          file: {
-            type: 'string',
-            format: 'binary',
-          },
+  @ApiOperation({ summary: 'Upload batch avatar' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        file: {
+          type: 'string',
+          format: 'binary',
         },
       },
-    })
-    @ApiResponse({ status: 200, description: 'Batch Avatar uploaded successfully' })
-    @UseInterceptors(
-      FileInterceptor('file', {
-        storage: multer.memoryStorage(),
-        limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
-        fileFilter: (req, file, cb) => {
-          if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
-            return cb(new Error('Only image files are allowed'), false);
-          }
-          cb(null, true);
-        },
-      }),
-    )
-    async updateAvatar(@Param('batchId') batchId: string, @UploadedFile() file: Express.Multer.File, @CurrentUser() user: any) {
-      const result = await this.batchService.updateBatchAvatar(batchId, file, user.userId);
-  
-      return {
-        success: true,
-        message: 'Batch avatar updated successfully',
-        data: result,
-      };
-    }
-  
-    @Delete(':batchId/photo')
-    @HttpCode(HttpStatus.NO_CONTENT)
-    @ApiOperation({ summary: 'Delete batch avatar' })
-    @ApiResponse({ status: 204, description: 'Batch Avatar deleted successfully' })
-    async deleteAvatar(@Param('farmId') batchId: string, @CurrentUser() user: any) {
-      await this.batchService.deleteBatchAvatar(batchId, user.userId);
-    }
+    },
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Batch Avatar uploaded successfully',
+  })
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: multer.memoryStorage(),
+      limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+      fileFilter: (req, file, cb) => {
+        if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(new Error('Only image files are allowed'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async updateAvatar(
+    @Param('batchId') batchId: string,
+    @UploadedFile() file: Express.Multer.File,
+    @CurrentUser() user: any,
+  ) {
+    const result = await this.batchService.updateBatchAvatar(
+      batchId,
+      file,
+      user.userId,
+    );
 
+    return {
+      success: true,
+      message: 'Batch avatar updated successfully',
+      data: result,
+    };
+  }
+
+  @Delete(':batchId/photo')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiOperation({ summary: 'Delete batch avatar' })
+  @ApiResponse({
+    status: 204,
+    description: 'Batch Avatar deleted successfully',
+  })
+  async deleteAvatar(
+    @Param('farmId') batchId: string,
+    @CurrentUser() user: any,
+  ) {
+    await this.batchService.deleteBatchAvatar(batchId, user.userId);
+  }
 }

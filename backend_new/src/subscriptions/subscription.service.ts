@@ -43,9 +43,7 @@ export class SubscriptionService {
     });
 
     if (existing) {
-      throw new ConflictException(
-        'User already has an active subscription',
-      );
+      throw new ConflictException('User already has an active subscription');
     }
 
     // Get plan details
@@ -59,7 +57,7 @@ export class SubscriptionService {
 
     const startDate = new Date(dto.start_date);
     const trialDays = dto.trial_days || plan.metadata?.trial_days || 0;
-    
+
     let endDate: Date | null = null;
     let trialEndDate: Date | null = null;
     let nextBillingDate: Date | null = null;
@@ -80,7 +78,7 @@ export class SubscriptionService {
       } else if (plan.plan_type === 'annual') {
         endDate.setFullYear(endDate.getFullYear() + 1);
       }
-      
+
       if (!nextBillingDate) {
         nextBillingDate = endDate;
       }
@@ -110,7 +108,14 @@ export class SubscriptionService {
   }
 
   async findAll(query: QuerySubscriptionDto) {
-    const { user_id, plan_id, status, auto_renew, page = 1, limit = 10 } = query;
+    const {
+      user_id,
+      plan_id,
+      status,
+      auto_renew,
+      page = 1,
+      limit = 10,
+    } = query;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.subscriptionRepo
@@ -137,7 +142,10 @@ export class SubscriptionService {
       });
     }
 
-    queryBuilder.orderBy('subscription.created_at', 'DESC').skip(skip).take(limit);
+    queryBuilder
+      .orderBy('subscription.created_at', 'DESC')
+      .skip(skip)
+      .take(limit);
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
@@ -199,8 +207,7 @@ export class SubscriptionService {
     switch (dto.usage_type) {
       case 'reading':
         if (
-          subscription.current_readings_count <
-          plan.free_readings_per_month
+          subscription.current_readings_count < plan.free_readings_per_month
         ) {
           isFree = true;
         } else {
@@ -244,7 +251,8 @@ export class SubscriptionService {
       subscription.balance = Number(subscription.balance) - totalCost;
     }
 
-    subscription.current_charges = Number(subscription.current_charges) + totalCost;
+    subscription.current_charges =
+      Number(subscription.current_charges) + totalCost;
 
     // Create usage record
     const usageRecord = this.usageRepo.create({
@@ -281,9 +289,13 @@ export class SubscriptionService {
       subscription.auto_topup_amount &&
       subscription.auto_topup_trigger
     ) {
-      if (Number(subscription.balance) <= Number(subscription.auto_topup_trigger)) {
+      if (
+        Number(subscription.balance) <= Number(subscription.auto_topup_trigger)
+      ) {
         // Here you would trigger auto top-up via payment service
-        console.log(`Auto top-up triggered for subscription ${subscription.id}`);
+        console.log(
+          `Auto top-up triggered for subscription ${subscription.id}`,
+        );
         // await this.paymentService.processAutoTopup(subscription);
       }
     }
@@ -294,7 +306,7 @@ export class SubscriptionService {
 
   async getUsageReport(dto: UsageReportDto) {
     const subscription = await this.findOne(dto.subscription_id);
-    
+
     const startDate = new Date(dto.start_date);
     const endDate = new Date(dto.end_date);
 
@@ -335,7 +347,9 @@ export class SubscriptionService {
         };
       }
       summary.by_type[record.usage_type].count += record.quantity;
-      summary.by_type[record.usage_type].total_cost += Number(record.total_cost);
+      summary.by_type[record.usage_type].total_cost += Number(
+        record.total_cost,
+      );
 
       // Group by day
       const day = record.usage_date.toISOString().split('T')[0];
@@ -354,7 +368,11 @@ export class SubscriptionService {
     };
   }
 
-  async cancel(id: string, reason?: string, notes?: string): Promise<Subscription> {
+  async cancel(
+    id: string,
+    reason?: string,
+    notes?: string,
+  ): Promise<Subscription> {
     const subscription = await this.findOne(id);
 
     subscription.status = 'cancelled';
@@ -375,8 +393,13 @@ export class SubscriptionService {
   async reactivate(id: string): Promise<Subscription> {
     const subscription = await this.findOne(id);
 
-    if (subscription.status !== 'suspended' && subscription.status !== 'cancelled') {
-      throw new BadRequestException('Can only reactivate suspended or cancelled subscriptions');
+    if (
+      subscription.status !== 'suspended' &&
+      subscription.status !== 'cancelled'
+    ) {
+      throw new BadRequestException(
+        'Can only reactivate suspended or cancelled subscriptions',
+      );
     }
 
     subscription.status = 'active';
@@ -427,7 +450,7 @@ export class SubscriptionService {
 
   private async renewSubscription(subscription: Subscription): Promise<void> {
     const plan = subscription.plan;
-    
+
     // Calculate new billing period
     const newStart = new Date(subscription.next_billing_date);
     const newEnd = new Date(newStart);

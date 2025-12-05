@@ -179,7 +179,10 @@ export class CreateVaccineCatalog1736480009005 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('vaccine_catalog', 'idx_vaccine_catalog_active');
+    await queryRunner.dropIndex(
+      'vaccine_catalog',
+      'idx_vaccine_catalog_active',
+    );
     await queryRunner.dropIndex('vaccine_catalog', 'idx_vaccine_catalog_type');
     await queryRunner.dropIndex('vaccine_catalog', 'idx_vaccine_catalog_name');
     await queryRunner.dropTable('vaccine_catalog');

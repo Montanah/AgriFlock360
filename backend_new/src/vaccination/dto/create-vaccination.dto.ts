@@ -1,5 +1,11 @@
 // vaccination/dto/create-vaccination.dto.ts
-import { IsString, IsDateString, IsOptional, IsInt, IsNumber } from 'class-validator';
+import {
+  IsString,
+  IsDateString,
+  IsOptional,
+  IsInt,
+  IsNumber,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateVaccinationDto {

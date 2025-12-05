@@ -23,4 +23,3 @@ export class SeedDeviceStatus1736463000000 implements MigrationInterface {
     `);
   }
 }
-

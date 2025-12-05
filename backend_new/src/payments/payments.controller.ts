@@ -14,7 +14,12 @@ import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
-import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiBearerAuth,
+  ApiResponse,
+} from '@nestjs/swagger';
 import type { Request } from 'express';
 
 @ApiTags('Payments')
@@ -67,14 +72,20 @@ export class PaymentsController {
   @common.Get()
   @ApiOperation({ summary: 'Get payment history' })
   @ApiResponse({ status: 200, description: 'Payments retrieved' })
-  async findAll(@CurrentUser() user: any, @common.Query() query: QueryPaymentsDto) {
+  async findAll(
+    @CurrentUser() user: any,
+    @common.Query() query: QueryPaymentsDto,
+  ) {
     return this.paymentsService.findAll(user.userId, query);
   }
 
   @common.Get(':paymentId')
   @ApiOperation({ summary: 'Get payment details' })
   @ApiResponse({ status: 200, description: 'Payment details retrieved' })
-  async findOne(@common.Param('paymentId') paymentId: string, @CurrentUser() user: any) {
+  async findOne(
+    @common.Param('paymentId') paymentId: string,
+    @CurrentUser() user: any,
+  ) {
     return this.paymentsService.findOne(paymentId, user.userId);
   }
 }

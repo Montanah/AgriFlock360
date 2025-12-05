@@ -37,7 +37,10 @@ export class RedisCacheService {
   ) {}
 
   // TELEMETRY CACHING
-  async cacheLatestTelemetry(deviceId: string, telemetry: TelemetryCache): Promise<void> {
+  async cacheLatestTelemetry(
+    deviceId: string,
+    telemetry: TelemetryCache,
+  ): Promise<void> {
     const key = `telemetry:latest:${deviceId}`;
     await this.redis.set(key, telemetry, 300); // 5 minutes TTL
     this.logger.log(`Cached telemetry for device ${deviceId}`);
@@ -57,7 +60,10 @@ export class RedisCacheService {
     await this.redis.set(key, stats, 3600); // 1 hour TTL
   }
 
-  async getTelemetryStats(deviceId: string, period: '1h' | '24h' | '7d'): Promise<any> {
+  async getTelemetryStats(
+    deviceId: string,
+    period: '1h' | '24h' | '7d',
+  ): Promise<any> {
     const key = `telemetry:stats:${deviceId}:${period}`;
     return await this.redis.get(key);
   }
@@ -66,7 +72,7 @@ export class RedisCacheService {
   async bufferTelemetry(deviceId: string, telemetry: any): Promise<void> {
     const key = `telemetry:buffer:${deviceId}`;
     await this.redis.rPush(key, telemetry);
-    
+
     // Check buffer size
     const size = await this.redis.lLen(key);
     if (size >= 100) {
@@ -107,11 +113,15 @@ export class RedisCacheService {
     return await this.redis.lPop(key);
   }
 
-  async setCommandStatus(commandId: string, status: string, metadata?: any): Promise<void> {
+  async setCommandStatus(
+    commandId: string,
+    status: string,
+    metadata?: any,
+  ): Promise<void> {
     const key = `commands:status:${commandId}`;
     await this.redis.hSet(key, 'status', status);
     await this.redis.hSet(key, 'updated_at', new Date().toISOString());
-    
+
     if (metadata) {
       for (const [field, value] of Object.entries(metadata)) {
         await this.redis.hSet(key, field, value);
@@ -127,7 +137,7 @@ export class RedisCacheService {
   }
 
   // DEVICE STATUS & HEARTBEAT
-   async setDeviceOnline(deviceId: string): Promise<void> {
+  async setDeviceOnline(deviceId: string): Promise<void> {
     const key = `device:online:${deviceId}`;
     await this.redis.set(key, 'true', 120); // 2 minutes TTL
   }
@@ -149,7 +159,10 @@ export class RedisCacheService {
   }
 
   // PAYG BALANCE CACHE
-  async cachePaygBalance(deviceId: string, balance: PaygBalance): Promise<void> {
+  async cachePaygBalance(
+    deviceId: string,
+    balance: PaygBalance,
+  ): Promise<void> {
     const key = `payg:balance:${deviceId}`;
     await this.redis.set(key, balance, 300); // 5 minutes TTL
   }
@@ -164,7 +177,6 @@ export class RedisCacheService {
     await this.redis.del(key);
   }
 
- 
   // ALERT COUNTERS
   async incrementUnreadAlerts(userId: string): Promise<number> {
     const key = `alerts:unread:${userId}`;
@@ -187,7 +199,10 @@ export class RedisCacheService {
     await this.redis.sAdd(key, alertType);
   }
 
-  async removeCriticalAlert(deviceId: string, alertType: string): Promise<void> {
+  async removeCriticalAlert(
+    deviceId: string,
+    alertType: string,
+  ): Promise<void> {
     const key = `alerts:critical:${deviceId}`;
     await this.redis.sRem(key, alertType);
   }
@@ -196,7 +211,6 @@ export class RedisCacheService {
     const key = `alerts:critical:${deviceId}`;
     return await this.redis.sMembers(key);
   }
-
 
   // RATE LIMITING
   async checkRateLimit(
@@ -270,7 +284,7 @@ export class RedisCacheService {
   }
 
   // PROVISIONING TOKENS
-   async cacheProvisioningToken(token: string, data: any): Promise<void> {
+  async cacheProvisioningToken(token: string, data: any): Promise<void> {
     const key = `provisioning:token:${token}`;
     await this.redis.set(key, data, 3600); // 1 hour TTL
   }

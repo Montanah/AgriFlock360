@@ -3,11 +3,12 @@ export const subscriptionPlanSeeds = [
   {
     name: 'PAYG Starter',
     plan_type: 'payg',
-    description: 'Pay only for what you use. Perfect for small farms with 1-5 devices.',
-    base_fee: 5.00, // KES 500 monthly base
+    description:
+      'Pay only for what you use. Perfect for small farms with 1-5 devices.',
+    base_fee: 5.0, // KES 500 monthly base
     per_reading_fee: 0.01, // KES 1 per 100 readings
-    per_alert_fee: 0.50, // KES 50 per alert
-    per_device_fee: 1.00, // KES 100 per device per day
+    per_alert_fee: 0.5, // KES 50 per alert
+    per_device_fee: 1.0, // KES 100 per device per day
     per_kb_fee: 0.001, // KES 0.1 per KB
     free_readings_per_month: 1000,
     free_alerts_per_month: 10,
@@ -35,8 +36,9 @@ export const subscriptionPlanSeeds = [
   {
     name: 'Professional Monthly',
     plan_type: 'monthly',
-    description: 'Fixed monthly rate for medium-sized farms. Unlimited readings and alerts.',
-    monthly_price: 50.00, // KES 5,000
+    description:
+      'Fixed monthly rate for medium-sized farms. Unlimited readings and alerts.',
+    monthly_price: 50.0, // KES 5,000
     max_devices: 20,
     features: {
       real_time_monitoring: true,
@@ -62,7 +64,7 @@ export const subscriptionPlanSeeds = [
     name: 'Enterprise Annual',
     plan_type: 'annual',
     description: 'Best value for large farms. Save 20% with annual commitment.',
-    annual_price: 480.00, // KES 48,000 (save KES 12,000)
+    annual_price: 480.0, // KES 48,000 (save KES 12,000)
     max_devices: 100,
     features: {
       real_time_monitoring: true,

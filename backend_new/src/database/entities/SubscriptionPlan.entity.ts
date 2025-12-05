@@ -103,7 +103,7 @@ export class SubscriptionPlan {
     minimum_commitment_months?: number;
   };
 
-  @OneToMany(() => Subscription, subscription => subscription.plan)
+  @OneToMany(() => Subscription, (subscription) => subscription.plan)
   subscriptions: Subscription[];
 
   @CreateDateColumn({ type: 'timestamptz' })

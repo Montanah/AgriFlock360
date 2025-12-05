@@ -1,5 +1,14 @@
 // admin/dto/query-logs.dto.ts
-import { IsOptional, IsInt, Min, Max, IsString, IsObject, IsEmail, IsNumber } from 'class-validator';
+import {
+  IsOptional,
+  IsInt,
+  Min,
+  Max,
+  IsString,
+  IsObject,
+  IsEmail,
+  IsNumber,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { ApiProperty } from '@nestjs/swagger';
@@ -76,16 +85,16 @@ export class CreateAdminDto {
 
 // QueryFarmersDto
 export class QueryFarmersDto {
-  @ApiProperty({ example: 'John Kipchonge'})
+  @ApiProperty({ example: 'John Kipchonge' })
   @IsString()
   name: string;
 
-  @ApiProperty({ example: 'example@gmail.com'})
+  @ApiProperty({ example: 'example@gmail.com' })
   @IsString()
   @IsEmail()
   email: string;
 
-  @ApiProperty({ example: 'location'})
+  @ApiProperty({ example: 'location' })
   @IsOptional()
   @IsString()
   location: string;
@@ -93,27 +102,27 @@ export class QueryFarmersDto {
   @ApiProperty({ example: 4 })
   @IsOptional()
   @IsNumber()
-  batches: number
+  batches: number;
 
-  @ApiProperty({ example: 45})
+  @ApiProperty({ example: 45 })
   @IsOptional()
   @IsNumber()
-  brooders: number
+  brooders: number;
 
   @ApiProperty({ example: 1000 })
   @IsOptional()
   @IsNumber()
-  birds: number
+  birds: number;
 
   @ApiProperty({ example: 'KES4999' })
   @IsOptional()
   @IsNumber()
-  revenue: number
+  revenue: number;
 
   @ApiProperty({ example: 'active' })
   @IsOptional()
   @IsString()
-  status: string
+  status: string;
 
   @ApiPropertyOptional({ example: 1 })
   @IsOptional()

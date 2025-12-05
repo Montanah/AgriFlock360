@@ -15,7 +15,6 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
-
 enum PlanType {
   PAYG = 'payg',
   MONTHLY = 'monthly',

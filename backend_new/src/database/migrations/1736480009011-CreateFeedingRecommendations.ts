@@ -1,10 +1,17 @@
-1736480009011
-
+1736480009011;
 
 // migrations/XXXXXX-create-feeding-recommendations.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
-export class CreateFeedingRecommendations1736480009011 implements MigrationInterface {
+export class CreateFeedingRecommendations1736480009011
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -134,15 +141,21 @@ export class CreateFeedingRecommendations1736480009011 implements MigrationInter
     const table = await queryRunner.getTable('feeding_recommendations');
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('bird_type_id') !== -1,
+        (fk) => fk.columnNames.indexOf('bird_type_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('feeding_recommendations', foreignKey);
       }
     }
 
-    await queryRunner.dropIndex('feeding_recommendations', 'idx_feeding_rec_age');
-    await queryRunner.dropIndex('feeding_recommendations', 'idx_feeding_rec_bird_type');
+    await queryRunner.dropIndex(
+      'feeding_recommendations',
+      'idx_feeding_rec_age',
+    );
+    await queryRunner.dropIndex(
+      'feeding_recommendations',
+      'idx_feeding_rec_bird_type',
+    );
     await queryRunner.dropTable('feeding_recommendations');
   }
 }

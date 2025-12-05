@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { InventoryCategory, } from '../database/entities/InventoryCategory.entity';
+import { InventoryCategory } from '../database/entities/InventoryCategory.entity';
 import { CreateCategoryDto, UpdateCategoryDto } from './dto/inventory.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 
@@ -19,7 +19,9 @@ export class InventoryCategoriesService {
     private logger: CustomLogger,
   ) {}
 
-  async createCategory(createDto: CreateCategoryDto): Promise<InventoryCategory> {
+  async createCategory(
+    createDto: CreateCategoryDto,
+  ): Promise<InventoryCategory> {
     // Check if category already exists
     const existing = await this.categoryRepository.findOne({
       where: { name: createDto.name },
@@ -37,7 +39,9 @@ export class InventoryCategoriesService {
     return category;
   }
 
-  async getCategories(activeOnly: boolean = false): Promise<InventoryCategory[]> {
+  async getCategories(
+    activeOnly: boolean = false,
+  ): Promise<InventoryCategory[]> {
     const query: any = {};
 
     if (activeOnly) {
@@ -63,7 +67,10 @@ export class InventoryCategoriesService {
     return category;
   }
 
-  async updateCategory(id: string, updateDto: UpdateCategoryDto): Promise<InventoryCategory> {
+  async updateCategory(
+    id: string,
+    updateDto: UpdateCategoryDto,
+  ): Promise<InventoryCategory> {
     const category = await this.categoryRepository.findOne({ where: { id } });
 
     if (!category) {

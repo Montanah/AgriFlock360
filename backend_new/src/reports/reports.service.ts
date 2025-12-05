@@ -1,6 +1,9 @@
-
 // reports/reports.service.ts
-import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ForbiddenException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
 import { Batch } from '../database/entities/Batch.entity';
@@ -107,7 +110,9 @@ export class ReportsService {
     const avgDailyGrowth =
       weightSamples.length > 1
         ? (
-            (Number(weightSamples[weightSamples.length - 1].average_weight_grams) -
+            (Number(
+              weightSamples[weightSamples.length - 1].average_weight_grams,
+            ) -
               Number(weightSamples[0].average_weight_grams)) /
             weightSamples.length
           ).toFixed(2)
@@ -153,7 +158,9 @@ export class ReportsService {
     // For PDF/Excel, you would use libraries like pdfkit or exceljs
     // Placeholder for now
     const format = reportDto.format ?? ReportFormat.JSON;
-    this.logger.log(`Report generated for batch ${batchId} in ${format} format`);
+    this.logger.log(
+      `Report generated for batch ${batchId} in ${format} format`,
+    );
 
     return {
       message: `${format.toUpperCase()} generation not yet implemented`,
@@ -247,7 +254,9 @@ export class ReportsService {
     // For PDF/Excel, you would use libraries like pdfkit or exceljs
     // Placeholder for now
     const format = reportDto.format ?? ReportFormat.JSON;
-    this.logger.log(`Report generated for device ${deviceId} in ${format} format`);
+    this.logger.log(
+      `Report generated for device ${deviceId} in ${format} format`,
+    );
 
     return {
       message: `${format.toUpperCase()} generation not yet implemented`,

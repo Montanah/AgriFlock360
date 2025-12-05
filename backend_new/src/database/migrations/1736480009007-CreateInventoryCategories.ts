@@ -1,7 +1,9 @@
 // migrations/XXXXXX-create-inventory-categories.ts
 import { MigrationInterface, QueryRunner, Table, TableIndex } from 'typeorm';
 
-export class CreateInventoryCategories1736480009007 implements MigrationInterface {
+export class CreateInventoryCategories1736480009007
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
@@ -55,7 +57,10 @@ export class CreateInventoryCategories1736480009007 implements MigrationInterfac
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropIndex('inventory_categories', 'idx_inventory_categories_name');
+    await queryRunner.dropIndex(
+      'inventory_categories',
+      'idx_inventory_categories_name',
+    );
     await queryRunner.dropTable('inventory_categories');
   }
 }

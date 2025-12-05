@@ -1,11 +1,22 @@
-import { MigrationInterface, QueryRunner, Table, TableColumn, TableForeignKey, TableIndex } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableColumn,
+  TableForeignKey,
+  TableIndex,
+} from 'typeorm';
 
-export class RefactorBirdTypeToEntity1736940115000 implements MigrationInterface {
+export class RefactorBirdTypeToEntity1736940115000
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     // 0. Fix the broken foreign key constraint that references 'flocks' instead of 'batchs'
     try {
       // Drop the existing foreign key constraint that's pointing to 'flocks'
-      await queryRunner.query(`ALTER TABLE feeding_schedules DROP CONSTRAINT IF EXISTS feeding_schedules_batch_id_fkey;`);
+      await queryRunner.query(
+        `ALTER TABLE feeding_schedules DROP CONSTRAINT IF EXISTS feeding_schedules_batch_id_fkey;`,
+      );
     } catch (error) {
       // Constraint might not exist, continue
     }
@@ -19,7 +30,7 @@ export class RefactorBirdTypeToEntity1736940115000 implements MigrationInterface
           referencedColumnNames: ['id'],
           referencedTableName: 'batchs',
           onDelete: 'CASCADE',
-        })
+        }),
       );
     } catch (error) {
       // Constraint might already exist, continue
@@ -146,7 +157,9 @@ export class RefactorBirdTypeToEntity1736940115000 implements MigrationInterface
     const batchTable = await queryRunner.getTable('batchs');
     if (batchTable) {
       const foreignKey = batchTable.foreignKeys.find(
-        (fk) => fk.columnNames.includes('bird_type_id') && fk.referencedTableName === 'bird_types',
+        (fk) =>
+          fk.columnNames.includes('bird_type_id') &&
+          fk.referencedTableName === 'bird_types',
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('batchs', foreignKey);

@@ -1,4 +1,3 @@
-
 // migrations/XXXXXX-update-roles-table.ts
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
@@ -26,8 +25,12 @@ export class UpdateRolesTable1736480009001 implements MigrationInterface {
 
     // Add created_at and updated_at if they don't exist
     const table = await queryRunner.getTable('roles');
-    const hasCreatedAt = table?.columns.find(col => col.name === 'created_at');
-    const hasUpdatedAt = table?.columns.find(col => col.name === 'updated_at');
+    const hasCreatedAt = table?.columns.find(
+      (col) => col.name === 'created_at',
+    );
+    const hasUpdatedAt = table?.columns.find(
+      (col) => col.name === 'updated_at',
+    );
 
     if (!hasCreatedAt) {
       await queryRunner.addColumn(
@@ -63,4 +66,3 @@ export class UpdateRolesTable1736480009001 implements MigrationInterface {
     await queryRunner.dropColumn('roles', 'is_system_role');
   }
 }
-

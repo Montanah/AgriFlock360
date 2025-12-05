@@ -12,7 +12,10 @@ export enum CommandTypeEnum {
 }
 
 export class CreateCommandDto {
-  @ApiProperty({ enum: CommandTypeEnum, example: CommandTypeEnum.SET_TEMPERATURE })
+  @ApiProperty({
+    enum: CommandTypeEnum,
+    example: CommandTypeEnum.SET_TEMPERATURE,
+  })
   @IsEnum(CommandTypeEnum)
   command_type: CommandTypeEnum;
 
@@ -23,7 +26,10 @@ export class CreateCommandDto {
   @IsObject()
   payload: any;
 
-  @ApiPropertyOptional({ example: 300, description: 'Command expiry in seconds' })
+  @ApiPropertyOptional({
+    example: 300,
+    description: 'Command expiry in seconds',
+  })
   @IsOptional()
   expires_in?: number;
 }

@@ -30,12 +30,10 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Extension Officers')
 @Controller('extension-officers')
-@UseGuards(JwtAuthGuard) 
+@UseGuards(JwtAuthGuard)
 @ApiBearerAuth()
 export class ExtensionOfficerController {
-  constructor(
-    private readonly officerService: ExtensionOfficerService,
-  ) {}
+  constructor(private readonly officerService: ExtensionOfficerService) {}
 
   @Post()
   @ApiOperation({ summary: 'Register a new extension officer' })

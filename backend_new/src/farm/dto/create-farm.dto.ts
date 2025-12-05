@@ -1,5 +1,11 @@
 // farm/dto/create-farm.dto.ts
-import { IsString, IsOptional, IsNumber, IsObject, MaxLength } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsObject,
+  MaxLength,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class CreateFarmDto {
@@ -35,6 +41,4 @@ export class CreateFarmDto {
     latitude?: number;
     longitude?: number;
   };
-
-  
 }

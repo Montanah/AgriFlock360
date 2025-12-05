@@ -9,10 +9,7 @@ import { User } from '../database/entities/User.entity';
 import { CustomLogger } from '../common/custom-logger.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Upload, User]),
-    ConfigModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Upload, User]), ConfigModule],
   controllers: [UploadsController],
   providers: [UploadsService, CustomLogger],
   exports: [UploadsService],

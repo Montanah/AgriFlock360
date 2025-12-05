@@ -5,13 +5,16 @@ import { Response, NextFunction } from 'express';
 export class RawBodyMiddleware implements NestMiddleware {
   use(req: any, res: Response, next: NextFunction) {
     // Store raw body for Stripe/Paystack signature verification
-    if (req.method === 'POST' && req.headers['content-type'] === 'application/json') {
+    if (
+      req.method === 'POST' &&
+      req.headers['content-type'] === 'application/json'
+    ) {
       let rawData = '';
       req.on('data', (chunk) => {
         rawData += chunk;
       });
       req.on('end', () => {
-        (req as any).rawBody = rawData;
+        req.rawBody = rawData;
         next();
       });
     } else {

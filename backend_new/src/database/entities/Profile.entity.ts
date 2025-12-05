@@ -22,7 +22,7 @@ export class Profile {
   @Column({ type: 'uuid', unique: true })
   user_id: string;
 
-  @OneToOne(() => User, user => user.profile, { onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.profile, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user: User;
 
@@ -44,7 +44,7 @@ export class Profile {
 
   @Column({ type: 'integer', nullable: true })
   age: number;
- 
+
   @Column({ type: 'varchar', length: 20, nullable: true })
   gender: Gender;
 

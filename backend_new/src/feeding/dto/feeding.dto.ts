@@ -1,5 +1,17 @@
 // create-feeding-recommendation.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, IsUUID, IsInt, Min, Max, IsObject, IsDateString } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  IsUUID,
+  IsInt,
+  Min,
+  Max,
+  IsObject,
+  IsDateString,
+} from 'class-validator';
 import { Type, Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -38,22 +50,29 @@ export class CreateFeedingRecommendationDto {
   @IsNotEmpty()
   protein_percentage: number;
 
-  @ApiProperty({ description: 'Quantity per bird per day (kg)', example: 0.035 })
+  @ApiProperty({
+    description: 'Quantity per bird per day (kg)',
+    example: 0.035,
+  })
   @IsNumber()
   @Min(0)
   @IsNotEmpty()
   quantity_per_bird_per_day: number;
 
-  @ApiProperty({ description: 'Times per day to feed', example: 2, required: false })
+  @ApiProperty({
+    description: 'Times per day to feed',
+    example: 2,
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(1)
   times_per_day?: number;
 
-  @ApiProperty({ 
-    description: 'Feeding time slots', 
+  @ApiProperty({
+    description: 'Feeding time slots',
     example: { slots: ['06:00', '12:00', '18:00'] },
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsObject()
@@ -66,7 +85,11 @@ export class CreateFeedingRecommendationDto {
   @IsString()
   notes?: string;
 
-  @ApiProperty({ description: 'Supplements needed', example: 'Add calcium for layers', required: false })
+  @ApiProperty({
+    description: 'Supplements needed',
+    example: 'Add calcium for layers',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   supplements?: string;
@@ -199,7 +222,10 @@ export class QueryRecommendationsDto {
 
 // create-feeding-record.dto.ts
 export class CreateFeedingRecordDto {
-  @ApiProperty({ description: 'Schedule ID (if from schedule)', required: false })
+  @ApiProperty({
+    description: 'Schedule ID (if from schedule)',
+    required: false,
+  })
   @IsOptional()
   @IsUUID()
   schedule_id?: string;
@@ -232,7 +258,11 @@ export class CreateFeedingRecordDto {
   @IsString()
   supplier?: string;
 
-  @ApiProperty({ description: 'Fed at timestamp', example: '2024-11-28T06:00:00Z', required: false })
+  @ApiProperty({
+    description: 'Fed at timestamp',
+    example: '2024-11-28T06:00:00Z',
+    required: false,
+  })
   @IsOptional()
   @IsDateString()
   fed_at?: Date;

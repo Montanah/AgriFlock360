@@ -13,11 +13,22 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { HousingMaterialsService } from './housing-materials.service';
-import { CreateMaterialDto, UpdateMaterialDto, CreateQuantityDto, UpdateQuantityDto, QueryMaterialsDto } from './dto/housing.dto';
+import {
+  CreateMaterialDto,
+  UpdateMaterialDto,
+  CreateQuantityDto,
+  UpdateQuantityDto,
+  QueryMaterialsDto,
+} from './dto/housing.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PermissionsGuard } from '../auth/guards/permissions.guard';
 import { RequirePermissions } from '../auth/decorators/permissions.decorator';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
 @ApiTags('Housing Materials (Admin)')
 @Controller('housing/materials')
@@ -95,7 +106,10 @@ export class HousingMaterialsController {
   @RequirePermissions('housing.manage')
   @ApiOperation({ summary: 'Update material (Admin)' })
   @ApiResponse({ status: 200, description: 'Material updated successfully' })
-  async updateMaterial(@Param('id') id: string, @Body() updateDto: UpdateMaterialDto) {
+  async updateMaterial(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateMaterialDto,
+  ) {
     const material = await this.materialsService.updateMaterial(id, updateDto);
 
     return {
@@ -136,7 +150,8 @@ export class HousingMaterialsController {
   @ApiOperation({ summary: 'Get quantities for material' })
   @ApiResponse({ status: 200, description: 'Returns quantities by capacity' })
   async getQuantitiesByMaterial(@Param('materialId') materialId: string) {
-    const quantities = await this.materialsService.getQuantitiesByMaterial(materialId);
+    const quantities =
+      await this.materialsService.getQuantitiesByMaterial(materialId);
 
     return {
       success: true,
@@ -149,7 +164,10 @@ export class HousingMaterialsController {
   @RequirePermissions('housing.manage')
   @ApiOperation({ summary: 'Update quantity (Admin)' })
   @ApiResponse({ status: 200, description: 'Quantity updated successfully' })
-  async updateQuantity(@Param('id') id: string, @Body() updateDto: UpdateQuantityDto) {
+  async updateQuantity(
+    @Param('id') id: string,
+    @Body() updateDto: UpdateQuantityDto,
+  ) {
     const quantity = await this.materialsService.updateQuantity(id, updateDto);
 
     return {
@@ -183,4 +201,3 @@ export class HousingMaterialsController {
     };
   }
 }
-

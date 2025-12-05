@@ -1,5 +1,10 @@
 // migrations/XXXXXX-create-user-preferences.ts
-import { MigrationInterface, QueryRunner, Table, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateUserPreferences1736480006000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -74,7 +79,7 @@ export class CreateUserPreferences1736480006000 implements MigrationInterface {
     const table = await queryRunner.getTable('user_preferences');
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('user_id') !== -1,
+        (fk) => fk.columnNames.indexOf('user_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('user_preferences', foreignKey);

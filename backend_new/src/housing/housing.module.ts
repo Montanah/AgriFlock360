@@ -19,10 +19,15 @@ import { UsersModule } from 'src/users/users.module';
       HousingQuantity,
       HousingQuotation,
     ]),
-    UsersModule
+    UsersModule,
   ],
   controllers: [HousingMaterialsController, HousingQuotationsController],
-  providers: [HousingMaterialsService, HousingQuotationsService, CustomLogger, PermissionsGuard],
+  providers: [
+    HousingMaterialsService,
+    HousingQuotationsService,
+    CustomLogger,
+    PermissionsGuard,
+  ],
   exports: [HousingMaterialsService, HousingQuotationsService],
 })
 export class HousingModule {}

@@ -1,11 +1,15 @@
 // devices/services/ota.service.ts
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Repository, In } from 'typeorm';
 import { OtaUpdate } from '../database/entities/OtaUpdate.entity';
 import { Device } from '../database/entities/Device.entity';
 import { FirmwareVersion } from '../database/entities/Firmware.entity';
 import { ScheduleOtaDto } from './dto/schedule-ota.dto';
-import { OtaProgressDto } from './dto/ota-progress.dto';  
+import { OtaProgressDto } from './dto/ota-progress.dto';
 import { RedisCacheService } from '../common/redis/redis-cache.service';
 import { CustomLogger } from '../common/custom-logger.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
@@ -63,7 +67,9 @@ export class OtaService {
       });
 
       if (existing) {
-        this.logger.warn(`OTA already scheduled for device ${device.device_id}`);
+        this.logger.warn(
+          `OTA already scheduled for device ${device.device_id}`,
+        );
         continue;
       }
 
@@ -129,14 +135,18 @@ export class OtaService {
         firmware_version_id: otaUpdate.firmware_id,
       });
 
-      this.logger.log(`OTA completed: Device ${deviceId} → v${otaUpdate.target_version}`);
+      this.logger.log(
+        `OTA completed: Device ${deviceId} → v${otaUpdate.target_version}`,
+      );
     }
 
     if (progressDto.status === 'failed') {
       otaUpdate.error_message = progressDto.message || 'OTA update failed';
       otaUpdate.retry_count += 1;
 
-      this.logger.error(`OTA failed: Device ${deviceId} - ${progressDto.message || 'OTA update failed'}`);
+      this.logger.error(
+        `OTA failed: Device ${deviceId} - ${progressDto.message || 'OTA update failed'}`,
+      );
     }
 
     await this.otaRepository.save(otaUpdate);
@@ -242,7 +252,9 @@ export class OtaService {
           },
         });
 
-        this.logger.log(`OTA retry queued: ${update.id} (attempt ${update.retry_count + 1})`);
+        this.logger.log(
+          `OTA retry queued: ${update.id} (attempt ${update.retry_count + 1})`,
+        );
       }
     }
   }
@@ -259,7 +271,9 @@ export class OtaService {
     ]);
 
     const successRate =
-      total > 0 ? ((completed / (completed + failed)) * 100).toFixed(2) : '0.00';
+      total > 0
+        ? ((completed / (completed + failed)) * 100).toFixed(2)
+        : '0.00';
 
     return {
       total,

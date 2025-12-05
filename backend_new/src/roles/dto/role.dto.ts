@@ -1,5 +1,15 @@
 // roles/dto/create-role.dto.ts
-import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsArray, IsUUID, IsInt, Min, Max } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsBoolean,
+  IsOptional,
+  IsArray,
+  IsUUID,
+  IsInt,
+  Min,
+  Max,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 
@@ -9,12 +19,20 @@ export class CreateRoleDto {
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ description: 'Role description', example: 'Manages farm operations', required: false })
+  @ApiProperty({
+    description: 'Role description',
+    example: 'Manages farm operations',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiProperty({ description: 'Permission IDs to assign', type: [String], required: false })
+  @ApiProperty({
+    description: 'Permission IDs to assign',
+    type: [String],
+    required: false,
+  })
   @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
@@ -23,7 +41,11 @@ export class CreateRoleDto {
 
 // roles/dto/update-role.dto.ts
 export class UpdateRoleDto {
-  @ApiProperty({ description: 'Role name', example: 'farm_manager', required: false })
+  @ApiProperty({
+    description: 'Role name',
+    example: 'farm_manager',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   name?: string;
@@ -41,7 +63,10 @@ export class UpdateRoleDto {
 
 // roles/dto/query-roles.dto.ts
 export class QueryRolesDto {
-  @ApiProperty({ description: 'Search in name or description', required: false })
+  @ApiProperty({
+    description: 'Search in name or description',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   search?: string;

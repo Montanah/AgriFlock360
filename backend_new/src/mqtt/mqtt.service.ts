@@ -45,7 +45,14 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       connectTimeout: 30000,
     };
 
-    console.log('process.env.MQTT_USERNAME', process.env.MQTT_USERNAME, 'process.env.MQTT_PASSWORD', process.env.MQTT_PASSWORD, 'mqttOptions', mqttOptions);
+    console.log(
+      'process.env.MQTT_USERNAME',
+      process.env.MQTT_USERNAME,
+      'process.env.MQTT_PASSWORD',
+      process.env.MQTT_PASSWORD,
+      'mqttOptions',
+      mqttOptions,
+    );
 
     if (process.env.MQTT_USERNAME) {
       mqttOptions.username = process.env.MQTT_USERNAME;
@@ -68,7 +75,12 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       });
 
       this.client.on('error', (error) => {
-        this.logger.error('MQTT Client error:', error instanceof Error ? (error.message || error.toString()) : String(error));
+        this.logger.error(
+          'MQTT Client error:',
+          error instanceof Error
+            ? error.message || error.toString()
+            : String(error),
+        );
         this.isConnected = false;
       });
 
@@ -80,9 +92,13 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       this.client.on('reconnect', () => {
         this.logger.log('MQTT Client reconnecting...');
       });
-
     } catch (error) {
-      this.logger.error('Failed to connect to MQTT broker:', error instanceof Error ? (error.message || error.toString()) : String(error));
+      this.logger.error(
+        'Failed to connect to MQTT broker:',
+        error instanceof Error
+          ? error.message || error.toString()
+          : String(error),
+      );
     }
   }
 
@@ -90,7 +106,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     // Subscribe to all device telemetry topics
     this.client.subscribe('iot/+/telemetry', { qos: 1 }, (err) => {
       if (err) {
-        this.logger.error('Failed to subscribe to telemetry topics:', err instanceof Error ? (err.message || err.toString()) : String(err));
+        this.logger.error(
+          'Failed to subscribe to telemetry topics:',
+          err instanceof Error ? err.message || err.toString() : String(err),
+        );
       } else {
         this.logger.log('Subscribed to iot/+/telemetry topics');
       }
@@ -99,7 +118,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
     // Optional: Subscribe to device status topics
     this.client.subscribe('iot/+/status', { qos: 1 }, (err) => {
       if (err) {
-        this.logger.error('Failed to subscribe to status topics:', err instanceof Error ? (err.message || err.toString()) : String(err));
+        this.logger.error(
+          'Failed to subscribe to status topics:',
+          err instanceof Error ? err.message || err.toString() : String(err),
+        );
       } else {
         this.logger.log('Subscribed to iot/+/status topics');
       }
@@ -115,20 +137,35 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
 
       // Extract device ID from topic (iot/<device_id>/telemetry)
       const topicParts = topic.split('/');
-      if (topicParts.length >= 3 && topicParts[0] === 'iot' && topicParts[2] === 'telemetry') {
+      if (
+        topicParts.length >= 3 &&
+        topicParts[0] === 'iot' &&
+        topicParts[2] === 'telemetry'
+      ) {
         const deviceId = topicParts[1];
         await this.processTelemetryData(deviceId, data);
-      } else if (topicParts.length >= 3 && topicParts[0] === 'iot' && topicParts[2] === 'status') {
+      } else if (
+        topicParts.length >= 3 &&
+        topicParts[0] === 'iot' &&
+        topicParts[2] === 'status'
+      ) {
         const deviceId = topicParts[1];
         await this.processStatusMessage(deviceId, data);
       }
-
     } catch (error) {
-      this.logger.error('Error processing MQTT message:', error instanceof Error ? (error.message || error.toString()) : String(error));
+      this.logger.error(
+        'Error processing MQTT message:',
+        error instanceof Error
+          ? error.message || error.toString()
+          : String(error),
+      );
     }
   }
 
-  private async processTelemetryData(deviceId: string, data: MqttTelemetryData) {
+  private async processTelemetryData(
+    deviceId: string,
+    data: MqttTelemetryData,
+  ) {
     try {
       // Transform MQTT data to match your telemetry service interface
       const telemetryData = {
@@ -143,15 +180,19 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
           rssi: data.rssi,
           battery: data.battery,
           status: data.status,
-          received_via: 'mqtt'
-        }
+          received_via: 'mqtt',
+        },
       };
 
       await this.telemetryService.recordTelemetry(deviceId, telemetryData);
       this.logger.log(`Telemetry recorded for device: ${deviceId}`);
-
     } catch (error) {
-      this.logger.error(`Failed to process telemetry for device ${deviceId}:`, error instanceof Error ? (error.message || error.toString()) : String(error));
+      this.logger.error(
+        `Failed to process telemetry for device ${deviceId}:`,
+        error instanceof Error
+          ? error.message || error.toString()
+          : String(error),
+      );
     }
   }
 
@@ -169,10 +210,15 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       }
 
       const payload = JSON.stringify(message);
-      
+
       this.client.publish(topic, payload, options, (error) => {
         if (error) {
-          this.logger.error(`Failed to publish to ${topic}:`, error instanceof Error ? (error.message || error.toString()) : String(error));
+          this.logger.error(
+            `Failed to publish to ${topic}:`,
+            error instanceof Error
+              ? error.message || error.toString()
+              : String(error),
+          );
           reject(error);
         } else {
           this.logger.log(`Message published to ${topic}`);

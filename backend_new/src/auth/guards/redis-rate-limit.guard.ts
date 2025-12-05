@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { RedisCacheService } from '../../common/redis/redis-cache.service';
 
@@ -22,7 +28,7 @@ export class RedisRateLimitGuard implements CanActivate {
       user.userId,
       endpoint,
       100, // 100 requests
-      60,  // per minute
+      60, // per minute
     );
 
     // Add rate limit headers
@@ -40,4 +46,3 @@ export class RedisRateLimitGuard implements CanActivate {
     return true;
   }
 }
-

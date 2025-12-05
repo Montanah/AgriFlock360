@@ -12,7 +12,7 @@ import type { QueryRunner } from 'typeorm';
 import { Role } from '../database/entities/Role.entity';
 import { Permission } from '../database/entities/Permission.entity';
 import { CreateRoleDto, UpdateRoleDto, QueryRolesDto } from './dto/role.dto';
-import { AssignPermissionsDto} from '../permissions/dto/permissions.dto';
+import { AssignPermissionsDto } from '../permissions/dto/permissions.dto';
 import { PermissionsService } from '../permissions/permissions.service';
 import { CustomLogger } from '../common/custom-logger.service';
 
@@ -29,7 +29,8 @@ export class RolesService {
   ) {
     if (this.queryRunner) {
       this.roleRepository = this.queryRunner.manager.getRepository(Role);
-      this.permissionRepository = this.queryRunner.manager.getRepository(Permission);
+      this.permissionRepository =
+        this.queryRunner.manager.getRepository(Permission);
     }
   }
 
@@ -46,7 +47,9 @@ export class RolesService {
     // Get permissions if provided
     let permissions: Permission[] = [];
     if (createDto.permission_ids && createDto.permission_ids.length > 0) {
-      permissions = await this.permissionsService.getPermissionsByIds(createDto.permission_ids);
+      permissions = await this.permissionsService.getPermissionsByIds(
+        createDto.permission_ids,
+      );
 
       if (permissions.length !== createDto.permission_ids.length) {
         throw new BadRequestException('One or more permission IDs are invalid');
@@ -61,7 +64,10 @@ export class RolesService {
 
     await this.roleRepository.save(role);
 
-    if (this.logger) this.logger.log(`Role created: ${role.name} with ${permissions.length} permissions`);
+    if (this.logger)
+      this.logger.log(
+        `Role created: ${role.name} with ${permissions.length} permissions`,
+      );
 
     return this.getRole(role.id);
   }
@@ -176,7 +182,10 @@ export class RolesService {
     if (this.logger) this.logger.log(`Role deleted: ${role.name}`);
   }
 
-  async assignPermissions(roleId: string, assignDto: AssignPermissionsDto): Promise<Role> {
+  async assignPermissions(
+    roleId: string,
+    assignDto: AssignPermissionsDto,
+  ): Promise<Role> {
     const role = await this.getRole(roleId);
 
     // Prevent updating system roles
@@ -196,19 +205,24 @@ export class RolesService {
     role.permissions = permissions;
     await this.roleRepository.save(role);
 
-    if (this.logger) this.logger.log(
-      `Permissions assigned to role ${role.name}: ${permissions.length} permissions`,
-    );
+    if (this.logger)
+      this.logger.log(
+        `Permissions assigned to role ${role.name}: ${permissions.length} permissions`,
+      );
 
     return this.getRole(roleId);
   }
 
-  async addPermissionToRole(roleId: string, permissionId: string): Promise<Role> {
+  async addPermissionToRole(
+    roleId: string,
+    permissionId: string,
+  ): Promise<Role> {
     const role = await this.getRole(roleId);
-    const permission = await this.permissionsService.getPermission(permissionId);
+    const permission =
+      await this.permissionsService.getPermission(permissionId);
 
     // Check if permission already assigned
-    const hasPermission = role.permissions.some(p => p.id === permissionId);
+    const hasPermission = role.permissions.some((p) => p.id === permissionId);
 
     if (hasPermission) {
       throw new BadRequestException('Permission already assigned to this role');
@@ -217,12 +231,18 @@ export class RolesService {
     role.permissions.push(permission);
     await this.roleRepository.save(role);
 
-    if (this.logger) this.logger.log(`Permission ${permission.name} added to role ${role.name}`);
+    if (this.logger)
+      this.logger.log(
+        `Permission ${permission.name} added to role ${role.name}`,
+      );
 
     return this.getRole(roleId);
   }
 
-  async removePermissionFromRole(roleId: string, permissionId: string): Promise<Role> {
+  async removePermissionFromRole(
+    roleId: string,
+    permissionId: string,
+  ): Promise<Role> {
     const role = await this.getRole(roleId);
 
     // Prevent updating system roles
@@ -230,10 +250,11 @@ export class RolesService {
       throw new BadRequestException('Cannot modify permissions of system role');
     }
 
-    role.permissions = role.permissions.filter(p => p.id !== permissionId);
+    role.permissions = role.permissions.filter((p) => p.id !== permissionId);
     await this.roleRepository.save(role);
 
-    if (this.logger) this.logger.log(`Permission removed from role ${role.name}`);
+    if (this.logger)
+      this.logger.log(`Permission removed from role ${role.name}`);
 
     return this.getRole(roleId);
   }
@@ -244,12 +265,14 @@ export class RolesService {
   }
 
   // Get permissions grouped by module
-  async getRolePermissionsByModule(roleId: string): Promise<Record<string, Permission[]>> {
+  async getRolePermissionsByModule(
+    roleId: string,
+  ): Promise<Record<string, Permission[]>> {
     const permissions = await this.getRolePermissions(roleId);
 
     const grouped: Record<string, Permission[]> = {};
 
-    permissions.forEach(permission => {
+    permissions.forEach((permission) => {
       const module = permission.module || 'other';
       if (!grouped[module]) {
         grouped[module] = [];
@@ -261,9 +284,12 @@ export class RolesService {
   }
 
   // Check if role has specific permission
-  async roleHasPermission(roleId: string, permissionName: string): Promise<boolean> {
+  async roleHasPermission(
+    roleId: string,
+    permissionName: string,
+  ): Promise<boolean> {
     const role = await this.getRole(roleId);
-    return role.permissions.some(p => p.name === permissionName);
+    return role.permissions.some((p) => p.name === permissionName);
   }
 
   // Seed default roles
@@ -280,11 +306,21 @@ export class RolesService {
         description: 'Administrator with most privileges',
         is_system_role: false,
         permissions: [
-          'users.create', 'users.read', 'users.update', 'users.delete',
-          'roles.create', 'roles.read', 'roles.update', 'roles.delete',
+          'users.create',
+          'users.read',
+          'users.update',
+          'users.delete',
+          'roles.create',
+          'roles.read',
+          'roles.update',
+          'roles.delete',
           'permissions.read',
-          'devices.manage', 'flocks.manage', 'farms.manage',
-          'reports.create', 'reports.read', 'reports.export',
+          'devices.manage',
+          'flocks.manage',
+          'farms.manage',
+          'reports.create',
+          'reports.read',
+          'reports.export',
         ],
       },
       {
@@ -292,10 +328,17 @@ export class RolesService {
         description: 'Farm manager with operational access',
         is_system_role: false,
         permissions: [
-          'users.read', 'devices.read', 'devices.update',
-          'flocks.create', 'flocks.read', 'flocks.update', 'flocks.delete',
-          'farms.read', 'farms.update',
-          'reports.create', 'reports.read',
+          'users.read',
+          'devices.read',
+          'devices.update',
+          'flocks.create',
+          'flocks.read',
+          'flocks.update',
+          'flocks.delete',
+          'farms.read',
+          'farms.update',
+          'reports.create',
+          'reports.read',
         ],
       },
       {
@@ -303,7 +346,11 @@ export class RolesService {
         description: 'Read-only access',
         is_system_role: false,
         permissions: [
-          'users.read', 'devices.read', 'flocks.read', 'farms.read', 'reports.read',
+          'users.read',
+          'devices.read',
+          'flocks.read',
+          'farms.read',
+          'reports.read',
         ],
       },
     ];
@@ -311,7 +358,7 @@ export class RolesService {
     for (const roleData of defaultRoles) {
       try {
         const existingRole = await this.getRoleByName(roleData.name);
-        
+
         if (!existingRole) {
           const permissions = await this.permissionRepository.find({
             where: { name: In(roleData.permissions) },
@@ -339,10 +386,14 @@ export class RolesService {
             );
           }
 
-          if (this.logger) this.logger.log(`Default role created: ${roleData.name}`);
+          if (this.logger)
+            this.logger.log(`Default role created: ${roleData.name}`);
         }
       } catch (error) {
-        if (this.logger) this.logger.error(`Failed to create role ${roleData.name}: ${error.message}`);
+        if (this.logger)
+          this.logger.error(
+            `Failed to create role ${roleData.name}: ${error.message}`,
+          );
       }
     }
   }

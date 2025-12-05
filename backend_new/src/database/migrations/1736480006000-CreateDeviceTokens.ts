@@ -1,5 +1,11 @@
 // migrations/XXXXXX-create-device-tokens.ts
-import { MigrationInterface, QueryRunner, Table, TableIndex, TableForeignKey } from 'typeorm';
+import {
+  MigrationInterface,
+  QueryRunner,
+  Table,
+  TableIndex,
+  TableForeignKey,
+} from 'typeorm';
 
 export class CreateDeviceTokens1736480007000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -107,7 +113,7 @@ export class CreateDeviceTokens1736480007000 implements MigrationInterface {
     const table = await queryRunner.getTable('device_tokens');
     if (table) {
       const foreignKey = table.foreignKeys.find(
-        fk => fk.columnNames.indexOf('user_id') !== -1,
+        (fk) => fk.columnNames.indexOf('user_id') !== -1,
       );
       if (foreignKey) {
         await queryRunner.dropForeignKey('device_tokens', foreignKey);

@@ -31,13 +31,12 @@ export class Role {
   @Column({ type: 'boolean', default: true })
   is_active: boolean;
 
-  @OneToMany(() => User, user => user.role)
+  @OneToMany(() => User, (user) => user.role)
   users: User[];
 
-  @ManyToMany(() => Permission, permission => permission.roles, {
+  @ManyToMany(() => Permission, (permission) => permission.roles, {
     cascade: true,
   })
-  
   @JoinTable({
     name: 'role_permissions',
     joinColumn: { name: 'role_id', referencedColumnName: 'id' },

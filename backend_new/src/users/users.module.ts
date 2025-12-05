@@ -15,7 +15,6 @@ import { EmailService } from '../services/email.service';
 import { CustomLogger } from '../common/custom-logger.service';
 import { AuditService } from '../services/audit.service';
 
-
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -27,7 +26,7 @@ import { AuditService } from '../services/audit.service';
       AuditLog,
     ]),
     ConfigModule,
-    UploadsModule, 
+    UploadsModule,
   ],
   controllers: [UsersController],
   providers: [UsersService, CustomLogger, EmailService, AuditService],

@@ -1,7 +1,6 @@
 // database/migrations/1736465000000-AddFarms.ts
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-
 export class AddFarms1736465000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`

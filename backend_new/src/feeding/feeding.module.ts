@@ -17,11 +17,27 @@ import { UsersModule } from '../users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([FeedingSchedule, FeedingRecord, WeightSample, Batch, FeedingRecommendation, BirdType]),
-    UsersModule
+    TypeOrmModule.forFeature([
+      FeedingSchedule,
+      FeedingRecord,
+      WeightSample,
+      Batch,
+      FeedingRecommendation,
+      BirdType,
+    ]),
+    UsersModule,
   ],
-  controllers: [FeedingController, WeightSamplesController, FeedingRecommendationsController],
-  providers: [FeedingRecommendationsService, FeedingService, CustomLogger, PermissionsGuard],
-  exports: [FeedingRecommendationsService, FeedingService]
+  controllers: [
+    FeedingController,
+    WeightSamplesController,
+    FeedingRecommendationsController,
+  ],
+  providers: [
+    FeedingRecommendationsService,
+    FeedingService,
+    CustomLogger,
+    PermissionsGuard,
+  ],
+  exports: [FeedingRecommendationsService, FeedingService],
 })
 export class FeedingModule {}

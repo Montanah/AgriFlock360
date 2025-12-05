@@ -12,24 +12,10 @@ import { FieldAppraisalController } from './field-appraisal.controller';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      ExtensionOfficer,
-      FieldAppraisal,
-      User,
-      Farm,
-    ]),
+    TypeOrmModule.forFeature([ExtensionOfficer, FieldAppraisal, User, Farm]),
   ],
-  controllers: [
-    ExtensionOfficerController,
-    FieldAppraisalController,
-  ],
-  providers: [
-    ExtensionOfficerService,
-    FieldAppraisalService,
-  ],
-  exports: [
-    ExtensionOfficerService,
-    FieldAppraisalService,
-  ],
+  controllers: [ExtensionOfficerController, FieldAppraisalController],
+  providers: [ExtensionOfficerService, FieldAppraisalService],
+  exports: [ExtensionOfficerService, FieldAppraisalService],
 })
 export class ExtensionOfficerModule {}

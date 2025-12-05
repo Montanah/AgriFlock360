@@ -1,7 +1,9 @@
 // migrations/XXXXXX-add-module-action-to-permissions.ts
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
-export class AddModuleActionToPermissions1736480009002 implements MigrationInterface {
+export class AddModuleActionToPermissions1736480009002
+  implements MigrationInterface
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.addColumn(
       'permissions',

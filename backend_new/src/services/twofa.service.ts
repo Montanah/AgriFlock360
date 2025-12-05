@@ -18,10 +18,10 @@ export class TwoFAService {
   async generateSecret(userId: string) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
-    if( !user ){
-      throw new Error('User not found')
+    if (!user) {
+      throw new Error('User not found');
     }
-    
+
     const secret = speakeasy.generateSecret({
       name: `AgriFlock360 (${user.email})`,
       issuer: 'AgriFlock360',
@@ -34,8 +34,10 @@ export class TwoFAService {
     const qrCode = await QRCode.toDataURL(secret.otpauth_url);
 
     // Store temporarily
-    let twoFA = await this.twoFARepository.findOne({ where: { user_id: userId } });
-    
+    let twoFA = await this.twoFARepository.findOne({
+      where: { user_id: userId },
+    });
+
     if (!twoFA) {
       twoFA = this.twoFARepository.create({
         user_id: userId,
@@ -55,8 +57,10 @@ export class TwoFAService {
   }
 
   async enable2FA(userId: string, token: string) {
-    const twoFA = await this.twoFARepository.findOne({ where: { user_id: userId } });
-    
+    const twoFA = await this.twoFARepository.findOne({
+      where: { user_id: userId },
+    });
+
     if (!twoFA) {
       throw new Error('2FA not initialized');
     }
@@ -86,8 +90,10 @@ export class TwoFAService {
   }
 
   async disable2FA(userId: string, token: string) {
-    const twoFA = await this.twoFARepository.findOne({ where: { user_id: userId } });
-    
+    const twoFA = await this.twoFARepository.findOne({
+      where: { user_id: userId },
+    });
+
     if (!twoFA) {
       throw new Error('2FA not initialized');
     }
@@ -110,8 +116,10 @@ export class TwoFAService {
   }
 
   async verify2FAToken(userId: string, token: string): Promise<boolean> {
-    const twoFA = await this.twoFARepository.findOne({ where: { user_id: userId } });
-    
+    const twoFA = await this.twoFARepository.findOne({
+      where: { user_id: userId },
+    });
+
     if (!twoFA || !twoFA.is_enabled) {
       return true; // 2FA not enabled
     }
@@ -119,7 +127,7 @@ export class TwoFAService {
     // Check backup codes first
     if (twoFA.backup_codes?.includes(token)) {
       // Remove used backup code
-      twoFA.backup_codes = twoFA.backup_codes.filter(code => code !== token);
+      twoFA.backup_codes = twoFA.backup_codes.filter((code) => code !== token);
       await this.twoFARepository.save(twoFA);
       return true;
     }

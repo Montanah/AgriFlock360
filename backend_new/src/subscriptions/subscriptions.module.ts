@@ -31,13 +31,13 @@ import { SubscriptionBillingService } from './subscription-billing.service';
       Payment,
       DeviceStatus,
     ]),
-    ScheduleModule.forRoot(), 
+    ScheduleModule.forRoot(),
   ],
   controllers: [
     SubscriptionController,
     SubscriptionPlanController,
     UsageController,
-    SubscriptionWebhookController
+    SubscriptionWebhookController,
   ],
   providers: [
     SubscriptionService,

@@ -19,7 +19,7 @@ export class MqttSubscriberService implements OnModuleInit {
   async onModuleInit() {
     // Subscribe to command acknowledgments
     await this.subscribeToCommandAcks();
-    
+
     // Subscribe to device heartbeats
     await this.subscribeToHeartbeats();
   }
@@ -41,17 +41,19 @@ export class MqttSubscriberService implements OnModuleInit {
         response,
       });
 
-      this.logger.log(`Command ${command_id} acknowledged with status: ${status}`);
+      this.logger.log(
+        `Command ${command_id} acknowledged with status: ${status}`,
+      );
     });
   }
 
   private async subscribeToHeartbeats() {
     await this.redis.subscribe('mqtt:heartbeat', async (message: any) => {
       const { device_id } = message;
-      
+
       // Update device online status
       await this.redisCache.setDeviceOnline(device_id);
-      
+
       this.logger.log(`Heartbeat received from device ${device_id}`);
     });
   }

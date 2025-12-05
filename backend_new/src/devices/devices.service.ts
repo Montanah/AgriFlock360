@@ -1,4 +1,3 @@
-
 // devices/devices.service.ts
 import {
   Injectable,
@@ -370,7 +369,10 @@ export class DevicesService {
     }
 
     // Validate payload based on command type
-    this.validateCommandPayload(createCommandDto.command_type, createCommandDto.payload);
+    this.validateCommandPayload(
+      createCommandDto.command_type,
+      createCommandDto.payload,
+    );
 
     const expiresAt = createCommandDto.expires_in
       ? new Date(Date.now() + createCommandDto.expires_in * 1000)
@@ -421,7 +423,7 @@ export class DevicesService {
     // Publish to MQTT
     await this.mqttService.publish(
       `${device.mqtt_topic_prefix}/commands`,
-      command
+      command,
     );
 
     return {
@@ -470,7 +472,11 @@ export class DevicesService {
   private validateCommandPayload(commandType: string, payload: any) {
     switch (commandType) {
       case 'set_temperature':
-        if (!payload.target_temp || payload.target_temp < 0 || payload.target_temp > 50) {
+        if (
+          !payload.target_temp ||
+          payload.target_temp < 0 ||
+          payload.target_temp > 50
+        ) {
           throw new BadRequestException('Invalid target temperature (0-50°C)');
         }
         break;
@@ -485,7 +491,6 @@ export class DevicesService {
           throw new BadRequestException('Enabled must be a boolean');
         }
         break;
-      
     }
   }
 }

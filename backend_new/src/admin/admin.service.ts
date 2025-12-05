@@ -9,7 +9,11 @@ import { Farm } from '../database/entities/Farm.entity';
 import { Device } from '../database/entities/Device.entity';
 import { Batch } from '../database/entities/Batch.entity';
 import { Payment } from '../database/entities/Payment.entity';
-import { QueryFarmersDto, QueryLogsDto, UpdateConfigDto } from './dto/admin.dto';
+import {
+  QueryFarmersDto,
+  QueryLogsDto,
+  UpdateConfigDto,
+} from './dto/admin.dto';
 import { CustomLogger } from '../common/custom-logger.service';
 import { AuditService, AuditAction } from '../services/audit.service';
 
@@ -35,7 +39,7 @@ export class AdminService {
   ) {}
 
   async getLogs(query: QueryLogsDto) {
-    const { entity_type, action, user_id, page =1, limit =10 } = query;
+    const { entity_type, action, user_id, page = 1, limit = 10 } = query;
     const skip = (page - 1) * limit;
 
     const queryBuilder = this.auditLogRepository
@@ -165,7 +169,7 @@ export class AdminService {
       .createQueryBuilder('farm')
       .select('DISTINCT farm.user_id', 'user_id')
       .getRawMany()
-      .then(results => results.map(r => r.user_id));
+      .then((results) => results.map((r) => r.user_id));
 
     // Start with users query
     const farmersQuery = this.userRepository
@@ -180,19 +184,25 @@ export class AdminService {
         '(SELECT COUNT(*) FROM batchs b WHERE b.user_id = user.id) as batches',
         '(SELECT SUM(b.initial_count) FROM batchs b WHERE b.user_id = user.id) as birds',
         '(SELECT COUNT(*) FROM devices d WHERE d.owner_id = user.id) as brooders',
-        '(SELECT COALESCE(SUM(p.amount), 0) FROM payments p WHERE p.user_id = user.id AND p.status = \'completed\') as revenue',
+        "(SELECT COALESCE(SUM(p.amount), 0) FROM payments p WHERE p.user_id = user.id AND p.status = 'completed') as revenue",
       ])
       .where('user.id IN (:...farmerIds)', { farmerIds: farmerUserIds });
 
     // Apply filters from query
     if (query.name) {
-      farmersQuery.andWhere('user.name ILIKE :name', { name: `%${query.name}%` });
+      farmersQuery.andWhere('user.name ILIKE :name', {
+        name: `%${query.name}%`,
+      });
     }
     if (query.email) {
-      farmersQuery.andWhere('user.email ILIKE :email', { email: `%${query.email}%` });
+      farmersQuery.andWhere('user.email ILIKE :email', {
+        email: `%${query.email}%`,
+      });
     }
     if (query.location) {
-      farmersQuery.andWhere('user.location ILIKE :location', { location: `%${query.location}%` });
+      farmersQuery.andWhere('user.location ILIKE :location', {
+        location: `%${query.location}%`,
+      });
     }
     if (query.status) {
       farmersQuery.andWhere('user.status = :status', { status: query.status });
@@ -200,16 +210,28 @@ export class AdminService {
 
     // Apply filters for computed fields (min thresholds)
     if (query.batches !== undefined) {
-      farmersQuery.andHaving('(SELECT COUNT(*) FROM batchs b WHERE b.user_id = user.id) >= :batches', { batches: query.batches });
+      farmersQuery.andHaving(
+        '(SELECT COUNT(*) FROM batchs b WHERE b.user_id = user.id) >= :batches',
+        { batches: query.batches },
+      );
     }
     if (query.brooders !== undefined) {
-      farmersQuery.andHaving('(SELECT COUNT(*) FROM devices d WHERE d.owner_id = user.id) >= :brooders', { brooders: query.brooders });
+      farmersQuery.andHaving(
+        '(SELECT COUNT(*) FROM devices d WHERE d.owner_id = user.id) >= :brooders',
+        { brooders: query.brooders },
+      );
     }
     if (query.birds !== undefined) {
-      farmersQuery.andHaving('(SELECT SUM(b.initial_count) FROM batchs b WHERE b.user_id = user.id) >= :birds', { birds: query.birds });
+      farmersQuery.andHaving(
+        '(SELECT SUM(b.initial_count) FROM batchs b WHERE b.user_id = user.id) >= :birds',
+        { birds: query.birds },
+      );
     }
     if (query.revenue !== undefined) {
-      farmersQuery.andHaving('(SELECT COALESCE(SUM(p.amount), 0) FROM payments p WHERE p.user_id = user.id AND p.status = \'completed\') >= :revenue', { revenue: query.revenue });
+      farmersQuery.andHaving(
+        "(SELECT COALESCE(SUM(p.amount), 0) FROM payments p WHERE p.user_id = user.id AND p.status = 'completed') >= :revenue",
+        { revenue: query.revenue },
+      );
     }
 
     // Add pagination
@@ -232,26 +254,38 @@ export class AdminService {
       totalQuery.andWhere('user.name ILIKE :name', { name: `%${query.name}%` });
     }
     if (query.email) {
-      totalQuery.andWhere('user.email ILIKE :email', { email: `%${query.email}%` });
+      totalQuery.andWhere('user.email ILIKE :email', {
+        email: `%${query.email}%`,
+      });
     }
     if (query.location) {
-      totalQuery.andWhere('user.location ILIKE :location', { location: `%${query.location}%` });
+      totalQuery.andWhere('user.location ILIKE :location', {
+        location: `%${query.location}%`,
+      });
     }
     if (query.status) {
       totalQuery.andWhere('user.status = :status', { status: query.status });
     }
 
     if (query.batches !== undefined) {
-      totalQuery.andWhere('(SELECT COUNT(*) FROM batchs b WHERE b.user_id = user.id) >= :batches');
+      totalQuery.andWhere(
+        '(SELECT COUNT(*) FROM batchs b WHERE b.user_id = user.id) >= :batches',
+      );
     }
     if (query.brooders !== undefined) {
-      totalQuery.andWhere('(SELECT COUNT(*) FROM devices d WHERE d.owner_id = user.id) >= :brooders');
+      totalQuery.andWhere(
+        '(SELECT COUNT(*) FROM devices d WHERE d.owner_id = user.id) >= :brooders',
+      );
     }
     if (query.birds !== undefined) {
-      totalQuery.andWhere('(SELECT SUM(b.initial_count) FROM batchs b WHERE b.user_id = user.id) >= :birds');
+      totalQuery.andWhere(
+        '(SELECT SUM(b.initial_count) FROM batchs b WHERE b.user_id = user.id) >= :birds',
+      );
     }
     if (query.revenue !== undefined) {
-      totalQuery.andWhere('(SELECT COALESCE(SUM(p.amount), 0) FROM payments p WHERE p.user_id = user.id AND p.status = \'completed\') >= :revenue');
+      totalQuery.andWhere(
+        "(SELECT COALESCE(SUM(p.amount), 0) FROM payments p WHERE p.user_id = user.id AND p.status = 'completed') >= :revenue",
+      );
     }
 
     totalQuery.setParameters({

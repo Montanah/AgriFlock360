@@ -42,8 +42,10 @@ export class SubscriptionPaymentService {
     }
 
     // Add balance
-    subscription.balance = Number(subscription.balance) + Number(payment.amount);
-    subscription.total_spent = Number(subscription.total_spent) + Number(payment.amount);
+    subscription.balance =
+      Number(subscription.balance) + Number(payment.amount);
+    subscription.total_spent =
+      Number(subscription.total_spent) + Number(payment.amount);
 
     return await this.subscriptionRepo.save(subscription);
   }

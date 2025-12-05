@@ -202,9 +202,10 @@ async function seedUsers(queryRunner: any, roles: Role[]) {
   return savedUsers;
 }
 
- // Device Status Seeding
+// Device Status Seeding
 async function seedDeviceStatus(queryRunner: any) {
-  const deviceStatusRepository = queryRunner.manager.getRepository(DeviceStatus);
+  const deviceStatusRepository =
+    queryRunner.manager.getRepository(DeviceStatus);
 
   const statuses = [
     { name: 'smart_brooder', desc: 'Smart Brooder Device' },
@@ -214,7 +215,9 @@ async function seedDeviceStatus(queryRunner: any) {
   ];
 
   for (const statusData of statuses) {
-    let status = await deviceStatusRepository.findOne({ where: { name: statusData.name } });
+    let status = await deviceStatusRepository.findOne({
+      where: { name: statusData.name },
+    });
     if (!status) {
       status = deviceStatusRepository.create(statusData);
       await deviceStatusRepository.save(status);
@@ -236,7 +239,9 @@ async function seedCommandTypes(queryRunner: any) {
   ];
 
   for (const cmdData of commandTypes) {
-    let commandType = await commandTypeRepository.findOne({ where: { name: cmdData.name } });
+    let commandType = await commandTypeRepository.findOne({
+      where: { name: cmdData.name },
+    });
     if (!commandType) {
       commandType = commandTypeRepository.create(cmdData);
       await commandTypeRepository.save(commandType);
@@ -253,20 +258,23 @@ async function seedBirdTypes(queryRunner: any) {
     {
       id: 'd7a8b9c4-1234-5678-9abc-def012345678',
       name: 'Broiler',
-      description: 'Fast-growing meat birds optimized for poultry meat production',
-      notes: 'Raised for 5-7 weeks, high feed conversion ratio'
+      description:
+        'Fast-growing meat birds optimized for poultry meat production',
+      notes: 'Raised for 5-7 weeks, high feed conversion ratio',
     },
     {
       id: 'e8b9c4d5-2345-6789-abcd-123456789012',
       name: 'Layer',
       description: 'Egg-laying hens optimized for egg production',
-      notes: 'Begin laying at 18-20 weeks, produce 280-300 eggs per year'
+      notes: 'Begin laying at 18-20 weeks, produce 280-300 eggs per year',
     },
   ];
 
   const savedBirdTypes: BirdType[] = [];
   for (const birdTypeData of birdTypes) {
-    let birdType = await birdTypeRepository.findOne({ where: { name: birdTypeData.name } });
+    let birdType = await birdTypeRepository.findOne({
+      where: { name: birdTypeData.name },
+    });
     if (!birdType) {
       birdType = birdTypeRepository.create(birdTypeData);
       await birdTypeRepository.save(birdType);
@@ -283,9 +291,12 @@ async function seedBirdTypes(queryRunner: any) {
 // Device Seeding
 async function seedDevices(queryRunner: any, users: User[]) {
   const deviceRepository = queryRunner.manager.getRepository(Device);
-  const deviceStatusRepository = queryRunner.manager.getRepository(DeviceStatus);
+  const deviceStatusRepository =
+    queryRunner.manager.getRepository(DeviceStatus);
   const adminUser = users.find((u) => u.email === 'admin@agriflock360.com');
-  const smartBrooderStatus = await deviceStatusRepository.findOne({ where: { name: 'smart_brooder' } });
+  const smartBrooderStatus = await deviceStatusRepository.findOne({
+    where: { name: 'smart_brooder' },
+  });
 
   const devices = [
     {
@@ -297,7 +308,7 @@ async function seedDevices(queryRunner: any, users: User[]) {
       firmware_version: 'v2.1.0',
       last_seen: new Date(),
       is_payg_locked: false,
-      payg_balance: 100.50,
+      payg_balance: 100.5,
       installation_date: new Date('2024-11-01'),
       mqtt_topic_prefix: 'farm/brooder/001',
       wifi_ssid: 'FarmNetwork',
@@ -341,7 +352,11 @@ async function seedDevices(queryRunner: any, users: User[]) {
 }
 
 // Batch Seeding
-async function seedBatchs(queryRunner: any, users: User[], birdTypes: BirdType[]) {
+async function seedBatchs(
+  queryRunner: any,
+  users: User[],
+  birdTypes: BirdType[],
+) {
   const batchRepository = queryRunner.manager.getRepository(Batch);
   const adminUser = users.find((u) => u.email === 'admin@agriflock360.com');
   const broilerType = birdTypes.find((bt) => bt.name === 'Broiler');
@@ -393,7 +408,7 @@ async function seedBatchs(queryRunner: any, users: User[], birdTypes: BirdType[]
 // Telemetry Seeding
 async function seedTelemetry(queryRunner: any, devices: Device[]) {
   const telemetryRepository = queryRunner.manager.getRepository(Telemetry);
-  const device = devices.find(d => d.device_id === 'BROODER-001');
+  const device = devices.find((d) => d.device_id === 'BROODER-001');
 
   // Generate telemetry data for the last 10 hours
   const telemetryData: any[] = [];
@@ -424,8 +439,8 @@ async function seedTelemetry(queryRunner: any, devices: Device[]) {
 // Alerts Seeding
 async function seedAlerts(queryRunner: any, devices: Device[], users: User[]) {
   const alertRepository = queryRunner.manager.getRepository(Alert);
-  const device = devices.find(d => d.device_id === 'BROODER-001');
-  const adminUser = users.find(u => u.email === 'admin@agriflock360.com');
+  const device = devices.find((d) => d.device_id === 'BROODER-001');
+  const adminUser = users.find((u) => u.email === 'admin@agriflock360.com');
 
   const alerts = [
     {
@@ -461,10 +476,15 @@ async function seedAlerts(queryRunner: any, devices: Device[], users: User[]) {
 }
 
 // Batch Histories Seeding
-async function seedBatchHistories(queryRunner: any, batches: Batch[], users: User[]) {
-  const batchHistoryRepository = queryRunner.manager.getRepository(BatchHistory);
-  const batch = batches.find(b => b.breed === 'Cobb 500');
-  const adminUser = users.find(u => u.email === 'admin@agriflock360.com');
+async function seedBatchHistories(
+  queryRunner: any,
+  batches: Batch[],
+  users: User[],
+) {
+  const batchHistoryRepository =
+    queryRunner.manager.getRepository(BatchHistory);
+  const batch = batches.find((b) => b.breed === 'Cobb 500');
+  const adminUser = users.find((u) => u.email === 'admin@agriflock360.com');
 
   const histories = [
     {
@@ -499,8 +519,9 @@ async function seedBatchHistories(queryRunner: any, batches: Batch[], users: Use
 
 // Feeding Schedules Seeding
 async function seedFeedingSchedules(queryRunner: any, batches: Batch[]) {
-  const feedingScheduleRepository = queryRunner.manager.getRepository(FeedingSchedule);
-  const batch = batches.find(b => b.breed === 'Cobb 500');
+  const feedingScheduleRepository =
+    queryRunner.manager.getRepository(FeedingSchedule);
+  const batch = batches.find((b) => b.breed === 'Cobb 500');
 
   const schedules = [
     {
@@ -550,7 +571,7 @@ async function seedFeedingSchedules(queryRunner: any, batches: Batch[]) {
 // Vaccination Seeding
 async function seedVaccinations(queryRunner: any, batches: Batch[]) {
   const vaccinationRepository = queryRunner.manager.getRepository(Vaccination);
-  const batch = batches.find(b => b.breed === 'Cobb 500');
+  const batch = batches.find((b) => b.breed === 'Cobb 500');
 
   const vaccinations = [
     {
@@ -599,11 +620,19 @@ async function seedVaccinations(queryRunner: any, batches: Batch[]) {
 }
 
 // Feeding Records Seeding
-async function seedFeedingRecords(queryRunner: any, batches: Batch[], feedingSchedules: any[], users: User[]) {
-  const feedingRecordRepository = queryRunner.manager.getRepository(FeedingRecord);
-  const batch = batches.find(b => b.breed === 'Cobb 500');
-  const schedule = feedingSchedules.find(s => s.feed_type.includes('Starter'));
-  const adminUser = users.find(u => u.email === 'admin@agriflock360.com');
+async function seedFeedingRecords(
+  queryRunner: any,
+  batches: Batch[],
+  feedingSchedules: any[],
+  users: User[],
+) {
+  const feedingRecordRepository =
+    queryRunner.manager.getRepository(FeedingRecord);
+  const batch = batches.find((b) => b.breed === 'Cobb 500');
+  const schedule = feedingSchedules.find((s) =>
+    s.feed_type.includes('Starter'),
+  );
+  const adminUser = users.find((u) => u.email === 'admin@agriflock360.com');
 
   // Generate feeding records for the last 10 days
   const feedingData: {
@@ -621,7 +650,8 @@ async function seedFeedingRecords(queryRunner: any, batches: Batch[], feedingSch
   for (let i = 0; i < 10; i++) {
     const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000);
 
-    for (let meal = 0; meal < 4; meal++) { // 4 meals per day
+    for (let meal = 0; meal < 4; meal++) {
+      // 4 meals per day
       feedingData.push({
         batch_id: batch!.id,
         schedule_id: schedule?.id || null,
@@ -644,10 +674,15 @@ async function seedFeedingRecords(queryRunner: any, batches: Batch[], feedingSch
 }
 
 // Weight Samples Seeding
-async function seedWeightSamples(queryRunner: any, batches: Batch[], users: User[]) {
-  const weightSampleRepository = queryRunner.manager.getRepository(WeightSample);
-  const batch = batches.find(b => b.breed === 'Cobb 500');
-  const adminUser = users.find(u => u.email === 'admin@agriflock360.com');
+async function seedWeightSamples(
+  queryRunner: any,
+  batches: Batch[],
+  users: User[],
+) {
+  const weightSampleRepository =
+    queryRunner.manager.getRepository(WeightSample);
+  const batch = batches.find((b) => b.breed === 'Cobb 500');
+  const adminUser = users.find((u) => u.email === 'admin@agriflock360.com');
 
   // Generate weight samples every 7 days for 5 weeks
   const weightData: {
@@ -663,7 +698,9 @@ async function seedWeightSamples(queryRunner: any, batches: Batch[], users: User
   const startDate = new Date('2025-01-01');
 
   for (let week = 0; week < 5; week++) {
-    const sampleDate = new Date(startDate.getTime() + week * 7 * 24 * 60 * 60 * 1000);
+    const sampleDate = new Date(
+      startDate.getTime() + week * 7 * 24 * 60 * 60 * 1000,
+    );
     const baseWeight = 0.3 + week * 0.8; // Starting weight ~300g, gaining ~800g per week
 
     weightData.push({
@@ -687,10 +724,14 @@ async function seedWeightSamples(queryRunner: any, batches: Batch[], users: User
 }
 
 // Payment Seeding
-async function seedPayments(queryRunner: any, users: User[], devices: Device[]) {
+async function seedPayments(
+  queryRunner: any,
+  users: User[],
+  devices: Device[],
+) {
   const paymentRepository = queryRunner.manager.getRepository(Payment);
-  const adminUser = users.find(u => u.email === 'admin@agriflock360.com');
-  const device = devices.find(d => d.device_id === 'BROODER-001');
+  const adminUser = users.find((u) => u.email === 'admin@agriflock360.com');
+  const device = devices.find((d) => d.device_id === 'BROODER-001');
 
   const payments = [
     {

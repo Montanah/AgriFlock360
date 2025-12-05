@@ -65,4 +65,3 @@ export class UserPreferences {
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
 }
-

@@ -1,4 +1,3 @@
-
 // migrations/XXXXXX-update-bird-types.ts
 import { MigrationInterface, QueryRunner, TableColumn } from 'typeorm';
 
@@ -27,7 +26,9 @@ export class UpdateBirdTypes1736480009013 implements MigrationInterface {
 
     // Add updated_at if doesn't exist
     const table = await queryRunner.getTable('bird_types');
-    const hasUpdatedAt = table?.columns.find(col => col.name === 'updated_at');
+    const hasUpdatedAt = table?.columns.find(
+      (col) => col.name === 'updated_at',
+    );
 
     if (!hasUpdatedAt) {
       await queryRunner.addColumn(

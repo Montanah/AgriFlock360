@@ -74,7 +74,7 @@ export class Batch {
   bird_type: BirdType;
 
   @Column({ type: 'integer' })
-  age: number;  
+  age: number;
 
   @Column({ type: 'integer' })
   birds_alive: number;
@@ -85,7 +85,7 @@ export class Batch {
   @Column({ type: 'integer' })
   expected_weight: number;
 
-  @Column ({ type: 'varchar', length: 255, nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   feeding_time: string;
 
   @Column({ type: 'jsonb', nullable: true })

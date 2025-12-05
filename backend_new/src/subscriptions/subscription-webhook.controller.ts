@@ -33,7 +33,8 @@ export class SubscriptionWebhookController {
 
     try {
       // Extract payment details from webhook
-      const { transaction_id, amount, phone_number, status, metadata } = payload;
+      const { transaction_id, amount, phone_number, status, metadata } =
+        payload;
 
       if (status === 'success' && metadata?.subscription_id) {
         // Process the top-up

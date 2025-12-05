@@ -1,19 +1,33 @@
 //create-material.dto.ts
-import { IsString, IsNotEmpty, IsOptional, IsNumber, IsBoolean, Min, IsObject, IsUUID, IsInt, Max  } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsNumber,
+  IsBoolean,
+  Min,
+  IsObject,
+  IsUUID,
+  IsInt,
+  Max,
+} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type, Transform } from 'class-transformer';
 
 export class CreateMaterialDto {
-  @ApiProperty({ description: 'Material name', example: 'Roofing Sheets 32 gauge 10ft' })
+  @ApiProperty({
+    description: 'Material name',
+    example: 'Roofing Sheets 32 gauge 10ft',
+  })
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiProperty({ 
-    description: 'Category', 
+  @ApiProperty({
+    description: 'Category',
     example: 'roofing',
     enum: ['roofing', 'walls', 'fencing', 'fixtures', 'construction', 'labor'],
-    required: false 
+    required: false,
   })
   @IsOptional()
   @IsString()
@@ -45,7 +59,11 @@ export class CreateMaterialDto {
   @IsString()
   supplier?: string;
 
-  @ApiProperty({ description: 'Specifications', example: '32 gauge 10ft', required: false })
+  @ApiProperty({
+    description: 'Specifications',
+    example: '32 gauge 10ft',
+    required: false,
+  })
   @IsOptional()
   @IsString()
   specifications?: string;
@@ -181,7 +199,11 @@ export class GenerateQuotationDto {
   @IsNotEmpty()
   bird_capacity: number;
 
-  @ApiProperty({ description: 'Labor percentage', example: 26, required: false })
+  @ApiProperty({
+    description: 'Labor percentage',
+    example: 26,
+    required: false,
+  })
   @IsOptional()
   @IsNumber()
   @Min(0)

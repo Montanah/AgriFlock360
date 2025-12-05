@@ -60,7 +60,7 @@ export class User {
   avatar: string | null;
 
   // Relationship to Profile
-  @OneToOne(() => Profile, profile => profile.user, { cascade: true })
+  @OneToOne(() => Profile, (profile) => profile.user, { cascade: true })
   profile?: Profile;
 
   // OAuth fields

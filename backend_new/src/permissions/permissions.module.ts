@@ -9,11 +9,7 @@ import { UsersModule } from '../users/users.module';
 import { CustomLogger } from '../common/custom-logger.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Permission]),
-    AuthModule,
-    UsersModule,
-  ],
+  imports: [TypeOrmModule.forFeature([Permission]), AuthModule, UsersModule],
   controllers: [PermissionsController],
   providers: [PermissionsService, CustomLogger],
   exports: [PermissionsService],
