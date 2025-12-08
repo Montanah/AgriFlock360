@@ -19,6 +19,7 @@ import { LoginAttempt } from '../database/entities/Login-attempt.entity';
 import { UserSession } from '../database/entities/User-session.entity';
 import { RateLimitLog } from '../database/entities/Rate-limit-log.entity';
 import { AuditLog } from '../database/entities/AuditLog.entity';
+import { Device } from '../database/entities/Device.entity';
 import { EmailService } from '../services/email.service';
 import { TwoFAService } from '../services/twofa.service';
 import { AccountLockoutService } from '../services/account-lockout.service';
@@ -33,6 +34,8 @@ import { LoggingInterceptor } from '../common/logging.interceptor';
 import { PermissionsGuard } from './guards/permissions.guard';
 import { UsersModule } from '../users/users.module';
 import { CountryGuard } from './guards/country.guard';
+import { DeviceAuthGuard } from './guards/device-auth.guard';
+import { DeviceOrUserAuthGuard } from './guards/device-or-user-auth.guard';
 
 @Module({
   imports: [
@@ -41,6 +44,7 @@ import { CountryGuard } from './guards/country.guard';
       UserSession,
       RateLimitLog,
       AuditLog,
+      Device,
     ]),
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
@@ -69,14 +73,17 @@ import { CountryGuard } from './guards/country.guard';
     MetricsService,
     JwtStrategy,
     GoogleStrategy,
+    JwtAuthGuard,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
     },
+    RolesGuard,
     {
       provide: APP_GUARD,
       useClass: RolesGuard,
     },
+    RateLimitGuard,
     {
       provide: APP_GUARD,
       useClass: RateLimitGuard,
@@ -90,12 +97,23 @@ import { CountryGuard } from './guards/country.guard';
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
     },
+    CountryGuard,
     {
       provide: APP_GUARD,
       useClass: CountryGuard,
     },
+    DeviceAuthGuard,
+    {
+      provide: APP_GUARD,
+      useClass: DeviceAuthGuard,
+    },
+    DeviceOrUserAuthGuard,
+    {
+      provide: APP_GUARD,
+      useClass: DeviceOrUserAuthGuard,
+    },
 
   ],
-  exports: [AuthService, JwtModule, PermissionsGuard],
+  exports: [AuthService, JwtModule, PermissionsGuard, DeviceOrUserAuthGuard, DeviceAuthGuard, JwtAuthGuard],
 })
 export class AuthModule {}

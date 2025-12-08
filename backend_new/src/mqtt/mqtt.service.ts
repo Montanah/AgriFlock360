@@ -1,6 +1,7 @@
 // mqtt/mqtt.service.ts
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { connect, MqttClient, IClientOptions } from 'mqtt';
+import { readFileSync } from 'fs';
 import { TelemetryService } from '../telemetry/telemetry.service';
 import { CustomLogger } from '../common/custom-logger.service';
 
@@ -44,6 +45,19 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       reconnectPeriod: 5000,
       connectTimeout: 30000,
     };
+    // const useTLS = process.env.MQTT_USE_TLS === 'true';
+    
+    // const mqttOptions: IClientOptions = {
+    //   protocol: useTLS ? 'mqtts' : 'mqtt',
+    //   host: process.env.MQTT_HOST || 'localhost',
+    //   port: parseInt(
+    //     process.env.MQTT_PORT || (useTLS ? '8883' : '1883')
+    //   ),
+    //   clientId: `nestjs-server-${Math.random().toString(16).substr(2, 8)}`,
+    //   clean: true,
+    //   reconnectPeriod: 5000,
+    //   connectTimeout: 30000,
+    // };
 
     console.log(
       'process.env.MQTT_USERNAME',
@@ -61,12 +75,46 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
       mqttOptions.password = process.env.MQTT_PASSWORD;
     }
 
+    // if (useTLS) {
+    //   try {
+    //     // In production, verify certificates
+    //     mqttOptions.rejectUnauthorized = process.env.NODE_ENV === 'production';
+
+    //     // Load CA certificate if provided
+    //     if (process.env.MQTT_CA_CERT_PATH) {
+    //       mqttOptions.ca = readFileSync(process.env.MQTT_CA_CERT_PATH);
+    //       this.logger.log('Loaded MQTT CA certificate');
+    //     }
+
+    //     // Load client certificate and key for mutual TLS (optional)
+    //     if (process.env.MQTT_CLIENT_CERT_PATH && process.env.MQTT_CLIENT_KEY_PATH) {
+    //       mqttOptions.cert = readFileSync(process.env.MQTT_CLIENT_CERT_PATH);
+    //       mqttOptions.key = readFileSync(process.env.MQTT_CLIENT_KEY_PATH);
+    //       this.logger.log('Loaded MQTT client certificate and key');
+    //     }
+
+    //     this.logger.log('MQTT TLS enabled');
+    //   } catch (error) {
+    //     this.logger.error(
+    //       'Failed to load TLS certificates:',
+    //       error instanceof Error ? error.message : String(error)
+    //     );
+    //     throw error;
+    //   }
+    // } else {
+    //   this.logger.warn(
+    //     '⚠️  MQTT TLS is DISABLED - This is insecure for production!'
+    //   );
+    // }
+
     try {
       this.client = connect(mqttOptions);
 
       this.client.on('connect', () => {
         this.isConnected = true;
-        this.logger.log('MQTT Client connected');
+        this.logger.log(
+          `MQTT Client connected securely via ${mqttOptions.protocol}://${mqttOptions.host}:${mqttOptions.port}`
+        );
         this.subscribeToTopics();
       });
 

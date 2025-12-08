@@ -98,7 +98,7 @@ export class SyncService {
         entity_id: op.entity_id,
         operation_data: op.operation_data,
         status: SyncStatus.PROCESSING,
-        server_version: Date.now(), // Simple version using timestamp
+        server_version: Date.now(), 
       });
 
       await this.syncRepository.save(syncRecord);
@@ -305,24 +305,6 @@ export class SyncService {
       default:
         throw new BadRequestException(`Unsupported operation: ${sync.operation_type}`);
     }
-  }
-
-  // Other CRUD methods remain for individual operations, but focus on batch sync
-
-  findAll() {
-    return this.syncRepository.find();
-  }
-
-  findOne(id: string) {
-    return this.syncRepository.findOne({ where: { id } });
-  }
-
-  update(id: string, updateSyncDto: UpdateSyncDto) {
-    return this.syncRepository.update(id, updateSyncDto);
-  }
-
-  remove(id: string) {
-    return this.syncRepository.delete(id);
   }
 
   /**

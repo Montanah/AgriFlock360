@@ -7,11 +7,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
+  OneToMany,
 } from 'typeorm';
 import { User } from './User.entity';
 import { DeviceStatus } from './DeviceStatus.entity';
 import { FirmwareVersion } from './Firmware.entity';
 import { Subscription } from './Subscription.entity';
+import { Telemetry } from './Telemetry.entity';
 
 @Entity('devices')
 @Index('idx_devices_owner', ['owner_id'])
@@ -53,6 +55,12 @@ export class Device {
 
   @Column({ type: 'timestamptz', nullable: true })
   last_seen?: Date;
+
+  @Column({ nullable: true, select: false })
+  api_key_hash?: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  api_key_created_at?: Date;
 
   @Column({ type: 'boolean', default: false })
   is_payg_locked: boolean;
@@ -102,4 +110,7 @@ export class Device {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updated_at: Date;
+
+  @OneToMany(() => Telemetry, (telemetry) => telemetry.device)
+  telemetry: Telemetry[];
 }

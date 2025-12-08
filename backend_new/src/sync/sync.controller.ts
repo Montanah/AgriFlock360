@@ -29,33 +29,4 @@ export class SyncController {
   getPendingSync(@Param('userId') userId: string) {
     return this.syncService.getPendingSync(userId);
   }
-
-  // Other CRUD endpoints for individual operations (optional)
-
-  @Post()
-  create(@Body() createSyncDto: CreateSyncDto) {
-    // This could create individual sync operations if needed
-    // But main sync is via batch
-    return 'Individual sync creation not implemented, use batch endpoint';
-  }
-
-  @Get()
-  findAll() {
-    return this.syncService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.syncService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateSyncDto: UpdateSyncDto) {
-    return this.syncService.update(id, updateSyncDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.syncService.remove(id);
-  }
 }

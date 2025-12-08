@@ -7,16 +7,20 @@ import {
   Param,
   Query,
   UseGuards,
+  Req,
 } from '@nestjs/common';
 import { TelemetryService } from './telemetry.service';
 import type { TelemetryData } from './telemetry.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { DeviceAuthGuard } from '../auth/guards/device-auth.guard';
+import { DeviceOrUserAuthGuard } from '../auth/guards/device-or-user-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
 import {
   ApiTags,
   ApiOperation,
   ApiBearerAuth,
   ApiResponse,
+  ApiHeader,
 } from '@nestjs/swagger';
 
 @ApiTags('Telemetry')
@@ -25,21 +29,35 @@ export class TelemetryController {
   constructor(private readonly telemetryService: TelemetryService) {}
 
   @Post(':deviceId')
-  @Public() // Device authentication would be separate
+  @UseGuards(DeviceAuthGuard)
   @ApiOperation({ summary: 'Record device telemetry data' })
+  @ApiHeader({
+    name: 'x-device-api-key',
+    description: 'Device API key for authentication',
+    required: true,
+  })
   @ApiResponse({ status: 201, description: 'Telemetry recorded' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Invalid API key' })
+  @ApiResponse({ status: 404, description: 'Device not found' })
   async recordTelemetry(
     @Param('deviceId') deviceId: string,
     @Body() data: TelemetryData,
+    @Req() req: any,
   ) {
     return this.telemetryService.recordTelemetry(deviceId, data);
   }
 
   @Get(':deviceId/latest')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(DeviceOrUserAuthGuard)
   @ApiBearerAuth()
+  @ApiHeader({
+    name: 'x-device-api-key',
+    description: 'Device API key (alternative to JWT)',
+    required: false,
+  })
   @ApiOperation({ summary: 'Get latest telemetry' })
   @ApiResponse({ status: 200, description: 'Latest telemetry retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getLatest(@Param('deviceId') deviceId: string) {
     return this.telemetryService.getLatestTelemetry(deviceId);
   }
@@ -49,6 +67,7 @@ export class TelemetryController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get telemetry history' })
   @ApiResponse({ status: 200, description: 'Telemetry history retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getHistory(
     @Param('deviceId') deviceId: string,
     @Query('start') start: string,
@@ -73,6 +92,7 @@ export class TelemetryController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get aggregated telemetry data' })
   @ApiResponse({ status: 200, description: 'Aggregated data retrieved' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async getAggregated(
     @Param('deviceId') deviceId: string,
     @Query('interval') interval: '1h' | '1d' | '1w' = '1d',

@@ -30,6 +30,9 @@ export class ExtensionOfficer {
   @Column({ type: 'varchar', length: 20, unique: true })
   phone_number: string;
 
+  @Column({ type: 'varchar', nullable: true })
+  education_level: string;
+
   @Column({ type: 'varchar', length: 255, nullable: true })
   region: string; // County, region, or area of operation
 

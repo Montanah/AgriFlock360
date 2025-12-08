@@ -19,7 +19,8 @@ export enum EntityType {
   DEVICE = 'DEVICE',
   VACCINATION = 'VACCINATION',
   FEEDING_RECORD = 'FEEDING_RECORD',
-  // Add more as needed
+  INVENTORY = 'INVENTORY',
+  PRODUCTS = 'PRODUCTS',
 }
 
 export enum SyncStatus {

@@ -27,6 +27,7 @@ import { FirmwareVersion } from '../database/entities/Firmware.entity';
 import { OtaUpdate } from '../database/entities/OtaUpdate.entity';
 import { PermissionsGuard } from 'src/auth/guards/permissions.guard';
 import { UsersModule } from '../users/users.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { UsersModule } from '../users/users.module';
       OtaUpdate,
     ]),
     UsersModule,
+    AuthModule,
     NotificationsModule,
     MqttModule,
     TelemetryModule,

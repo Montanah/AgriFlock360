@@ -26,6 +26,7 @@ import { AuditService, AuditAction } from '../services/audit.service';
 import { MqttService } from '../mqtt/mqtt.service';
 import * as crypto from 'crypto';
 import { RedisCacheService } from 'src/common/redis/redis-cache.service';
+import { randomBytes, createHash } from 'crypto';
 
 @Injectable()
 export class DevicesService {
@@ -47,13 +48,32 @@ export class DevicesService {
     private redisCache: RedisCacheService,
     private mqttService: MqttService,
   ) {}
+  
+  // Generate a secure API key for device authentication
+  generateApiKey(): string {
+    // Generate a 32-byte random key and encode as hex
+    // This produces a 64-character hex string
+    return randomBytes(32).toString('hex');
+  }
+
+  /**
+   * Hash an API key for secure storage
+   */
+  hashApiKey(apiKey: string): string {
+    return createHash('sha256').update(apiKey).digest('hex');
+  }
 
   async create(
     createDeviceDto: CreateDeviceDto,
     userId: string,
     ipAddress: string,
     userAgent: string,
-  ) {
+  ): Promise<{ device: Device; apiKey: string }> {
+
+    // Generate API key
+    const apiKey = this.generateApiKey();
+    const apiKeyHash = this.hashApiKey(apiKey);
+
     // Check if device_id already exists
     const existingDevice = await this.deviceRepository.findOne({
       where: { device_id: createDeviceDto.device_id },
@@ -74,6 +94,8 @@ export class DevicesService {
 
     const device = this.deviceRepository.create({
       ...createDeviceDto,
+      api_key_hash: apiKeyHash,
+      api_key_created_at: new Date(),
       device_status_id: defaultStatus.id,
       mqtt_topic_prefix: `devices/${createDeviceDto.device_id}`,
     });
@@ -92,8 +114,34 @@ export class DevicesService {
 
     this.logger.log(`Device created: ${device.device_id} by user ${userId}`);
 
-    return device;
+    return { device, apiKey }; 
   }
+
+  /**
+   * Rotate device API key
+   */
+  async rotateApiKey(deviceId: string): Promise<string> {
+    const device = await this.deviceRepository.findOne({
+      where: { id: deviceId },
+    });
+
+    if (!device) {
+      throw new NotFoundException('Device not found');
+    }
+
+    // Generate new API key
+    const newApiKey = this.generateApiKey();
+    const newApiKeyHash = this.hashApiKey(newApiKey);
+
+    // Update device
+    device.api_key_hash = newApiKeyHash;
+    device.api_key_created_at = new Date();
+
+    await this.deviceRepository.save(device);
+
+    return newApiKey; // Return to user once
+  }
+
 
   async findAll(query: QueryDevicesDto) {
     const { status, owner_id, page = 1, limit = 20 } = query;
