@@ -94,7 +94,7 @@ More details in `BRANCHING_STRATEGY.md`.
 
 ---
 
-## 📄 Licensing
+## � Licensing
 Internal proprietary software — not open-source.
 
 ---
@@ -103,3 +103,4 @@ Internal proprietary software — not open-source.
 **M’Global Business Consultancy**  
 📧 mglobalbizconsult@gmail.com  
 📞 +254 799 863 070  
+
